@@ -227,21 +227,260 @@ import/check <filename>       - Validate JSON without importing
 ## Web Form Integration
 
 ### Files Found
-- `reference repo/public_html/character-creation.html`
-- `reference repo/public_html/character-creation-new.html`
+- `reference repo/public_html/character-creation.html` - Basic form (older version)
+- `reference repo/public_html/character-creation-new.html` - Enhanced form with validation
+- `reference repo/public_html/assets/js/character-sheet-new.js` - Full validation logic (1000+ lines)
+- `reference repo/public_html/assets/css/character-sheet-new.css` - Styling
 
-### Integration Method
-**Not yet analyzed** - Need to examine HTML files for:
-- Form structure and validation
-- JavaScript for JSON export
-- API integration code
-- User experience flow
+### Technology Stack
+**Pure HTML/CSS/JavaScript** - No framework dependencies
+- Vanilla JavaScript with DOM manipulation
+- CSS Grid for layout
+- localStorage for temporary character storage
+- No server-side dependency (fully client-side)
 
-**Recommendation**: Use modern web framework
-- React/Vue.js for dynamic forms
-- Form validation library (Yup, Joi)
-- JSON export button
-- Preview/validation before download
+### Features Implemented
+
+#### 1. **Interactive Dot-Based System**
+```javascript
+// Visual dot selection for attributes/skills
+<div class="dots" data-category="physical" data-attribute="strength">
+    <span class="dot" data-value="1"></span>
+    <span class="dot" data-value="2"></span>
+    <span class="dot" data-value="3"></span>
+    <span class="dot" data-value="4"></span>
+    <span class="dot" data-value="5"></span>
+</div>
+```
+
+#### 2. **Point-Buy Validation** (V5 Rules)
+```javascript
+const validationRules = {
+    attributes: {
+        totalDots: 9,  // 4/3/2 distribution
+        priorityDots: { high: 4, medium: 3, low: 2 }
+    },
+    skills: {
+        totalDots: 27,  // 13/9/5 distribution
+        maxAtCreation: 3,
+        priorityDots: { high: 13, medium: 9, low: 5 }
+    },
+    disciplines: {
+        max: 5,
+        maxAtCreation: 2,
+        totalDots: 3  // 3 dots total at chargen
+    },
+    backgrounds: {
+        max: 5,
+        totalDots: 7  // 7 dots for advantages
+    }
+};
+```
+
+#### 3. **Clan Selection with Auto-Populate**
+```javascript
+const clanData = {
+    brujah: {
+        disciplines: ['potence', 'presence', 'celerity'],
+        bane: 'Brujah have a harder time controlling their anger...',
+        compulsion: 'Rebellion: The vampire refuses to bow to any authority...'
+    },
+    // ... all clans with disciplines, banes, compulsions
+};
+
+// When clan selected, auto-populate disciplines and show clan details
+```
+
+#### 4. **Real-Time Point Tracking**
+```javascript
+const pointTrackers = {
+    attributes: { total: 9, used: 0, remaining: 9 },
+    skills: { total: 27, used: 0, remaining: 27 },
+    disciplines: { total: 3, used: 0, remaining: 3 },
+    backgrounds: { total: 7, used: 0, remaining: 7 }
+};
+
+// Updates displayed as: "Points remaining: 9"
+```
+
+#### 5. **Predator Type Selection**
+- 10 predator types: Alleycat, Bagger, Blood Leech, Cleaver, Consensualist, Farmer, Osiris, Sandman, Scene Queen, Siren
+- Dropdown selection stored in bio data
+
+#### 6. **Client-Side Validation**
+```javascript
+function validateCharacter() {
+    // Check name and concept filled
+    if (!character.name.trim()) {
+        showError("Please enter a character name.");
+        return false;
+    }
+
+    // Check clan selected
+    if (!character.clan) {
+        showError("Please select a clan.");
+        return false;
+    }
+
+    // Validate point allocation
+    // Validate required fields
+    // Return true/false
+}
+```
+
+#### 7. **JSON Export**
+```javascript
+function formatCharacterData(char) {
+    return {
+        splat: "vampire",
+        bio: {
+            "full name": char.name,
+            concept: char.concept,
+            clan: char.clan,
+            generation: char.generation,
+            predator: char.predator
+        },
+        attributes: {
+            strength: char.attributes.physical.strength,
+            dexterity: char.attributes.physical.dexterity,
+            // ... all 9 attributes
+        },
+        skills: {
+            // Only includes skills with values > 0
+        },
+        disciplines: {
+            // Only includes disciplines with values > 0
+        },
+        specialties: {},
+        advantages: {},
+        flaws: {},
+        pools: {
+            health: char.health,
+            willpower: char.willpower,
+            humanity: char.humanity,
+            "blood potency": char.bloodPotency
+        },
+        notes: char.notes
+    };
+}
+
+// Export button: JSON.stringify(formattedData, null, 2)
+```
+
+#### 8. **User Experience Flow**
+1. **Character Info**: Enter name, concept, chronicle
+2. **Clan Selection**: Choose clan → auto-populate disciplines, show bane/compulsion
+3. **Predator Type**: Select feeding style
+4. **Attributes**: Distribute 9 dots using 4/3/2 priority system
+5. **Skills**: Distribute 27 dots using 13/9/5 priority system
+6. **Disciplines**: Allocate 3 dots from in-clan disciplines
+7. **Backgrounds**: Allocate 7 dots to advantages
+8. **Flaws**: Optional (can increase points)
+9. **Export**: Click "Generate JSON" → copy to clipboard or download
+
+### Integration with Evennia
+
+**Current Implementation**: Standalone HTML files
+- Not integrated with Evennia web server
+- Must manually download JSON and upload to MUD
+
+**Recommended Integration** (Phase 3):
+
+1. **Move to Evennia Web Directory**
+   ```
+   beckonmu/web/static/chargen/
+   ├── character-creation.html
+   ├── assets/
+   │   ├── js/character-sheet.js
+   │   └── css/character-sheet.css
+   ```
+
+2. **Add Django URL Route**
+   ```python
+   # beckonmu/web/urls.py
+   path('chargen/', TemplateView.as_view(template_name='chargen/character-creation.html'))
+   ```
+
+3. **Add AJAX Submission**
+   ```javascript
+   // Instead of localStorage, POST to /api/character/import/
+   fetch('/api/character/import/', {
+       method: 'POST',
+       headers: {
+           'Content-Type': 'application/json',
+           'X-CSRFToken': getCookie('csrftoken')
+       },
+       body: JSON.stringify({
+           character_name: character.name,
+           account_name: currentUser.username,
+           character_data: formattedData
+       })
+   })
+   .then(response => response.json())
+   .then(data => {
+       if (data.success) {
+           showSuccess("Character submitted for approval!");
+       } else {
+           showError(data.errors.join(", "));
+       }
+   });
+   ```
+
+4. **Session Integration**
+   - Require logged-in session
+   - Auto-fill account_name from session
+   - Create character object before allowing chargen
+   - Auto-submit job after successful import
+
+### Assessment
+
+#### ✅ What Works Well
+- **Comprehensive V5 rules**: 4/3/2 attributes, 13/9/5 skills, 3 discipline dots
+- **Visual feedback**: Dot-based selection feels like tabletop character sheet
+- **Clan integration**: Auto-populates disciplines based on clan
+- **Real-time validation**: Points tracker updates live
+- **No dependencies**: Pure vanilla JavaScript, works anywhere
+
+#### ⚠️ Improvements Needed
+1. **Missing Clans**: Only 9 clans, should have all 13 (no Banu Haqim, Hecata, Lasombra, Ministry, Tzimisce, Ravnos)
+2. **No Discipline Powers**: Only tracks discipline dots, not individual powers
+3. **No Specialties UI**: Specialties data structure exists but no UI to add them
+4. **No XP Tracking**: Doesn't calculate XP costs for out-of-clan disciplines
+5. **localStorage Only**: No server integration, manual JSON download
+6. **No Character List**: Can't view previously created characters
+7. **Missing V5 Mechanics**:
+   - Touchstones (Humanity tracking)
+   - Convictions (Humanity system)
+   - Ambition/Desire (Chronicle tenets)
+   - True Age (vs apparent age)
+
+#### 🔧 Recommended Enhancements
+1. **Add missing clans** with proper disciplines
+2. **Discipline power selection** UI after allocating dots
+3. **Specialties modal** for adding skill specializations
+4. **Character list page** showing all submitted characters
+5. **Staff approval interface** in web UI (not just command-line)
+6. **Auto-save to localStorage** every 30 seconds (prevent data loss)
+7. **Import from JSON** button to resume editing
+8. **Print stylesheet** for physical character sheet
+
+### Deployment Strategy
+
+**Phase 1 (Current)**: Standalone HTML
+- Host on external site or use as-is
+- Manual JSON download/upload
+
+**Phase 2 (MVP Integration)**: Static files in Evennia
+- Copy to `beckonmu/web/static/chargen/`
+- Add URL route in Django
+- Still use manual JSON download, but hosted in-game
+
+**Phase 3 (Full Integration)**: AJAX API calls
+- Replace localStorage with API calls
+- Session-based authentication
+- Auto-create character object
+- Auto-submit approval job
+- Staff approval interface in web UI
 
 ---
 

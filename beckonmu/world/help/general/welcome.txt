@@ -12,11 +12,11 @@ rules for a MUSH-style roleplay-focused experience.
 
 |WKEY CONCEPTS:|n
 
-|y• The Masquerade|n - The First Tradition: hide vampire existence from mortals
-|y• The Beast|n - The predatory nature within all vampires
-|y• Hunger|n - Replaces Blood Pool; drives vampire desperation (0-5 scale)
-|y• Disciplines|n - Supernatural vampire powers unique to each clan
-|y• Status & Boons|n - The political currency of Camarilla society
+|y- The Masquerade|n - The First Tradition: hide vampire existence from mortals
+|y- The Beast|n - The predatory nature within all vampires
+|y- Hunger|n - Replaces Blood Pool; drives vampire desperation (0-5 scale)
+|y- Disciplines|n - Supernatural vampire powers unique to each clan
+|y- Status & Boons|n - The political currency of Camarilla society
 
 |WGETTING STARTED:|n
 
@@ -29,11 +29,11 @@ rules for a MUSH-style roleplay-focused experience.
 
 |WIMPORTANT MUSH ETIQUETTE:|n
 
-• This is a |yrolep lay-focused|n game - commands provide mechanical support
-• |yDescribe your actions|n - commands calculate results, you narrate outcomes
-• |yRespect the Masquerade|n - keep vampire nature hidden from mortals
-• |yCoordinate with others|n - use +roll for contested actions
-• |yAsk staff for help|n - we're here to support great stories
+- This is a |yrolep lay-focused|n game - commands provide mechanical support
+- |yDescribe your actions|n - commands calculate results, you narrate outcomes
+- |yRespect the Masquerade|n - keep vampire nature hidden from mortals
+- |yCoordinate with others|n - use +roll for contested actions
+- |yAsk staff for help|n - we're here to support great stories
 
 |[r+================================================================+|n
 

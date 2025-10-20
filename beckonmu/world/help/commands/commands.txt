@@ -68,11 +68,11 @@ for detailed information on any specific command.
 
 |WMUSH ETIQUETTE:|n
 
-• Commands provide |ymechanical support|n - you narrate the story
-• Always |yrolep lay|n your actions, don't just use commands
-• Use |y+roll|n for contested actions between players
-• Coordinate with others for dramatic scenes
-• Ask staff via |y+job|n if you need help
+- Commands provide |ymechanical support|n - you narrate the story
+- Always |yrolep lay|n your actions, don't just use commands
+- Use |y+roll|n for contested actions between players
+- Coordinate with others for dramatic scenes
+- Ask staff via |y+job|n if you need help
 
 |[r═══════════════════════════════════════════════════════════════════|n
 

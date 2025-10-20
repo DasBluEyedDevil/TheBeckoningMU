@@ -29,14 +29,21 @@ from evennia.settings_default import *
 
 ######################################################################
 # Evennia base server config
-######################################################################
-
-# This is the name of your game. Make it catchy!
+########################################## This is the name of your game. Make it catchy!
 SERVERNAME = "beckonmu"
 
 ######################################################################
-# Help System Configuration
+# Django Apps
 ######################################################################
+
+# Add custom apps to INSTALLED_APPS
+INSTALLED_APPS = INSTALLED_APPS + [
+    'bbs',
+]
+
+######################################################################
+# Help System Configuration
+############################################################################################################
 
 # Load help entries from text/YAML files in world/help/
 FILE_HELP_ENTRY_MODULES = ["world.help_entries"]

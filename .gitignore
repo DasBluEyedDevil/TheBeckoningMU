@@ -1,0 +1,86 @@
+# Evennia Server Files
+*.db3
+*.sqlite3
+server/evennia.db3
+server/logs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.venv/
+venv/
+ENV/
+env/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git/Development
+*.orig
+*.rej
+.git/
+nul
+
+# Evennia Specific
+server/evennia.db3
+*.db3-journal
+world/*.pyc
+typeclasses/*.pyc
+commands/*.pyc
+beckonmu/server/logs/
+
+# Reference Repository (read-only, don't track changes)
+reference repo/
+
+# Local Configuration
+server/conf/secret_settings.py
+*.local.json
+.env
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation Build
+docs/_build/
+
+# OS Generated
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Poetry
+poetry.lock
+
+# Backup files
+*.bak
+*_v1.md
+*.backup

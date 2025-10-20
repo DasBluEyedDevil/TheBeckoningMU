@@ -51,36 +51,185 @@ This document tracks important future implementation tasks and notes for TheBeck
 
 ### 1. Web-Based Character Creation (JSON Import)
 
-**Status**: Research in progress (Gemini analyzing reference repo)
+**Status**: ✅ **ANALYSIS COMPLETE** - See `WEB_CHARGEN_ANALYSIS.md`
 
 **Objective**: Integrate web-based character creation form that exports JSON for server import
 
 **Reference**:
 - Web form: https://beckon.vineyard.haus/character-creation-new.html
 - Reference repo implementation at: `reference repo/BeckoningMU-master/`
+- **Complete Documentation**: `WEB_CHARGEN_ANALYSIS.md` (720+ lines)
 
-**Tasks**:
-- [ ] Analyze reference repo's web chargen implementation (Gemini)
-- [ ] Review JSON format and validation rules
-- [ ] Understand server-side import commands
-- [ ] Identify Jobs system integration for approval workflow
-- [ ] Refactor for new codebase architecture
-- [ ] Implement Django views/URLs
-- [ ] Create import command (+chargen/import)
-- [ ] Integrate with approval workflow
-- [ ] Add validation and security checks
-- [ ] Test with example JSON characters
+**Implementation Phases**:
 
-**Files to Create/Modify** (from Gemini analysis - pending):
-- TBD after Gemini analysis completes
+**Phase 1 (MVP - HIGH PRIORITY)**:
+- [ ] Copy Django models from reference repo (`traits/models.py`)
+- [ ] Copy enhanced import utilities (`traits/utils.py`)
+- [ ] Copy RESTful API endpoints (`traits/api.py`)
+- [ ] Implement `import` command in chargen cmdset
+- [ ] Create `server/conf/character_imports/` directory
+- [ ] Test with sample V5 character JSON
+
+**Phase 2 (API Integration - MEDIUM)**:
+- [ ] Add API URL routes to `web/urls.py`
+- [ ] Add session-based authentication
+- [ ] Add rate limiting
+- [ ] Add CSRF protection (remove @csrf_exempt)
+- [ ] Test API endpoints with curl/Postman
+
+**Phase 3 (Web Form - LOW)**:
+- [ ] Copy web forms to `beckonmu/web/static/chargen/`
+- [ ] Add missing 4 clans (Banu Haqim, Hecata, Lasombra, Ministry)
+- [ ] Add discipline power selection UI
+- [ ] Add specialties interface
+- [ ] Replace localStorage with AJAX API calls
+- [ ] Add session integration
+- [ ] Auto-create character object on form load
+- [ ] Auto-submit approval job on import
+
+**Files to Create/Modify**:
+- `beckonmu/traits/models.py` - Django ORM for character traits
+- `beckonmu/traits/utils.py` - Enhanced import/validation
+- `beckonmu/traits/api.py` - RESTful endpoints (7 total)
+- `beckonmu/commands/chargen.py` - Add `CmdImportCharacter` class
+- `beckonmu/web/static/chargen/` - Web form files (Phase 3)
+
+**Security Considerations** (see analysis doc for details):
+- File path validation (prevent directory traversal)
+- Authentication required for API endpoints
+- Input sanitization for JSON fields
+- Authorization checks (only import to own characters)
 
 ---
 
-### 2. Evennia Contribs Integration
+### 2. Enhanced Grid Building System (Athens Setting)
 
-**Status**: Not started
+**Status**: 🆕 **PRIORITY: HIGH**
+
+**Objective**: Create intuitive, dynamic building system for Athens grid far superior to stock Evennia/traditional MU*s
+
+**Requirements**:
+- Modern day Athens as the primary setting
+- Easy room creation with minimal commands
+- Dynamic/customizable room descriptions
+- Template-based building (room types: Street, Building, Haven, Elysium, etc.)
+- Batch building support for city blocks/districts
+- Visual grid map generation
+- Copy/paste/modify room patterns
+- Import from spreadsheet/JSON for bulk creation
+
+**Potential Approaches**:
+1. **Evennia Batch Code System** (`.ev` files)
+   - Reference: `world/batch_cmds.ev` in reference repo
+   - Pro: Built-in, version controlled, repeatable
+   - Con: Syntax can be clunky
+
+2. **Custom Build Commands** (MUX-style enhanced)
+   - `+dig <name>=<exit to>,<exit from>`
+   - `+desc/set <location>=<template>` with variable substitution
+   - `+clone <source>` to duplicate room patterns
+   - Pro: Familiar to MU* builders, fast for experienced staff
+   - Con: Still command-line based
+
+3. **Web-Based Grid Builder** (BEST FOR YOUR GOALS)
+   - Visual drag-and-drop interface
+   - Template selection from library
+   - Batch operations (create entire district)
+   - Preview before committing
+   - Export/import grid layouts
+   - Pro: Most user-friendly, modern UX
+   - Con: Requires frontend development
+
+4. **Spreadsheet Import System**
+   - Define grid in Excel/Google Sheets (Room Name, Description, Exits, Type)
+   - Upload CSV/JSON
+   - Auto-generate entire city district
+   - Pro: Non-technical staff can build, easy collaboration
+   - Con: Less interactive
+
+**Recommended Hybrid Approach**:
+- Phase 1: Enhanced batch code system with templates
+- Phase 2: Spreadsheet import for bulk creation
+- Phase 3: Web-based visual builder
+
+**Features to Include**:
+- [ ] Room templates (Street, Cafe, Nightclub, Haven, Elysium, etc.)
+- [ ] Variable substitution in descriptions (time of day, weather, season)
+- [ ] Auto-generate exits with proper reverse exits
+- [ ] District organization (Plaka, Monastiraki, Kolonaki, etc.)
+- [ ] Landmark system (Acropolis, Syntagma Square, etc.)
+- [ ] Random description variations (prevent repetition)
+- [ ] Object spawning (furniture, props)
+- [ ] Lighting system (day/night descriptions)
+- [ ] Access control (public, private, vampire-only)
+- [ ] Grid visualization (ASCII map or web-based)
+
+**Evennia Tools to Leverage**:
+- `evennia.prototypes` - Object templates
+- `evennia.utils.batchprocessors` - Batch building
+- `evennia.contrib.grid` - Grid contrib (if available)
+- `evennia.utils.create` - Programmatic object creation
+
+**Athens-Specific Details to Include**:
+- Modern Greek street names
+- Authentic neighborhood descriptions
+- Historical landmarks (Parthenon, Agora, etc.)
+- Modern venues (clubs, cafes, tech hubs)
+- Hidden Camarilla locations
+- Nosferatu tunnels beneath the city
+- Elysium locations (museums, galleries, theaters)
+
+**Files to Create**:
+- `beckonmu/world/athens_templates.py` - Room templates for Athens
+- `beckonmu/world/grid_builder.py` - Enhanced building utilities
+- `beckonmu/commands/building.py` - Custom build commands
+- `beckonmu/web/grid/` - Web-based grid builder (Phase 3)
+- `beckonmu/world/batch_files/athens_plaka.ev` - Example district
+
+---
+
+### 3. Evennia Contribs Integration
+
+**Status**: Research complete - Reference repo uses 4 contribs
 
 **Objective**: Leverage Evennia contrib packages instead of building from scratch
+
+**Contribs Used in Reference Repo**:
+1. ✅ **`evennia.contrib.base_systems.color_markups`** - MUX-style ANSI color codes
+   - Already configured in reference repo's `settings.py`
+   - Provides `|W`, `|y`, `|[R`, `|n` etc. color syntax
+   - **Action**: Copy color config from reference repo
+
+2. ✅ **`evennia.contrib.game_systems.multidescer`** - Multiple description system
+   - Used in `commands/character_customization.py`
+   - Allows characters to have multiple descriptions (outfits, poses)
+   - **Action**: Import `CmdMultiDesc` into custom cmdset
+
+3. ✅ **`evennia.contrib.game_systems.mail`** - In-game mail system
+   - Used in `commands/comms.py`
+   - Provides `CmdMail` for player-to-player messages
+   - **Action**: Import `CmdMail` into communication cmdset
+
+4. ✅ **`evennia.contrib.utils.git_integration`** - Git version control
+   - Used in `commands/default_cmdsets.py`
+   - Provides in-game Git commands for staff
+   - **Action**: Import `GitCmdSet` for developer cmdset
+
+**Potentially Useful Contribs** (not yet in reference repo):
+- [ ] `evennia.contrib.grid.xyzgrid` - Spatial grid system (for Athens map)
+- [ ] `evennia.contrib.game_systems.crafting` - Crafting system (Blood Alchemy?)
+- [ ] `evennia.contrib.game_systems.dice` - Dice rolling system (V5 dice pools)
+- [ ] `evennia.contrib.rpg.traits` - Character trait system (alternative to custom traits)
+- [ ] `evennia.contrib.tutorials.tutorial_world` - Reference for room building patterns
+
+**Tasks**:
+- [x] Identify contribs used in reference repo
+- [ ] Copy color markup configuration
+- [ ] Import multidescer for character customization
+- [ ] Import mail system for IC communication
+- [ ] Import Git integration for staff development
+- [ ] Research xyzgrid for Athens spatial mapping
+- [ ] Evaluate dice contrib vs custom V5 dice system
 
 **Reference**: https://www.evennia.com/docs/latest/Contribs/Contribs-Overview.html
 

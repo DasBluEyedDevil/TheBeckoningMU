@@ -34,6 +34,9 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         #
         # any commands you add below will overload the default ones.
         #
+        import importlib
+        BBSCmdSet = getattr(importlib.import_module("bbs.commands"), "BBSCmdSet")
+        self.add(BBSCmdSet)
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):

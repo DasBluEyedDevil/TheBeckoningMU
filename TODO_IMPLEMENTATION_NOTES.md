@@ -22,6 +22,9 @@ This document tracks important future implementation tasks and notes for TheBeck
    - Trace bugs across files
    - Answer architectural questions
    - Security & performance audits
+   - **Note**: Has automatic fallback to Flash model when Pro quota exhausted
+   - Both Pro and Flash models can hit rate limits (429 errors)
+   - Use `-m, --model` flag to explicitly specify model if needed
 
 3. **Cursor CLI (Developer #1)** - UI/visual work
    - Implement UI components

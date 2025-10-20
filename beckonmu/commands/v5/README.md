@@ -8,6 +8,29 @@ This document outlines the architectural decisions and patterns for V5 command i
 
 ## Core Principles
 
+### 0. Leverage Evennia's Built-In Features First (NEW PRINCIPLE)
+
+**ALWAYS check if Evennia provides the functionality before building from scratch.**
+
+**Examples:**
+- ✅ **Help System**: Evennia has built-in `help` command and `HelpEntry` model. Use `help_entries.py` to load text files into Evennia's system (official pattern).
+- ✅ **Channels**: Evennia has built-in communication channels. Customize existing channels, don't build new system.
+- ✅ **Locks**: Evennia has built-in permission system. Use lock strings, don't build custom auth.
+- ✅ **Scripts**: Evennia has built-in Scripts for scheduled tasks. Use them for automated systems.
+- ✅ **Typeclasses**: Evennia has Object/Character/Room/Exit. Extend them, don't replace.
+
+**Before implementing a feature, ask:**
+1. Does Evennia provide this functionality?
+2. Can we extend/customize Evennia's built-in feature?
+3. Is there an official Evennia pattern for this?
+4. Only if all answers are "no", build custom.
+
+**Resources:**
+- Evennia Documentation: https://www.evennia.com/docs/latest/
+- Check `evennia.commands.default` for built-in commands
+- Check `evennia.typeclasses` for extendable classes
+- Check settings.py documentation for configuration options
+
 ### 1. Small Single-Responsibility Commands
 
 **DO THIS:**

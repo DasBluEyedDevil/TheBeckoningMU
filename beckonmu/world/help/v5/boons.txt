@@ -1,0 +1,119 @@
+|[R+===================================================================+
+|W|                      BOON ECONOMY SYSTEM                          |
+|[R+===================================================================+|n
+
+Boons are the |yprimary currency|n of Camarilla politics. They represent
+favors owed between vampires - debts that |ymust|n be honored.
+
+|WBOON TYPES:|n
+
+|yTrivial Boon|n - Minor favors
+  • Small service, minor information
+  • Example: "Tell me who entered Elysium last night"
+  • Easily granted and called in
+  • Little political weight
+
+|yMinor Boon|n - Standard favors
+  • Significant service, useful information
+  • Example: "Provide an alibi for my whereabouts"
+  • Most common type of boon
+  • Real political currency
+
+|yMajor Boon|n - Substantial favors
+  • Life-saving action, critical information
+  • Example: "Hide me from the Sheriff for a week"
+  • Serious political leverage
+  • Can determine important votes
+
+|yLife Boon|n - Ultimate debt
+  • Saving from Final Death
+  • Example: "Rescued me from fire/sunlight/Blood Hunt"
+  • Cannot be refused when called
+  • May require suicide mission to repay
+
+|WHOW BOONS WORK:|n
+
+|yGranting a Boon:|n
+  • Someone performs a service for you
+  • You now |[Rowe them|n a boon
+  • Harpy witnesses and records it
+  • Public knowledge in domain
+
+|yCalling in a Boon:|n
+  • You request favor from debtor
+  • Must be |yproportional|n to boon level
+  • Debtor |ymust comply|n or face Status loss
+  • Harpy confirms boon is cleared
+
+|yRefusing a Boon:|n
+  • Grounds for Status loss or worse
+  • "Oath-breaker" reputation
+  • May lead to Blood Hunt
+  • |[RNEVER refuse Life Boon|n
+
+|WBOON STRATEGY:|n
+
+|yCollecting Boons:|n
+  • Perform services without being asked
+  • Offer help to influential Kindred
+  • Boons are |ypower|n - accumulate them
+
+|yOwing Boons:|n
+  • Try to repay quickly (removes leverage)
+  • Owe many small boons > few large boons
+  • |[RNever owe Life Boon if possible|n
+
+|yTrading Boons:|n
+  • Can be transferred to third party
+  • "I'll give you the boon <Name> owes me"
+  • Requires Harpy verification
+  • Political wheeling and dealing
+
+|WHARPY'S ROLE:|n
+
+The |yHarpy|n maintains the boon ledger:
+  • Witnesses and records all boons
+  • Announces major boons at Elysium
+  • Arbitrates disputes over boon value
+  • Enforces boon payment
+
+|WBOON ETIQUETTE:|n
+
+|yDO:|n
+  • Honor your debts promptly
+  • Request fair payment for services
+  • Announce Life Boons publicly
+  • Keep Harpy informed
+
+|yDON'T:|n
+  • Call in boon for trivial matters (wastes political capital)
+  • Overestimate boon value (Harpy will correct you publicly)
+  • Refuse to repay (social and political suicide)
+  • Hide boons from Harpy (undermines the system)
+
+|WEXAMPLE BOONS:|n
+
+|wTrivial:|n "Let me feed in your territory tonight"
+|wMinor:|n "Provide introduction to Primogen"
+|wMajor:|n "Vote for my candidate at Primogen Council"
+|wLife:|n "I saved you from SI raid"
+
+|WCOMMANDS:|n
+
+|y+boons|n - View boons you owe and are owed
+|y+boons <name>|n - View someone's boons
+|y+boons/grant <name>=<type>|n - Grant a boon (Harpy records)
+|y+boons/call <name>=<boon ID>|n - Call in a boon owed to you
+|y+boons/trade <from>/<to>=<boon ID>|n - Transfer boon to third party
+
+|WPOLITICAL IMPORTANCE:|n
+
+Boons are |ymore valuable than Status|n in many ways:
+  • Status is reputation; boons are |yleverageable power|n
+  • One Major Boon can swing important votes
+  • Life Boons can compel almost anything
+  • Boon networks = political machines
+
+|[r+===================================================================+|n
+
+|ySee also:|n help status, help positions, help elysium, help harpy

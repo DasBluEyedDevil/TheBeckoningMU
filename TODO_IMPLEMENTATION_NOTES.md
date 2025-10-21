@@ -35,9 +35,10 @@ This document tracks important future implementation tasks and notes for TheBeck
 
 4. **Copilot CLI (Developer #2)** - Backend work
    - Implement backend features
-   - GitHub operations
+   - GitHub operations (gh commands)
    - Terminal tasks
    - Cross-check Cursor's work
+   - **Usage**: `copilot -p "TASK" --allow-all-tools`
 
 ### Token Efficiency Targets
 

@@ -2,8 +2,8 @@
 BBS (Bulletin Board System) models for Evennia MUD.
 """
 
-from django.db import models
-from django.db.models import Max
+from django.db import models, transaction
+from django.db.models import Max, F
 from evennia.accounts.models import AccountDB
 
 
@@ -119,13 +119,14 @@ class Post(models.Model):
         return f"{self.board.name}/{self.sequence_number}: {self.title}"
     
     def save(self, *args, **kwargs):
-        """Auto-increment sequence_number per board."""
+        """Auto-increment sequence_number per board (atomic to prevent race conditions)."""
         if not self.pk and not self.sequence_number:
-            # Get the highest sequence number for this board
-            max_seq = Post.objects.filter(board=self.board).aggregate(
-                Max('sequence_number')
-            )['sequence_number__max']
-            self.sequence_number = (max_seq or 0) + 1
+            # Use select_for_update to prevent race conditions
+            with transaction.atomic():
+                max_seq = Post.objects.filter(board=self.board).select_for_update().aggregate(
+                    Max('sequence_number')
+                )['sequence_number__max']
+                self.sequence_number = (max_seq or 0) + 1
         super().save(*args, **kwargs)
     
     def get_author_name(self, viewer=None):

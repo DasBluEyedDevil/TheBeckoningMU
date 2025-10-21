@@ -98,27 +98,15 @@ def format_board_list(caller, boards):
     Returns:
         str: Formatted table
     """
-    # Filter boards by required flags
+    # Filter boards using get_board() to ensure consistent permission checking
     filtered_boards = []
-    character = caller if hasattr(caller, 'db') else None
-    char_flags = character.db.flags if character else {}
     
     for board in boards:
-        required_flags = board.get_required_flags_list()
-        if required_flags:
-            # Check if character has all required flags
-            if not character:
-                continue
-            if not all(char_flags.get(flag) for flag in required_flags):
-                continue
-        
-        # Check read permissions
-        if board.read_perm:
-            account = caller.account if hasattr(caller, 'account') else caller
-            if not account.check_permstring(board.read_perm):
-                continue
-        
-        filtered_boards.append(board)
+        # Use get_board() with the board's ID to perform permission checks
+        # This ensures we use the same logic as other parts of the system
+        if get_board(caller, board.id, check_perm=True):
+            filtered_boards.append(board)
+    
     
     if not filtered_boards:
         return "No boards available."

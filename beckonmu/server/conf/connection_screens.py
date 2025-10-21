@@ -1,54 +1,70 @@
 # -*- coding: utf-8 -*-
 """
-Connection screen module for TheBeckoningMU.
+Connection screen
 
-This module defines the text players see when connecting to the MUD before
-they are logged in. It uses the V:tM Gothic theme established in
-beckonmu/world/ansi_theme.py.
+This is the text to show the user when they first connect to the game (before
+they log in).
 
-See: THEMING_GUIDE.md for complete aesthetics specification
+To change the login screen in this module, do one of the following:
+
+- Define a function 'connection_screen()', taking no arguments. This will be
+  called first and must return the full string to act as the connection screen.
+  This can be used to produce more dynamic screens.
+- Alternatively, define a string variable in the outermost scope of this module
+  with the connection string that should be displayed. If more than one such
+  variable is given, Evennia will pick one of them at random.
 
 The commands available to the user when the connection screen is shown
 are defined in evennia.default_cmds.UnloggedinCmdSet. The parsing and display
 of the screen is done by the unlogged-in "look" command.
+
 """
 
 from django.conf import settings
+
 from evennia import utils
 
-# Connection screen shown before login
-CONNECTION_SCREEN = """
-|[R
-      ██╗   ██╗ █████╗ ███╗   ███╗██████╗ ██╗██████╗ ███████╗
-      ██║   ██║██╔══██╗████╗ ████║██╔══██╗██║██╔══██╗██╔════╝
-      ██║   ██║███████║██╔████╔██║██████╔╝██║██████╔╝█████╗
-      ╚██╗ ██╔╝██╔══██║██║╚██╔╝██║██╔═══╝ ██║██╔══██╗██╔══╝
-       ╚████╔╝ ██║  ██║██║ ╚═╝ ██║██║     ██║██║  ██║███████╗
-        ╚═══╝  ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
-|n
-|[r            ╔════════════════════════════════════════╗
-|[r            ║  |WT H E   B E C K O N I N G           |[r║
-|[r            ║  |wThe Masquerade - 5th Edition       |[r║
-|[r            ╚════════════════════════════════════════╝|n
+CONNECTION_SCREEN = """                                                    
 
-|x┌──────────────────────────────────────────────────────────────┐
-|x│  |W"The night has a thousand eyes, and the blood has a     |x│
-|x│  |W thousand secrets. Welcome, Kindred, to your Danse      |x│
-|x│  |W Macabre."|n                                             |x│
-|x└──────────────────────────────────────────────────────────────┘|n
+=============================                                  
+=        ==  ================                                  
+====  =====  ================                                  
+====  =====  ================                                  
+====  =====  ======   =======                                  
+====  =====    ===  =  ======                                  
+====  =====  =  ==     ======                                  
+====  =====  =  ==  =========                                  
+====  =====  =  ==  =  ======                                  
+====  =====  =  ===   =======                                  
+=============================                                  
+===============================================================
+=      ==================  ====================================
+=  ===  =================  ====================================
+=  ====  ================  ====================================
+=  ===  ====   ====   ===  =  ===   ===  = ===  ==  = ====   ==
+=      ====  =  ==  =  ==    ===     ==     ======     ==  =  =
+=  ===  ===     ==  =====   ====  =  ==  =  ==  ==  =  ===    =
+=  ====  ==  =====  =====    ===  =  ==  =  ==  ==  =  =====  =
+=  ===  ===  =  ==  =  ==  =  ==  =  ==  =  ==  ==  =  ==  =  =
+=      =====   ====   ===  =  ===   ===  =  ==  ==  =  ===   ==
+===============================================================
+  _                         __                             
+ /_) _)_ ( _   _   _   _    )_)         )\ ) o  _ ( _  _)_ 
+/ /  (_   ) ) )_) ) ) (    /__) (_(    (  (  ( (_( ) ) (_  
+             (_       _)          _)             _)        
 
-         |wConnect with:|n  connect <username> <password>
-         |wCreate char:|n  create <username> <password>
+    A World of Darkness MUSH                                                                                             
 
-|[R═══════════════════════════════════════════════════════════════════|n
-"""
+    To connect, type '|wconnect <username> <password>|n'
+    to create,  type '|wcreate  <username> <password>|n'
 
-# Post-logout screen (shown after disconnect)
-POST_DISCONNECT_SCREEN = """
-|x
-╔═══════════════════════════════════════════════════════════════╗
-║  |wYou fade into the shadows, leaving only whispers...       |x║
-╚═══════════════════════════════════════════════════════════════╝|n
+    If you have spaces in your username, enclose it in quotes.
+  
+    Enter |whelp|n for more info.
 
-|wThank you for playing TheBeckoningMU. Until the next night...|n
-"""
+    Original Work by lcanady (github/lcanady)
+    Modifications by Devil and erratic
+    Powered By Evennia v{}""".format(
+    utils.get_evennia_version("short")
+)
+

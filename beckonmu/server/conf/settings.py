@@ -39,6 +39,7 @@ SERVERNAME = "beckonmu"
 # Add custom apps to INSTALLED_APPS
 INSTALLED_APPS = INSTALLED_APPS + [
     'bbs',
+    'traits',
 ]
 
 ######################################################################

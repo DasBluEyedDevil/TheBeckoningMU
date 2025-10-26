@@ -27,7 +27,7 @@ urlpatterns = [
     # web admin
     path("admin/", include("web.admin.urls")),
     # traits API
-    path("", include("beckonmu.traits.urls")),
+    path("", include("traits.urls")),
 ]
 
 # 'urlpatterns' must be named such for Django to find it.

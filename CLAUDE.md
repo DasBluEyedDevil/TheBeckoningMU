@@ -6,261 +6,103 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 TheBeckoningMU is an Evennia-based MUD (Multi-User Dungeon) game project. Evennia is a Python framework for building MUDs and other multiplayer text-based games. This project uses Python 3.13+ and Poetry for dependency management.
 
-## Essential Commands
+## Evennia Framework
 
-### Initial Setup
+TheBeckoningMU is built on Evennia, a Python framework for MUDs and multiplayer text games.
+
+### Essential Skills
+
+For comprehensive Evennia guidance, see the `.skills/` directory:
+- **`evennia-framework-basics`**: Core concepts, architecture, typeclasses, attributes, hooks, configuration
+- **`evennia-development-workflow`**: Server commands, testing, debugging, deployment
+- **`evennia-typeclasses`**: Creating and working with Objects, Characters, Rooms, Exits, etc.
+- **`evennia-commands`**: Command system, MuxCommand syntax, command sets
+
+### Quick Command Reference
+
 ```bash
-# Initialize the database (first time only)
-evennia migrate
-
-# Create superuser when prompted during first start
-evennia start
+evennia start     # Start server
+evennia stop      # Stop server
+evennia reload    # Apply code changes (fast)
+evennia test      # Run tests
+evennia shell     # Django shell with Evennia context
 ```
 
-### Development Workflow
-```bash
-# Start the server (logs to console)
-evennia start
+**Server Access**: MUD client (localhost:4000), Web client (http://localhost:4001), Admin (http://localhost:4001/admin)
 
-# Stop the server
-evennia stop
+## Project Structure
 
-# Restart the server
-evennia restart
-
-# Reload the server (without full restart, preserves sessions)
-evennia reload
-
-# Check server status
-evennia status
-
-# Run tests
-evennia test
-
-# Access Python shell with Evennia context
-evennia shell
+```
+beckonmu/
+├── typeclasses/        # Game entity definitions (Objects, Characters, Rooms, Exits)
+├── commands/           # Command definitions and command sets
+├── world/              # Game-specific code (prototypes, help entries)
+├── server/conf/        # Server configuration (settings.py, secret_settings.py)
+├── web/                # Web interface (Django app)
+└── traits/             # Vampire: The Masquerade 5e trait system
 ```
 
-### Server Access
-- MUD client: `localhost:4000`
-- Web client: `http://localhost:4001`
-- Admin interface: `http://localhost:4001/admin`
+**Key Patterns**:
+- **ObjectParent mixin** (`typeclasses/objects.py`): Methods here affect ALL game entities with a location
+- **MuxCommand syntax**: Commands support MUX-style switches: `command/switch arg = value`
+- **Attributes**: Use `.db` for persistent data (survives reloads), `.ndb` for temporary data
+- **Hooks**: Override methods like `at_object_creation()`, `at_post_move()`, etc. to customize behavior
 
-## Architecture
+See Evennia skills for complete details on typeclasses, commands, hooks, and configuration.
 
-### Evennia Typeclass System
+## AI Development Workflow
 
-Evennia uses a "typeclass" pattern where game entities inherit from base classes. All entities with a location in the game world inherit from `DefaultObject` at some level.
+**CRITICAL**: This project uses the AI Quadrumvirate pattern for token-efficient development.
 
-**Key Typeclasses:**
-- **Objects** (`typeclasses/objects.py`): Base class for all in-game items
-- **Characters** (`typeclasses/characters.py`): Player-controlled entities (inherit from Objects)
-- **Rooms** (`typeclasses/rooms.py`): Locations in the game world
-- **Exits** (`typeclasses/exits.py`): Connections between rooms
-- **Accounts** (`typeclasses/accounts.py`): Player accounts (OOC entities)
-- **Scripts** (`typeclasses/scripts.py`): Time-based or persistent game logic
-- **Channels** (`typeclasses/channels.py`): Communication channels
+For complete usage instructions, see the `.skills/` directory:
+- **`ai-quadrumvirate-coordination.md`**: Core coordination patterns and workflows
+- **`gemini-cli-codebase-analysis.md`**: How to query Gemini for codebase analysis
+- **`cursor-agent-advanced-usage.md`**: How to delegate to Cursor CLI
+- **`github-copilot-cli-usage.md`**: How to delegate to Copilot CLI
 
-### ObjectParent Mixin Pattern
+**Quick Summary**: Claude orchestrates; Gemini analyzes code (unlimited context); Cursor/Copilot implement (expendable tokens).
 
-The `ObjectParent` class in `typeclasses/objects.py` is a mixin used to override behavior for ALL entities inheriting from `DefaultObject` (Objects, Exits, Characters, Rooms). Add methods here to affect all game entities with a location.
+## Available Documentation
 
-### Directory Structure
+### Skills (`.skills/` directory)
 
-- **`beckonmu/typeclasses/`**: Game entity definitions (Objects, Characters, Rooms, etc.)
-  - Each module contains skeleton classes that inherit from Evennia defaults
-  - Override methods in these classes to customize behavior
+**Evennia Framework**:
+- `evennia-framework-basics.md`: Core concepts, architecture, typeclasses, attributes, hooks
+- `evennia-development-workflow.md`: Server commands, testing, debugging, deployment
+- `evennia-typeclasses.md`: Deep dive on Objects, Characters, Rooms, Exits, hooks
+- `evennia-commands.md`: Command system, MuxCommand, command sets, patterns
 
-- **`beckonmu/commands/`**: Command definitions and command sets
-  - `command.py`: Base command class for this game
-  - `default_cmdsets.py`: Command set definitions
-  - Commands use MUX-style syntax: `command[/switch] arg1, arg2 = value1, value2`
+**AI Development Workflow**:
+- `ai-quadrumvirate-coordination.md`: Token-efficient development with Claude/Gemini/Cursor/Copilot
+- `gemini-cli-codebase-analysis.md`: Using Gemini for unlimited-context code analysis
+- `cursor-agent-advanced-usage.md`: Delegating UI/visual work to Cursor CLI
+- `github-copilot-cli-usage.md`: Delegating backend work to Copilot CLI
 
-- **`beckonmu/world/`**: Game-specific code (economy, combat, batch scripts)
-  - `prototypes.py`: Object prototypes for spawning
-  - `help_entries.py`: Custom help entries
+### Project Documentation (`docs/` directory)
 
-- **`beckonmu/server/conf/`**: Server configuration
-  - `settings.py`: Main configuration file (overrides Evennia defaults)
-  - `secret_settings.py`: Secret/server-specific settings (gitignored)
-  - Other conf files: hooks, lock functions, input/inline functions, connection screens
+**Planning** (`docs/planning/`):
+- `ROADMAP.md`: Complete 20-phase implementation plan (Phases 0-18b)
+- `TODO.md`: Active tasks and implementation notes
+- `STATUS.md`: Current project status and progress
 
-- **`beckonmu/web/`**: Web interface customization
-  - Django-based web application
-  - `website/`: Public-facing website
-  - `webclient/`: Web-based MUD client
-  - `admin/`: Admin interface customization
-  - `api/`: REST API endpoints
+**Reference** (`docs/reference/`):
+- `V5_MECHANICS.md`: Complete V5 game mechanics database
+- `THEMING.md`: ANSI art and gothic aesthetics guide
+- `WEB_CHARGEN.md`: Web-based character creation analysis
 
-### Command System
+**Guides** (`docs/guides/`):
+- `GIT_SETUP.md`: Git configuration and workflow
+- `IMPORT_COMMAND_TEST.md`: Testing character import commands
 
-Commands inherit from `evennia.commands.command.Command` or its MuxCommand variant. Each command implements:
-
-1. **`at_pre_cmd()`**: Pre-execution hook (abort if returns truthy)
-2. **`parse()`**: Parse `self.args` into useful attributes (switches, lhs/rhs, etc.)
-3. **`func()`**: Main command logic (required)
-4. **`at_post_cmd()`**: Post-execution hook
-
-Commands are organized into Command Sets (cmdsets) which are attached to objects dynamically.
-
-### Database and Persistence
-
-Evennia uses Django ORM for database operations. Game objects have two attribute systems:
-
-- **`self.db.*`**: Persistent attributes (stored in database)
-- **`self.ndb.*`**: Non-persistent attributes (memory only, cleared on reload)
-
-### Hooks System
-
-Evennia provides numerous hooks (methods called at specific times):
-
-- **Object lifecycle**: `at_object_creation()`, `at_object_delete()`, `at_init()`
-- **Movement**: `at_pre_move()`, `announce_move_from()`, `at_post_move()`
-- **Puppeting**: `at_pre_puppet()`, `at_post_puppet()`, `at_pre_unpuppet()`
-- **Server events**: `at_server_reload()`, `at_server_shutdown()`
-- **Interaction**: `at_traverse()` (exits), `at_get()`, `at_drop()`, `at_say()`
-
-Override these hooks in typeclasses to customize behavior.
-
-## Configuration
-
-- Main settings: `beckonmu/server/conf/settings.py`
-- Game name: Set via `SERVERNAME` in settings.py
-- Default settings: https://www.evennia.com/docs/latest/Setup/Settings-Default.html
-- Only override settings you actually need to change (don't copy entire default file)
-
-## Important Notes
-
-- **Virtual environment**: The project uses a `.venv` directory for Python packages
-- **Poetry**: This project uses Poetry for dependency management (`poetry.toml`, `pyproject.toml`)
-- **Server structure**: Do NOT restructure the `server/` directory—Evennia expects its layout
-- **Module discovery**: New subdirectories require `__init__.py` files
-- **Settings paths**: Use `GAME_DIR` and `EVENNIA_DIR` for file paths in settings
-- **Evennia version**: Installed in virtualenv at `.venv/Scripts/evennia`
-
-## Development Patterns
-
-### Creating Custom Commands
-
-1. Create command class in `commands/` inheriting from `Command`
-2. Implement `func()` method with command logic
-3. Add to appropriate command set in `default_cmdsets.py`
-4. Update settings if using custom cmdset location
-
-### Creating Custom Typeclasses
-
-1. Define class in appropriate `typeclasses/` module
-2. Inherit from `ObjectParent` mixin + Evennia default class
-3. Override `at_object_creation()` for initialization
-4. Override other hooks as needed for custom behavior
-
-### Modifying All Game Entities
-
-Add methods to `ObjectParent` mixin in `typeclasses/objects.py`. These affect Objects, Characters, Rooms, and Exits.
-
-## AI Quadrumvirate Coordination (CRITICAL)
-
-**YOU MUST FOLLOW THIS PATTERN TO PRESERVE TOKEN COUNT**
-
-This project uses the AI Quadrumvirate pattern for token-efficient development. See `.skills/ai-quadrumvirate-coordination.md` for complete details.
-
-### The Four Roles
-
-1. **Claude Code (You)**: Orchestrator and decision-maker
-   - Gather requirements and create plans
-   - Query Gemini for analysis
-   - Delegate implementation to Cursor/Copilot
-   - Verify final results
-   - **NEVER read large files (>100 lines) - ask Gemini**
-   - **NEVER implement complex features - delegate**
-   - **ONLY perform trivial edits (<5 lines)**
-
-2. **Gemini CLI**: Unlimited code analyst (1M+ context)
-   - Analyze entire codebase before implementation
-   - Trace bugs across files
-   - Answer architectural questions
-   - Security and performance audits
-
-3. **Cursor CLI**: UI/visual developer (expendable tokens)
-   - Implement UI components
-   - Complex reasoning tasks (with thinking models)
-   - Take screenshots for validation
-   - Cross-check Copilot's work
-
-4. **Copilot CLI**: Backend developer (expendable tokens)
-   - Implement backend features
-   - GitHub operations
-   - Terminal tasks
-   - Cross-check Cursor's work
-
-### Mandatory Workflow for All Tasks
-
-**Phase 1: Requirements & Planning** (Claude - minimal tokens)
-```
-1. Gather user requirements
-2. Use superpowers:brainstorming if applicable
-3. Create TodoWrite plan
-```
-
-**Phase 2: Codebase Analysis** (Gemini - 0 Claude tokens)
-```bash
-gemini -p "@beckonmu/
-Task: [description]
-
-Questions:
-1. What files will be affected?
-2. Are there similar patterns already implemented?
-3. What is the recommended approach?
-4. What are the risks?
-
-Provide file paths and code excerpts."
-```
-
-**Phase 3: Implementation** (Cursor/Copilot - 0 Claude tokens)
-```bash
-# For UI/visual work - delegate to Cursor
-wsl.exe bash -c "cd '/mnt/c/Users/dasbl/PycharmProjects/TheBeckoningMU' && cursor-agent -p --model sonnet-4.5 'TASK: [spec with Gemini context]'"
-
-# For backend/terminal work - delegate to Copilot
-copilot -p "TASK: [spec with Gemini context]"
-```
-
-**Phase 4: Verification** (Claude + Gemini - minimal tokens)
-```bash
-# Ask Gemini to verify architectural consistency
-gemini -p "@beckonmu/ Verify changes: [summary from developers]"
-
-# Use superpowers for final validation
-superpowers:verification-before-completion
-```
-
-### Token Efficiency Targets
-
-- Feature development: <5k Claude tokens (vs 35k old way = **86% savings**)
-- Bug fixes: <2k Claude tokens (vs 28k old way = **93% savings**)
-- Code reviews: <1k Claude tokens (vs 28k old way = **96% savings**)
-
-### Success Criteria
-
-You're doing it right when:
-- ✅ Claude tokens <5k per task
-- ✅ Gemini queried before reading files
-- ✅ Cursor/Copilot do all implementation
-- ✅ Developers cross-check each other
-- ✅ Superpowers skills used for structure
-- ✅ TodoWrite tracks progress
-
-### Available AI Tools
-
-Check `.skills/` directory for detailed guides:
-- `ai-quadrumvirate-coordination.md`: Complete coordination patterns
-- `gemini-cli-codebase-analysis.md`: How to query Gemini effectively
-- `cursor-agent-advanced-usage.md`: Cursor CLI delegation patterns
-- `github-copilot-cli-usage.md`: Copilot CLI usage
+See **[docs/README.md](docs/README.md)** for complete documentation index.
 
 ## Resources
 
-- Evennia Documentation: https://github.com/evennia/evennia/wiki
-- Evennia Tutorials: https://github.com/evennia/evennia/wiki/Tutorials
-- Directory Overview: https://github.com/evennia/evennia/wiki/Directory-Overview#the-game-directory
-- Default Settings: https://www.evennia.com/docs/latest/Setup/Settings-Default.html
+- **Evennia Documentation**: https://www.evennia.com/docs/latest/index.html
+- **Evennia Wiki**: https://github.com/evennia/evennia/wiki
+- **Evennia Tutorials**: https://github.com/evennia/evennia/wiki/Tutorials
+- **Default Settings**: https://www.evennia.com/docs/latest/Setup/Settings-Default.html
+- Always use "copilot" to engage Copilot CLI, not "gh copilot"
+- You can delegate tasks to copilot and to cursor, it doesn't have to be one or the other, they can work in parallel
+- Always grant Copilot/Cursor/Gemini full permissions when engaging them
+- Never include "beckonmu." in the name of apps, as it causes migration errors

@@ -42,11 +42,12 @@ SERVERNAME = "beckonmu"
 INSTALLED_APPS = INSTALLED_APPS + [
     'bbs',
     'traits',
+    'jobs',
 ]
 
 ######################################################################
 # Help System Configuration
-############################################################################################################
+######################################################################
 
 # Load help entries from text/YAML files in world/help/
 FILE_HELP_ENTRY_MODULES = ["world.help_entries"]

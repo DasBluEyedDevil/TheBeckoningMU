@@ -38,6 +38,9 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         BBSCmdSet = getattr(importlib.import_module("bbs.commands"), "BBSCmdSet")
         self.add(BBSCmdSet)
 
+        JobsCmdSet = getattr(importlib.import_module("jobs.cmdset"), "JobsCmdSet")
+        self.add(JobsCmdSet)
+
         # Add staff chargen commands for builders and admins
         from commands.chargen import ChargenCmdSet
         self.add(ChargenCmdSet)

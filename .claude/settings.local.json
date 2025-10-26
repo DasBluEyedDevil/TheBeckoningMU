@@ -1,9 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(evennia makemigrations:*)"
+      "Write",
+      "Edit",
+      "Read",
+      "Bash",
+      "Glob",
+      "Grep",
+      "NotebookEdit",
+      "Task",
+      "SlashCommand",
+      "Skill"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "defaultMode": "bypassPermissions"
   }
 }

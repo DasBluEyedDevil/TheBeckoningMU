@@ -712,15 +712,20 @@
                     dot.dataset.value = i;
 
                     dot.addEventListener('click', function() {
-                        const newValue = parseInt(this.dataset.value);
+                        const clickedValue = parseInt(this.dataset.value);
                         const minValue = category.startsWith('skills') ? 0 : 1;
+                        const currentValue = traitValues[trait] ?? minValue;
+                        let newValue = clickedValue;
 
-                        if (newValue >= minValue) {
-                            traitValues[trait] = newValue;
-                            updateDots(container, newValue);
-                            updatePointsDisplay();
-                            validateForm();
+                        // Toggle off if clicking the same filled dot
+                        if (clickedValue === currentValue) {
+                            newValue = Math.max(minValue, currentValue - 1);
                         }
+
+                        traitValues[trait] = newValue;
+                        updateDots(container, newValue);
+                        updatePointsDisplay();
+                        validateForm();
                     });
 
                     container.appendChild(dot);
@@ -894,21 +899,33 @@
             const trackerId = `tracker-${type}-${category}`;
             const tracker = document.getElementById(trackerId);
             if (!tracker) return;
+
+            // Normalize the prefix so we never accumulate multiple ✓/❌
+            const normalizePrefix = (symbol) => {
+                tracker.innerHTML = tracker.innerHTML
+                    // Replace any existing marks after the colon and before the first span
+                    .replace(/^([^<]*:)\s*(?:[✓❌]\s*)*/, `$1 ${symbol} `);
+            };
+            const clearPrefixMarks = () => {
+                tracker.innerHTML = tracker.innerHTML
+                    .replace(/^([^<]*:)\s*(?:[✓❌]\s*)*/, '$1 ');
+            };
             
             if (max === null) {
                 tracker.className = '';
+                clearPrefixMarks();
                 return;
             }
             
             if (spent === max) {
                 tracker.className = 'validation-success';
-                tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ✓');
+                normalizePrefix('✓');
             } else if (spent > max) {
                 tracker.className = 'validation-error';
-                tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ❌');
+                normalizePrefix('❌');
             } else {
                 tracker.className = 'validation-error';
-                tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ❌');
+                normalizePrefix('❌');
             }
         }
 
@@ -1008,7 +1025,12 @@
                     dot.dataset.value = i;
                     
                     dot.addEventListener('click', function() {
-                        const newValue = parseInt(this.dataset.value);
+                        const clickedValue = parseInt(this.dataset.value);
+                        const currentValue = disciplineValues[trait] ?? 0;
+                        let newValue = clickedValue;
+                        if (clickedValue === currentValue) {
+                            newValue = Math.max(0, currentValue - 1);
+                        }
                         disciplineValues[trait] = newValue;
                         updateDots(dotsContainer, newValue);
                         updatePointsDisplay();
@@ -1072,7 +1094,12 @@
                     dot.dataset.value = i;
                     
                     dot.addEventListener('click', function() {
-                        const newValue = parseInt(this.dataset.value);
+                        const clickedValue = parseInt(this.dataset.value);
+                        const currentValue = advantageValues[trait].value ?? 0;
+                        let newValue = clickedValue;
+                        if (clickedValue === currentValue) {
+                            newValue = Math.max(0, currentValue - 1);
+                        }
                         advantageValues[trait].value = newValue;
                         updateDots(dotsContainer, newValue);
                         updatePointsDisplay();
@@ -1240,30 +1267,36 @@
             
             // Update tracker display with validation status
             const trackerDisciplines = document.getElementById('tracker-disciplines');
+            // Helper to normalize trailing label markers like 'dots' or 'points'
+            const normalizeSuffix = (el, word, symbol) => {
+                const re = new RegExp(`(${word})[\\s✓❌]*`);
+                el.innerHTML = el.innerHTML.replace(re, `$1 ${symbol} `);
+            };
+
             if (disciplinesSpent === 3) {
                 trackerDisciplines.className = 'validation-success';
-                trackerDisciplines.innerHTML = trackerDisciplines.innerHTML.replace('dots', 'dots ✓');
+                normalizeSuffix(trackerDisciplines, 'dots', '✓');
             } else {
                 trackerDisciplines.className = 'validation-error';
-                trackerDisciplines.innerHTML = trackerDisciplines.innerHTML.replace('dots', 'dots ❌');
+                normalizeSuffix(trackerDisciplines, 'dots', '❌');
             }
             
             const trackerAdvantages = document.getElementById('tracker-advantages');
             if (advantagesSpent === 7) {
                 trackerAdvantages.className = 'validation-success';
-                trackerAdvantages.innerHTML = trackerAdvantages.innerHTML.replace('points', 'points ✓');
+                normalizeSuffix(trackerAdvantages, 'points', '✓');
             } else {
                 trackerAdvantages.className = 'validation-error';
-                trackerAdvantages.innerHTML = trackerAdvantages.innerHTML.replace('points', 'points ❌');
+                normalizeSuffix(trackerAdvantages, 'points', '❌');
             }
             
             const trackerFlaws = document.getElementById('tracker-flaws');
             if (flawsSpent <= 2) {
                 trackerFlaws.className = 'validation-success';
-                trackerFlaws.innerHTML = trackerFlaws.innerHTML.replace('points', 'points ✓');
+                normalizeSuffix(trackerFlaws, 'points', '✓');
             } else {
                 trackerFlaws.className = 'validation-error';
-                trackerFlaws.innerHTML = trackerFlaws.innerHTML.replace('points', 'points ❌');
+                normalizeSuffix(trackerFlaws, 'points', '❌');
             }
             
             // Display errors or hide error section

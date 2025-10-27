@@ -49,6 +49,10 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         from beckonmu.dice.cmdset import DiceCmdSet
         self.add(DiceCmdSet)
 
+        # Add V5 blood system (feeding, Blood Surge, Hunger tracking)
+        from beckonmu.commands.v5.blood_cmdset import BloodCmdSet
+        self.add(BloodCmdSet)
+
         # Old V5 dice commands (can be removed once new system is fully tested)
         # from commands.v5.dice import CmdRoll, CmdRollStat, CmdRouseCheck
         # self.add(CmdRoll)

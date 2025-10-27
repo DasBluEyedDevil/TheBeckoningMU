@@ -45,11 +45,15 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         from commands.chargen import ChargenCmdSet
         self.add(ChargenCmdSet)
 
-        # Add V5 dice commands
-        from commands.v5.dice import CmdRoll, CmdRollStat, CmdRouseCheck
-        self.add(CmdRoll)
-        self.add(CmdRollStat)
-        self.add(CmdRouseCheck)
+        # Add V5 dice system (new comprehensive implementation)
+        from beckonmu.dice.cmdset import DiceCmdSet
+        self.add(DiceCmdSet)
+
+        # Old V5 dice commands (can be removed once new system is fully tested)
+        # from commands.v5.dice import CmdRoll, CmdRollStat, CmdRouseCheck
+        # self.add(CmdRoll)
+        # self.add(CmdRollStat)
+        # self.add(CmdRouseCheck)
 
         # Add V5 sheet commands
         from commands.v5.sheet import CmdSheet, CmdSheetShort

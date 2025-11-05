@@ -15,12 +15,179 @@ from .objects import ObjectParent
 
 class Character(ObjectParent, DefaultCharacter):
     """
-    The Character just re-implements some of the Object's methods and hooks
-    to represent a Character entity in-game.
+    The Character extends DefaultCharacter to support V5 vampire mechanics.
+
+    All V5-specific data is stored in character.db attributes:
+    - char.db.stats: Attributes, skills, specialties, disciplines
+    - char.db.vampire: Clan, generation, blood potency, hunger, humanity
+    - char.db.pools: Health, willpower, and damage tracking
+    - char.db.humanity_data: Convictions, touchstones, stains
+    - char.db.advantages: Backgrounds, merits, flaws
+    - char.db.experience: XP tracking
+    - char.db.effects: Active discipline effects and conditions
 
     See mygame/typeclasses/objects.py for a list of
     properties and methods available on all Object child classes like this.
 
     """
 
-    pass
+    def at_object_creation(self):
+        """
+        Called when character is first created.
+        Initialize all V5 data structures.
+        """
+        super().at_object_creation()
+
+        # Initialize stats structure (attributes, skills, disciplines, specialties)
+        self.db.stats = {
+            "attributes": {
+                "physical": {
+                    "strength": 1,
+                    "dexterity": 1,
+                    "stamina": 1
+                },
+                "social": {
+                    "charisma": 1,
+                    "manipulation": 1,
+                    "composure": 1
+                },
+                "mental": {
+                    "intelligence": 1,
+                    "wits": 1,
+                    "resolve": 1
+                }
+            },
+            "skills": {
+                "physical": {
+                    "athletics": 0, "brawl": 0, "craft": 0,
+                    "drive": 0, "firearms": 0, "melee": 0,
+                    "larceny": 0, "stealth": 0, "survival": 0
+                },
+                "social": {
+                    "animal_ken": 0, "etiquette": 0, "insight": 0,
+                    "intimidation": 0, "leadership": 0, "performance": 0,
+                    "persuasion": 0, "streetwise": 0, "subterfuge": 0
+                },
+                "mental": {
+                    "academics": 0, "awareness": 0, "finance": 0,
+                    "investigation": 0, "medicine": 0, "occult": 0,
+                    "politics": 0, "science": 0, "technology": 0
+                }
+            },
+            "specialties": {},  # Format: {"skill_name": "specialty_name"}
+            "disciplines": {},  # Format: {"discipline_name": {"level": 0, "powers": []}}
+            "approved": False  # For chargen approval workflow
+        }
+
+        # Initialize vampire vitals
+        self.db.vampire = {
+            "clan": None,  # Set during character creation
+            "generation": 13,  # Default generation for new vampires
+            "blood_potency": 0,  # Increases with age/XP
+            "hunger": 1,  # 0-5 scale, starts at 1
+            "humanity": 7,  # 0-10 scale
+            "predator_type": None,  # Set during character creation
+            "current_resonance": None,  # Tracks last feeding resonance
+            "resonance_intensity": 0,  # 0=none, 1=fleeting, 2=intense, 3=dyscrasia
+            "bane": None,  # Set based on clan
+            "compulsion": None  # Set based on clan
+        }
+
+        # Initialize health and willpower pools
+        self.db.pools = {
+            "health": 3,  # Base health (Stamina + 3)
+            "willpower": 3,  # Base willpower (Composure + Resolve)
+            "current_health": 3,
+            "current_willpower": 3,
+            "superficial_damage": 0,
+            "aggravated_damage": 0
+        }
+
+        # Initialize humanity system
+        self.db.humanity_data = {
+            "convictions": [],  # List of strings
+            "touchstones": [],  # List of dicts: {"name": "...", "conviction_index": 0}
+            "stains": 0,  # 0-10, track Humanity degradation
+            "chronicle_tenets": []  # Chronicle-specific moral guidelines
+        }
+
+        # Initialize advantages (backgrounds, merits, flaws)
+        self.db.advantages = {
+            "backgrounds": {},  # Format: {"background_name": dots}
+            "merits": {},  # Format: {"merit_name": dots}
+            "flaws": {}  # Format: {"flaw_name": dots}
+        }
+
+        # Initialize experience tracking
+        self.db.experience = {
+            "total_earned": 0,
+            "total_spent": 0,
+            "current": 0,
+            "history": []  # List of dicts: {"type": "earned/spent", "amount": X, "reason": "..."}
+        }
+
+        # Initialize active effects (discipline powers, conditions)
+        self.db.effects = []  # List of dicts: {"name": "...", "expires": timestamp, "data": {}}
+
+        # Initialize character creation tracking
+        self.db.chargen = {
+            "completed": False,
+            "current_step": None,  # Tracks which step of chargen they're on
+            "approved": False,
+            "approval_job_id": None
+        }
+
+    def get_display_name(self, looker, **kwargs):
+        """
+        Returns the name to display for this character.
+        Can be customized to show clan, titles, etc.
+        """
+        name = super().get_display_name(looker, **kwargs)
+
+        # Staff can see more info
+        if looker.check_permstring("Builder"):
+            if self.db.vampire and self.db.vampire.get("clan"):
+                clan = self.db.vampire["clan"]
+                hunger = self.db.vampire.get("hunger", 0)
+                name = f"{name} ({clan}, H:{hunger})"
+
+        return name
+
+    def calculate_health(self):
+        """Calculate total health based on Stamina."""
+        stamina = self.db.stats["attributes"]["physical"]["stamina"]
+        return stamina + 3
+
+    def calculate_willpower(self):
+        """Calculate total willpower based on Composure + Resolve."""
+        composure = self.db.stats["attributes"]["social"]["composure"]
+        resolve = self.db.stats["attributes"]["mental"]["resolve"]
+        return composure + resolve
+
+    def update_derived_stats(self):
+        """
+        Recalculate derived stats (health, willpower) after attribute changes.
+        Call this whenever attributes are modified.
+        """
+        old_health = self.db.pools["health"]
+        old_willpower = self.db.pools["willpower"]
+
+        new_health = self.calculate_health()
+        new_willpower = self.calculate_willpower()
+
+        # Update maximums
+        self.db.pools["health"] = new_health
+        self.db.pools["willpower"] = new_willpower
+
+        # Adjust current values proportionally
+        if old_health > 0:
+            health_ratio = self.db.pools["current_health"] / old_health
+            self.db.pools["current_health"] = int(new_health * health_ratio)
+        else:
+            self.db.pools["current_health"] = new_health
+
+        if old_willpower > 0:
+            willpower_ratio = self.db.pools["current_willpower"] / old_willpower
+            self.db.pools["current_willpower"] = int(new_willpower * willpower_ratio)
+        else:
+            self.db.pools["current_willpower"] = new_willpower

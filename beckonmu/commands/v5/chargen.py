@@ -1,0 +1,353 @@
+"""
+Character Generation Commands for V5
+
+Provides a comprehensive character creation system following V5 rules.
+"""
+
+from evennia.commands.command import Command
+from evennia.utils.utils import inherits_from
+from .utils import chargen_utils, clan_utils, trait_utils, blood_utils
+from world.v5_data import PREDATOR_TYPES
+
+
+class CmdChargen(Command):
+    """
+    Character generation system for V5.
+
+    Usage:
+      +chargen                  - Show character creation progress
+      +chargen/start            - Begin character creation (resets character!)
+      +chargen/clan <name>      - Select your clan
+      +chargen/predator <type>  - Select your predator type
+      +chargen/finalize         - Complete character creation (submit for approval)
+      +chargen/reset            - Reset character (WARNING: deletes all data!)
+
+    Examples:
+      +chargen
+      +chargen/clan Brujah
+      +chargen/predator Scene Queen
+      +chargen/finalize
+
+    Character creation follows V5 rules:
+    - Choose clan and predator type
+    - Allocate attributes (7/5/3)
+    - Allocate skills (13/9/5)
+    - Select starting disciplines (2-3 dots)
+    - Choose specialties
+
+    See 'help chargen' for detailed character creation guide.
+    """
+
+    key = "+chargen"
+    aliases = ["chargen"]
+    locks = "cmd:all()"
+    help_category = "Character"
+
+    def func(self):
+        """Execute chargen command."""
+        # Validate caller is a character
+        if not inherits_from(self.caller, "typeclasses.characters.Character"):
+            self.caller.msg("|rYou must be in character to use chargen.|n")
+            return
+
+        # Handle switches
+        if "start" in self.switches:
+            self.start_chargen()
+        elif "clan" in self.switches:
+            self.select_clan()
+        elif "predator" in self.switches:
+            self.select_predator()
+        elif "finalize" in self.switches:
+            self.finalize_chargen()
+        elif "reset" in self.switches:
+            self.reset_chargen()
+        else:
+            self.show_progress()
+
+    def start_chargen(self):
+        """Start or restart character creation."""
+        # Warn if character has data
+        clan = clan_utils.get_clan(self.caller)
+        if clan:
+            self.caller.msg("|yWarning:|n This will reset your character to a blank slate!")
+            self.caller.msg("If you're sure, use '+chargen/reset' to confirm.")
+            return
+
+        result = chargen_utils.start_chargen(self.caller)
+        self.caller.msg(result["message"])
+        self.caller.msg("\n" + chargen_utils.format_chargen_progress(self.caller))
+        self.caller.msg(f"\n|yNext step:|n {chargen_utils.get_recommended_next_step(self.caller)}")
+
+    def select_clan(self):
+        """Select character's clan."""
+        if not self.args:
+            # Show available clans
+            self.caller.msg(clan_utils.list_all_clans())
+            self.caller.msg("\n|yUsage:|n +chargen/clan <name>")
+            return
+
+        clan_name = self.args.strip()
+
+        # Validate clan selection
+        valid, error_msg = clan_utils.validate_clan_selection(self.caller, clan_name)
+        if not valid:
+            self.caller.msg(f"|rError:|n {error_msg}")
+            return
+
+        # Set clan
+        try:
+            success = clan_utils.set_clan(self.caller, clan_name)
+            if success:
+                self.caller.msg(f"\n|gClan set to {clan_name}!|n\n")
+                self.caller.msg(clan_utils.format_clan_display(self.caller))
+                self.caller.msg(f"\n|yNext step:|n {chargen_utils.get_recommended_next_step(self.caller)}")
+                chargen_utils.set_chargen_step(self.caller, "predator")
+            else:
+                self.caller.msg(f"|rFailed to set clan.|n")
+        except ValueError as e:
+            self.caller.msg(f"|rError:|n {e}")
+
+    def select_predator(self):
+        """Select character's predator type."""
+        if not self.args:
+            # Show available predator types
+            lines = []
+            lines.append("|c" + "="*70 + "|n")
+            lines.append("|c" + " "*25 + "PREDATOR TYPES" + " "*25 + "|n")
+            lines.append("|c" + "="*70 + "|n")
+            lines.append("")
+
+            for predator_name, predator_data in sorted(PREDATOR_TYPES.items()):
+                lines.append(f"|w{predator_name}|n")
+                lines.append(f"  {predator_data['description']}")
+                lines.append(f"  Specialty: {predator_data['specialty']}")
+                lines.append("")
+
+            lines.append("|yUsage:|n +chargen/predator <type>")
+            self.caller.msg("\n".join(lines))
+            return
+
+        predator_name = self.args.strip()
+
+        # Validate predator type
+        if predator_name not in PREDATOR_TYPES:
+            self.caller.msg(f"|rInvalid predator type:|n {predator_name}")
+            self.caller.msg("Use '+chargen/predator' to see available types.")
+            return
+
+        # Set predator type
+        self.caller.db.vampire["predator_type"] = predator_name
+        predator_data = PREDATOR_TYPES[predator_name]
+
+        self.caller.msg(f"\n|gPredator Type set to {predator_name}!|n")
+        self.caller.msg(f"Description: {predator_data['description']}")
+        self.caller.msg(f"Specialty: {predator_data['specialty']}")
+        self.caller.msg(f"\n|yNext step:|n {chargen_utils.get_recommended_next_step(self.caller)}")
+        chargen_utils.set_chargen_step(self.caller, "attributes")
+
+    def finalize_chargen(self):
+        """Finalize character creation and submit for approval."""
+        # Check if character is complete
+        success, message = chargen_utils.mark_chargen_complete(self.caller)
+
+        if not success:
+            self.caller.msg(f"|rCannot finalize character creation:|n\n{message}")
+            self.caller.msg("\n" + chargen_utils.format_chargen_progress(self.caller))
+            return
+
+        self.caller.msg(f"|g{message}|n")
+        self.caller.msg("\n|yYour character has been submitted for staff approval.|n")
+        self.caller.msg("Staff will review your character and approve or provide feedback.")
+        self.caller.msg("\nYou can view your character with '+sheet'.")
+
+        # TODO: Create a job in the Approval bucket (Phase 3 integration)
+        # For now, just notify staff
+        self.caller.msg("\n|xNote: Automatic job creation not yet implemented.|n")
+        self.caller.msg("|xPlease notify staff that your character is ready for approval.|n")
+
+    def reset_chargen(self):
+        """Reset character creation (WARNING: deletes all data)."""
+        self.caller.msg("|r!!! WARNING !!!|n")
+        self.caller.msg("This will completely reset your character, deleting all data.")
+        self.caller.msg("To confirm, type: |y+chargen/reset confirm|n")
+
+        if "confirm" in self.args.lower():
+            chargen_utils.reset_chargen(self.caller)
+            self.caller.msg("|gCharacter reset complete.|n")
+            self.caller.msg("Use '+chargen/start' to begin character creation.")
+        else:
+            return
+
+    def show_progress(self):
+        """Show character creation progress."""
+        self.caller.msg(chargen_utils.format_chargen_progress(self.caller))
+        self.caller.msg(f"\n|yRecommendation:|n {chargen_utils.get_recommended_next_step(self.caller)}")
+
+
+class CmdSetStat(Command):
+    """
+    Set an attribute, skill, or discipline during character creation.
+
+    Usage:
+      +setstat <trait> = <value>
+      +setstat/specialty <skill> = <specialty name>
+
+    Examples:
+      +setstat strength = 3
+      +setstat brawl = 2
+      +setstat celerity = 2
+      +setstat/specialty brawl = Grappling
+
+    This command is used during character creation to allocate dots.
+    You must follow V5 allocation rules:
+    - Attributes: 7/5/3 distribution (minimum 1, maximum 5)
+    - Skills: 13/9/5 distribution (minimum 0, maximum 5)
+    - Disciplines: 2-3 dots total at creation
+
+    See 'help chargen' for detailed rules.
+    """
+
+    key = "+setstat"
+    aliases = ["setstat"]
+    locks = "cmd:all()"
+    help_category = "Character"
+
+    def func(self):
+        """Execute setstat command."""
+        # Validate caller is a character
+        if not inherits_from(self.caller, "typeclasses.characters.Character"):
+            self.caller.msg("|rYou must be in character to use this command.|n")
+            return
+
+        # Check if in character creation
+        if chargen_utils.is_character_approved(self.caller):
+            self.caller.msg("|rYou cannot modify stats after approval. Use +xp to spend experience.|n")
+            return
+
+        # Parse arguments
+        if not self.args or "=" not in self.args:
+            self.caller.msg("Usage: +setstat <trait> = <value>")
+            return
+
+        trait_name, value_str = self.args.split("=", 1)
+        trait_name = trait_name.strip().lower()
+        value_str = value_str.strip()
+
+        # Handle specialty
+        if "specialty" in self.switches:
+            success = trait_utils.set_specialty(self.caller, trait_name, value_str)
+            if success:
+                self.caller.msg(f"|gSpecialty set:|n {trait_name.title()} ({value_str})")
+                chargen_utils.set_chargen_step(self.caller, "specialties")
+            else:
+                self.caller.msg(f"|rCannot set specialty.|n Skill must have at least 1 dot.")
+            return
+
+        # Parse value
+        try:
+            value = int(value_str)
+        except ValueError:
+            self.caller.msg(f"|rInvalid value:|n '{value_str}' is not a number.")
+            return
+
+        # Try to set the trait
+        try:
+            success = trait_utils.set_trait_value(self.caller, trait_name, value)
+            if success:
+                self.caller.msg(f"|gSet {trait_name.title()} to {value}|n")
+
+                # Show progress for relevant category
+                if value > 0:
+                    # Determine what was modified and show appropriate feedback
+                    progress = chargen_utils.get_chargen_progress(self.caller)
+                    self.caller.msg(f"Attributes: {progress['attributes'][0]}/{progress['attributes'][1]}/{progress['attributes'][2]}")
+                    self.caller.msg(f"Skills: {progress['skills'][0]}/{progress['skills'][1]}/{progress['skills'][2]}")
+                    self.caller.msg(f"Disciplines: {progress['disciplines']} dots")
+            else:
+                self.caller.msg(f"|rFailed to set {trait_name}.|n Trait not found.")
+                self.caller.msg("Use '+sheet' to see available traits.")
+        except ValueError as e:
+            self.caller.msg(f"|rError:|n {e}")
+
+
+class CmdSetDiscipline(Command):
+    """
+    Set a discipline during character creation.
+
+    Usage:
+      +setdisc <discipline> = <level>
+
+    Examples:
+      +setdisc celerity = 2
+      +setdisc potence = 1
+
+    During character creation, you may allocate 2-3 discipline dots.
+    In-clan disciplines are recommended for starting characters.
+
+    Your clan's in-clan disciplines are shown on your character sheet.
+    """
+
+    key = "+setdisc"
+    aliases = ["setdisc"]
+    locks = "cmd:all()"
+    help_category = "Character"
+
+    def func(self):
+        """Execute setdisc command."""
+        # Validate caller is a character
+        if not inherits_from(self.caller, "typeclasses.characters.Character"):
+            self.caller.msg("|rYou must be in character to use this command.|n")
+            return
+
+        # Check if in character creation
+        if chargen_utils.is_character_approved(self.caller):
+            self.caller.msg("|rYou cannot modify disciplines after approval. Use +xp to spend experience.|n")
+            return
+
+        # Parse arguments
+        if not self.args or "=" not in self.args:
+            # Show in-clan disciplines
+            inclan = clan_utils.get_inclan_disciplines(self.caller)
+            if inclan:
+                self.caller.msg(f"|wYour in-clan disciplines:|n {', '.join(inclan)}")
+            else:
+                self.caller.msg("Select a clan first with '+chargen/clan <name>'")
+            self.caller.msg("\n|yUsage:|n +setdisc <discipline> = <level>")
+            return
+
+        discipline_name, value_str = self.args.split("=", 1)
+        discipline_name = discipline_name.strip()
+        value_str = value_str.strip()
+
+        # Parse value
+        try:
+            value = int(value_str)
+        except ValueError:
+            self.caller.msg(f"|rInvalid value:|n '{value_str}' is not a number.")
+            return
+
+        # Validate value
+        if value < 0 or value > 3:
+            self.caller.msg("|rDiscipline level must be between 0 and 3 during character creation.|n")
+            return
+
+        # Check if in-clan
+        inclan = clan_utils.is_discipline_inclan(self.caller, discipline_name)
+        if not inclan:
+            self.caller.msg(f"|yWarning:|n {discipline_name} is not in-clan for you.")
+            self.caller.msg("Starting with out-of-clan disciplines requires staff approval.")
+
+        # Set discipline
+        disciplines = self.caller.db.stats.get("disciplines", {})
+        disciplines[discipline_name.lower()] = {
+            "level": value,
+            "powers": []  # Powers will be selected later or automatically granted
+        }
+
+        self.caller.msg(f"|gSet {discipline_name} to {value}|n")
+
+        # Show total discipline dots
+        total = trait_utils.get_total_discipline_dots(self.caller)
+        self.caller.msg(f"Total discipline dots: {total} (need 2-3)")
+
+        chargen_utils.set_chargen_step(self.caller, "disciplines")

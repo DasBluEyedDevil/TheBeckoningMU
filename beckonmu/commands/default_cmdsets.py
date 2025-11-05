@@ -35,6 +35,40 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         # any commands you add below will overload the default ones.
         #
 
+        # Add V5 hunting commands
+        from commands.v5.hunt import CmdHunt, CmdFeed, CmdHuntingInfo, CmdHuntAction, CmdHuntCancel
+        self.add(CmdHunt)
+        self.add(CmdFeed)
+        self.add(CmdHuntingInfo)
+        self.add(CmdHuntAction)
+        self.add(CmdHuntCancel)
+
+        # Add V5 XP commands
+        from commands.v5.xp import CmdXP, CmdSpend, CmdXPAward
+        self.add(CmdXP)
+        self.add(CmdSpend)
+        self.add(CmdXPAward)
+
+        # Add Status system commands
+        from beckonmu.status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
+        self.add(CmdStatus)
+        self.add(CmdPositions)
+        self.add(CmdStatusRequest)
+        self.add(CmdStatusAdmin)
+
+        # Add Boons system commands
+        from beckonmu.boons.commands import (
+            CmdBoon, CmdBoonGive, CmdBoonAccept, CmdBoonDecline,
+            CmdBoonCall, CmdBoonFulfill, CmdBoonAdmin
+        )
+        self.add(CmdBoon)
+        self.add(CmdBoonGive)
+        self.add(CmdBoonAccept)
+        self.add(CmdBoonDecline)
+        self.add(CmdBoonCall)
+        self.add(CmdBoonFulfill)
+        self.add(CmdBoonAdmin)
+
 
 class AccountCmdSet(default_cmds.AccountCmdSet):
     """

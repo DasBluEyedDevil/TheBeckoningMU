@@ -112,160 +112,203 @@ def _format_character_info(character):
 
 def _format_attributes_skills_disciplines(character):
     """
-    Section 2: Three-column layout
-    ATTRIBUTES (left) | SKILLS (center) | DISCIPLINES (right)
+    Section 2: Vertically stacked sections (matching official V5 layout)
+
+    ATTRIBUTES (3-column grid: Physical | Social | Mental)
+    SKILLS (3-column grid: Physical | Social | Mental)
+    DISCIPLINES (horizontal list)
 
     Official sheet layout:
-    - Attributes in 3x3 grid (9 attributes total)
-    - Skills listed vertically by category
-    - Disciplines listed with dot ratings
+    - Attributes in 3-column grid (Physical, Social, Mental)
+    - Skills in 3-column grid below attributes
+    - Disciplines listed horizontally below skills
     """
-    attrs_lines = _build_attributes_section(character)
-    skills_lines = _build_skills_section(character)
-    disciplines_lines = _build_disciplines_section(character)
-
-    # Pad to same height
-    max_height = max(len(attrs_lines), len(skills_lines), len(disciplines_lines))
-    attrs_lines += [""] * (max_height - len(attrs_lines))
-    skills_lines += [""] * (max_height - len(skills_lines))
-    disciplines_lines += [""] * (max_height - len(disciplines_lines))
-
     lines = []
+
+    # ATTRIBUTES Section
     lines.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}ATTRIBUTES{' ' * 66}{BOX_V}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
+    lines.extend(_build_attributes_grid(character))
+    lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
+    lines.append("")
 
-    # Headers
-    lines.append(
-        f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}ATTRIBUTES{' ' * 14}"
-        f"{BOX_V} {BONE_WHITE}SKILLS{' ' * 20}"
-        f"{BOX_V} {BONE_WHITE}DISCIPLINES{' ' * 13}{BOX_V}{RESET}"
-    )
-    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 24}{BOX_R}{BOX_H * 26}{BOX_R}{BOX_H * 25}{BOX_R}{RESET}")
+    # SKILLS Section
+    lines.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}SKILLS{' ' * 70}{BOX_V}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
+    lines.extend(_build_skills_grid(character))
+    lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
+    lines.append("")
 
-    # Content rows
-    for i in range(max_height):
-        attr_line = attrs_lines[i] if i < len(attrs_lines) else ""
-        skill_line = skills_lines[i] if i < len(skills_lines) else ""
-        disc_line = disciplines_lines[i] if i < len(disciplines_lines) else ""
-
-        lines.append(
-            f"{SHADOW_GREY}{BOX_V} {attr_line:<31}"
-            f"{BOX_V} {skill_line:<33}"
-            f"{BOX_V} {disc_line:<32}{BOX_V}{RESET}"
-        )
-
+    # DISCIPLINES Section
+    lines.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}DISCIPLINES{' ' * 64}{BOX_V}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
+    lines.extend(_build_disciplines_horizontal(character))
     lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
 
     return "\n".join(lines)
 
 
-def _build_attributes_section(character):
-    """Build attributes section (matches official 3x3 layout)."""
+def _build_attributes_grid(character):
+    """Build attributes in 3-column grid (Physical | Social | Mental)."""
     lines = []
 
     if not hasattr(character.db, 'stats') or not character.db.stats:
-        return ["(No attributes)"]
+        lines.append(f"{SHADOW_GREY}{BOX_V} (No attributes){' ' * 60}{BOX_V}{RESET}")
+        return lines
 
     attrs = character.db.stats.get('attributes', {})
     phys = attrs.get('physical', {})
     soc = attrs.get('social', {})
     ment = attrs.get('mental', {})
 
-    # Physical attributes
-    lines.append(f"{PALE_IVORY}Physical{RESET}")
-    lines.append(f"  {GOLD}Strength{RESET}     {_dots(phys.get('strength', 1))}")
-    lines.append(f"  {GOLD}Dexterity{RESET}    {_dots(phys.get('dexterity', 1))}")
-    lines.append(f"  {GOLD}Stamina{RESET}      {_dots(phys.get('stamina', 1))}")
-    lines.append("")
+    # Category headers
+    lines.append(
+        f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Physical{' ' * 16}"
+        f"{BOX_V} {PALE_IVORY}Social{' ' * 18}"
+        f"{BOX_V} {PALE_IVORY}Mental{' ' * 17}{BOX_V}{RESET}"
+    )
+    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 24}{BOX_R}{BOX_H * 24}{BOX_R}{BOX_H * 27}{BOX_R}{RESET}")
 
-    # Social attributes
-    lines.append(f"{PALE_IVORY}Social{RESET}")
-    lines.append(f"  {GOLD}Charisma{RESET}     {_dots(soc.get('charisma', 1))}")
-    lines.append(f"  {GOLD}Manipulation{RESET} {_dots(soc.get('manipulation', 1))}")
-    lines.append(f"  {GOLD}Composure{RESET}    {_dots(soc.get('composure', 1))}")
-    lines.append("")
+    # Row 1: Strength, Charisma, Intelligence
+    lines.append(
+        f"{SHADOW_GREY}{BOX_V} {GOLD}Strength{RESET}     {_dots(phys.get('strength', 1)):<8}"
+        f"{BOX_V} {GOLD}Charisma{RESET}     {_dots(soc.get('charisma', 1)):<8}"
+        f"{BOX_V} {GOLD}Intelligence{RESET} {_dots(ment.get('intelligence', 1)):<8}{BOX_V}{RESET}"
+    )
 
-    # Mental attributes
-    lines.append(f"{PALE_IVORY}Mental{RESET}")
-    lines.append(f"  {GOLD}Intelligence{RESET} {_dots(ment.get('intelligence', 1))}")
-    lines.append(f"  {GOLD}Wits{RESET}         {_dots(ment.get('wits', 1))}")
-    lines.append(f"  {GOLD}Resolve{RESET}      {_dots(ment.get('resolve', 1))}")
+    # Row 2: Dexterity, Manipulation, Wits
+    lines.append(
+        f"{SHADOW_GREY}{BOX_V} {GOLD}Dexterity{RESET}    {_dots(phys.get('dexterity', 1)):<8}"
+        f"{BOX_V} {GOLD}Manipulation{RESET} {_dots(soc.get('manipulation', 1)):<8}"
+        f"{BOX_V} {GOLD}Wits{RESET}         {_dots(ment.get('wits', 1)):<8}{BOX_V}{RESET}"
+    )
+
+    # Row 3: Stamina, Composure, Resolve
+    lines.append(
+        f"{SHADOW_GREY}{BOX_V} {GOLD}Stamina{RESET}      {_dots(phys.get('stamina', 1)):<8}"
+        f"{BOX_V} {GOLD}Composure{RESET}    {_dots(soc.get('composure', 1)):<8}"
+        f"{BOX_V} {GOLD}Resolve{RESET}      {_dots(ment.get('resolve', 1)):<8}{BOX_V}{RESET}"
+    )
 
     return lines
 
 
-def _build_skills_section(character):
-    """Build skills section (official sheet: all skills listed by category)."""
+def _build_skills_grid(character):
+    """Build skills in 3-column grid (Physical | Social | Mental)."""
     lines = []
 
     if not hasattr(character.db, 'stats') or not character.db.stats:
-        return ["(No skills)"]
+        lines.append(f"{SHADOW_GREY}{BOX_V} (No skills){' ' * 64}{BOX_V}{RESET}")
+        return lines
 
     skills = character.db.stats.get('skills', {})
     specialties = character.db.stats.get('specialties', {})
 
-    # Physical skills
-    lines.append(f"{PALE_IVORY}Physical{RESET}")
     phys_skills = skills.get('physical', {})
-    for skill_name in sorted(phys_skills.keys()):
-        value = phys_skills[skill_name]
-        if value > 0:  # Only show skills with dots
-            display_name = skill_name.replace('_', ' ').title()
-            spec = specialties.get(skill_name, "")
-            spec_str = f" ({spec})" if spec else ""
-            lines.append(f"  {GOLD}{display_name:<13}{RESET}{_dots(value)}{spec_str}")
-
-    if not any(v > 0 for v in phys_skills.values()):
-        lines.append(f"  {SHADOW_GREY}—{RESET}")
-    lines.append("")
-
-    # Social skills
-    lines.append(f"{PALE_IVORY}Social{RESET}")
     soc_skills = skills.get('social', {})
-    for skill_name in sorted(soc_skills.keys()):
-        value = soc_skills[skill_name]
-        if value > 0:
-            display_name = skill_name.replace('_', ' ').title()
-            spec = specialties.get(skill_name, "")
-            spec_str = f" ({spec})" if spec else ""
-            lines.append(f"  {GOLD}{display_name:<13}{RESET}{_dots(value)}{spec_str}")
-
-    if not any(v > 0 for v in soc_skills.values()):
-        lines.append(f"  {SHADOW_GREY}—{RESET}")
-    lines.append("")
-
-    # Mental skills
-    lines.append(f"{PALE_IVORY}Mental{RESET}")
     ment_skills = skills.get('mental', {})
-    for skill_name in sorted(ment_skills.keys()):
-        value = ment_skills[skill_name]
-        if value > 0:
-            display_name = skill_name.replace('_', ' ').title()
-            spec = specialties.get(skill_name, "")
-            spec_str = f" ({spec})" if spec else ""
-            lines.append(f"  {GOLD}{display_name:<13}{RESET}{_dots(value)}{spec_str}")
 
-    if not any(v > 0 for v in ment_skills.values()):
-        lines.append(f"  {SHADOW_GREY}—{RESET}")
+    # Get lists of skills with values > 0
+    phys_list = [(name, val, specialties.get(name, ""))
+                 for name, val in sorted(phys_skills.items()) if val > 0]
+    soc_list = [(name, val, specialties.get(name, ""))
+                for name, val in sorted(soc_skills.items()) if val > 0]
+    ment_list = [(name, val, specialties.get(name, ""))
+                 for name, val in sorted(ment_skills.items()) if val > 0]
+
+    # Category headers
+    lines.append(
+        f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Physical{' ' * 16}"
+        f"{BOX_V} {PALE_IVORY}Social{' ' * 18}"
+        f"{BOX_V} {PALE_IVORY}Mental{' ' * 17}{BOX_V}{RESET}"
+    )
+    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 24}{BOX_R}{BOX_H * 24}{BOX_R}{BOX_H * 27}{BOX_R}{RESET}")
+
+    # Determine max rows needed
+    max_rows = max(len(phys_list) if phys_list else 1,
+                   len(soc_list) if soc_list else 1,
+                   len(ment_list) if ment_list else 1)
+
+    # Build rows
+    for i in range(max_rows):
+        # Physical column
+        if i < len(phys_list):
+            name, val, spec = phys_list[i]
+            display_name = name.replace('_', ' ').title()
+            spec_str = f"({spec[:5]})" if spec else ""
+            phys_cell = f"{GOLD}{display_name:<11}{RESET} {_dots(val)} {spec_str}"
+        elif i == 0:
+            phys_cell = f"{SHADOW_GREY}—{RESET}"
+        else:
+            phys_cell = ""
+
+        # Social column
+        if i < len(soc_list):
+            name, val, spec = soc_list[i]
+            display_name = name.replace('_', ' ').title()
+            spec_str = f"({spec[:5]})" if spec else ""
+            soc_cell = f"{GOLD}{display_name:<11}{RESET} {_dots(val)} {spec_str}"
+        elif i == 0:
+            soc_cell = f"{SHADOW_GREY}—{RESET}"
+        else:
+            soc_cell = ""
+
+        # Mental column
+        if i < len(ment_list):
+            name, val, spec = ment_list[i]
+            display_name = name.replace('_', ' ').title()
+            spec_str = f"({spec[:5]})" if spec else ""
+            ment_cell = f"{GOLD}{display_name:<11}{RESET} {_dots(val)} {spec_str}"
+        elif i == 0:
+            ment_cell = f"{SHADOW_GREY}—{RESET}"
+        else:
+            ment_cell = ""
+
+        lines.append(
+            f"{SHADOW_GREY}{BOX_V} {phys_cell:<31}"
+            f"{BOX_V} {soc_cell:<31}"
+            f"{BOX_V} {ment_cell:<34}{BOX_V}{RESET}"
+        )
 
     return lines
 
 
-def _build_disciplines_section(character):
-    """Build disciplines section (right column of upper section)."""
+def _build_disciplines_horizontal(character):
+    """Build disciplines in horizontal layout."""
     lines = []
 
     if not hasattr(character.db, 'stats') or not character.db.stats:
-        return ["(No disciplines)"]
+        lines.append(f"{SHADOW_GREY}{BOX_V} (No disciplines){' ' * 60}{BOX_V}{RESET}")
+        return lines
 
     disciplines = character.db.stats.get('disciplines', {})
 
     if not disciplines:
-        lines.append(f"{SHADOW_GREY}(None){RESET}")
+        lines.append(f"{SHADOW_GREY}{BOX_V} {SHADOW_GREY}(None){' ' * 71}{BOX_V}{RESET}")
     else:
-        for disc_name, disc_data in sorted(disciplines.items()):
-            level = disc_data.get('level', 0)
-            display_name = disc_name.replace('_', ' ').title()
-            lines.append(f"{DARK_RED}{display_name:<16}{RESET}{_dots(level)}")
+        # Display disciplines in rows, 2 per row
+        disc_items = sorted(disciplines.items())
+        for i in range(0, len(disc_items), 2):
+            disc1_name, disc1_data = disc_items[i]
+            disc1_level = disc1_data.get('level', 0)
+            disc1_display = disc1_name.replace('_', ' ').title()
+
+            left_cell = f"{DARK_RED}{disc1_display:<18}{RESET}{_dots(disc1_level)}"
+
+            if i + 1 < len(disc_items):
+                disc2_name, disc2_data = disc_items[i + 1]
+                disc2_level = disc2_data.get('level', 0)
+                disc2_display = disc2_name.replace('_', ' ').title()
+                right_cell = f"{DARK_RED}{disc2_display:<18}{RESET}{_dots(disc2_level)}"
+            else:
+                right_cell = ""
+
+            lines.append(
+                f"{SHADOW_GREY}{BOX_V} {left_cell:<36}{BOX_V} {right_cell:<38}{BOX_V}{RESET}"
+            )
 
     return lines
 

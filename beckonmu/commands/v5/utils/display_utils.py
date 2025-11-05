@@ -75,6 +75,12 @@ def format_character_sheet(character):
     lines.append(_format_advantages(character))
     lines.append("")
 
+    # Section 6.5: BOONS (Political Favors & Debts)
+    boons_section = _format_boons_section(character)
+    if boons_section:
+        lines.append(boons_section)
+        lines.append("")
+
     # Section 7: EXPERIENCE
     lines.append(_format_experience(character))
 
@@ -582,6 +588,72 @@ def _format_advantages(character):
         for flaw_name, flaw_val in sorted(flaws.items()):
             display_name = flaw_name.replace('_', ' ').title()
             lines.append(f"{SHADOW_GREY}{BOX_V}   {BLOOD_RED}{display_name:<30}{RESET} {_dots(flaw_val)}{' ' * 36}{SHADOW_GREY}{BOX_V}{RESET}")
+
+    lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
+
+    return "\n".join(lines)
+
+
+def _format_boons_section(character):
+    """Section 6.5: Boons (Political Favors & Debts)."""
+    try:
+        from boons.utils import get_or_create_ledger
+    except ImportError:
+        # Boons system not installed/migrated yet
+        return ""
+
+    ledger = get_or_create_ledger(character)
+
+    # Only show if there are boons
+    if ledger.total_debt_weight == 0 and ledger.total_credit_weight == 0:
+        return ""
+
+    lines = []
+    lines.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}BOONS{RESET}{' ' * 71}{SHADOW_GREY}{BOX_V}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
+
+    # Debts
+    debts = []
+    if ledger.life_owed > 0:
+        debts.append(f"Life: {ledger.life_owed}")
+    if ledger.blood_owed > 0:
+        debts.append(f"Blood: {ledger.blood_owed}")
+    if ledger.major_owed > 0:
+        debts.append(f"Major: {ledger.major_owed}")
+    if ledger.minor_owed > 0:
+        debts.append(f"Minor: {ledger.minor_owed}")
+    if ledger.trivial_owed > 0:
+        debts.append(f"Trivial: {ledger.trivial_owed}")
+
+    debt_str = ", ".join(debts) if debts else "None"
+    lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Debts:{RESET} {debt_str} (Weight: {ledger.total_debt_weight}){'':30} {SHADOW_GREY}{BOX_V}{RESET}")
+
+    # Credits
+    credits = []
+    if ledger.life_held > 0:
+        credits.append(f"Life: {ledger.life_held}")
+    if ledger.blood_held > 0:
+        credits.append(f"Blood: {ledger.blood_held}")
+    if ledger.major_held > 0:
+        credits.append(f"Major: {ledger.major_held}")
+    if ledger.minor_held > 0:
+        credits.append(f"Minor: {ledger.minor_held}")
+    if ledger.trivial_held > 0:
+        credits.append(f"Trivial: {ledger.trivial_held}")
+
+    credit_str = ", ".join(credits) if credits else "None"
+    lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Credits:{RESET} {credit_str} (Weight: {ledger.total_credit_weight}){'':28} {SHADOW_GREY}{BOX_V}{RESET}")
+
+    # Net position
+    if ledger.net_weight > 0:
+        net_str = f"{GOLD}+{ledger.net_weight} (In credit){RESET}"
+    elif ledger.net_weight < 0:
+        net_str = f"{BLOOD_RED}{ledger.net_weight} (In debt){RESET}"
+    else:
+        net_str = f"{SHADOW_GREY}Balanced{RESET}"
+
+    lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Net:{RESET} {net_str}{'':50} {SHADOW_GREY}{BOX_V}{RESET}")
 
     lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
 

@@ -61,6 +61,12 @@ def format_character_sheet(character):
     lines.append(_format_clan_section(character))
     lines.append("")
 
+    # Section 4.5: STATUS (Position & Standing)
+    status_section = _format_status_section(character)
+    if status_section:
+        lines.append(status_section)
+        lines.append("")
+
     # Section 5: HUMANITY DETAILS (Convictions & Touchstones)
     lines.append(_format_humanity_details(character))
     lines.append("")
@@ -443,6 +449,57 @@ def _format_clan_section(character):
     for i, line in enumerate(comp_wrapped):
         label = f"{GOLD}Compulsion:{RESET}" if i == 0 else " " * 11
         lines.append(f"{SHADOW_GREY}{BOX_V} {label} {line:<65} {SHADOW_GREY}{BOX_V}{RESET}")
+
+    lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
+
+    return "\n".join(lines)
+
+
+def _format_status_section(character):
+    """Section 4.5: Status (Position & Standing in Kindred Society)."""
+    try:
+        from status.utils import get_character_status
+    except ImportError:
+        # Status system not installed/migrated yet
+        return ""
+
+    char_status = get_character_status(character)
+
+    if not char_status:
+        return ""
+
+    lines = []
+    lines.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}STATUS{RESET}{' ' * 70}{SHADOW_GREY}{BOX_V}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
+
+    # Total Status
+    total = char_status.total_status
+    status_dots = f"{GOLD}{CIRCLE_FILLED * total}{SHADOW_GREY}{CIRCLE_EMPTY * (5 - total)}{RESET}"
+
+    breakdown_parts = []
+    if char_status.earned_status > 0:
+        breakdown_parts.append(f"Earned: {char_status.earned_status}")
+    if char_status.position_status > 0:
+        breakdown_parts.append(f"Position: {char_status.position_status}")
+    if char_status.temporary_status != 0:
+        breakdown_parts.append(f"Temporary: {char_status.temporary_status:+d}")
+
+    breakdown = f" ({', '.join(breakdown_parts)})" if breakdown_parts else ""
+
+    lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Total:{RESET} {status_dots} ({total}){breakdown:<40} {SHADOW_GREY}{BOX_V}{RESET}")
+
+    # Position
+    if char_status.position:
+        lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Position:{RESET} {GOLD}{char_status.position.name:<60}{RESET} {SHADOW_GREY}{BOX_V}{RESET}")
+
+    # Sect
+    lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Sect:{RESET} {char_status.sect:<66} {SHADOW_GREY}{BOX_V}{RESET}")
+
+    # Mechanical bonus
+    bonus = char_status.get_status_bonus()
+    if bonus > 0:
+        lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Social Bonus:{RESET} +{bonus} dice{'':58} {SHADOW_GREY}{BOX_V}{RESET}")
 
     lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
 

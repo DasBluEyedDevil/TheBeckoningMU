@@ -6,12 +6,25 @@ including attributes, skills, disciplines, and advantages.
 
 These functions provide a clean interface between commands and character data,
 with proper error handling and validation.
+
+NOTE: This module uses the bridge functions from traits.utils to ensure
+compatibility with both the web-based character import system (Django models)
+and the in-game character creation system (char.db.stats).
 """
+
+# Import the bridge functions from the existing traits system
+from traits.utils import (
+    get_character_trait_value as _db_get_trait,
+    set_character_trait_value as _db_set_trait,
+)
 
 
 def get_trait_value(character, trait_name, category=None):
     """
     Get the value of a trait from a character.
+
+    Uses the bridge function from traits.utils to ensure compatibility
+    with both web imports (Django models) and in-game chargen (char.db.stats).
 
     Args:
         character: Character object
@@ -27,39 +40,37 @@ def get_trait_value(character, trait_name, category=None):
         >>> get_trait_value(char, 'brawl', 'skill')
         2
     """
+    # Use the existing bridge function which checks both Django models and char.db.stats
+    value = _db_get_trait(character, trait_name)
+
+    if value > 0:
+        return value
+
+    # Fallback for disciplines (which are stored differently in char.db.stats)
     trait_name = trait_name.lower().replace(" ", "_")
 
-    # Try attributes first
-    if category in [None, 'attribute', 'attributes']:
-        for cat_name, attrs in character.db.stats.get("attributes", {}).items():
-            if trait_name in attrs:
-                return attrs[trait_name]
-
-    # Try skills
-    if category in [None, 'skill', 'skills']:
-        for cat_name, skills in character.db.stats.get("skills", {}).items():
-            if trait_name in skills:
-                return skills[trait_name]
-
-    # Try disciplines
     if category in [None, 'discipline', 'disciplines']:
-        disciplines = character.db.stats.get("disciplines", {})
-        if trait_name in disciplines:
-            return disciplines[trait_name].get("level", 0)
+        if hasattr(character.db, 'stats') and character.db.stats:
+            disciplines = character.db.stats.get("disciplines", {})
+            if trait_name in disciplines:
+                return disciplines[trait_name].get("level", 0)
 
-    # Try backgrounds
+    # Try backgrounds (might not be in Django models yet)
     if category in [None, 'background', 'backgrounds']:
-        backgrounds = character.db.advantages.get("backgrounds", {})
-        if trait_name in backgrounds:
-            return backgrounds[trait_name]
+        if hasattr(character.db, 'advantages') and character.db.advantages:
+            backgrounds = character.db.advantages.get("backgrounds", {})
+            if trait_name in backgrounds:
+                return backgrounds[trait_name]
 
-    # Not found
     return 0
 
 
 def set_trait_value(character, trait_name, value, category=None):
     """
     Set the value of a trait on a character.
+
+    Uses the bridge function from traits.utils to update BOTH the Django models
+    and char.db.stats, ensuring compatibility with web imports.
 
     Args:
         character: Character object
@@ -79,40 +90,37 @@ def set_trait_value(character, trait_name, value, category=None):
     if value < 0 or value > 5:
         raise ValueError(f"Trait value must be between 0 and 5, got {value}")
 
-    # Try attributes
-    if category in [None, 'attribute', 'attributes']:
-        for cat_name, attrs in character.db.stats.get("attributes", {}).items():
-            if trait_name in attrs:
-                attrs[trait_name] = value
-                character.update_derived_stats()  # Recalculate health/willpower if needed
-                return True
+    # Use the bridge function to update both Django models and char.db.stats
+    success = _db_set_trait(character, trait_name, value)
 
-    # Try skills
-    if category in [None, 'skill', 'skills']:
-        for cat_name, skills in character.db.stats.get("skills", {}).items():
-            if trait_name in skills:
-                skills[trait_name] = value
-                return True
-
-    # Try disciplines
+    # Special handling for disciplines (stored differently)
     if category in [None, 'discipline', 'disciplines']:
+        if not hasattr(character.db, 'stats') or not character.db.stats:
+            return False
+
         disciplines = character.db.stats.get("disciplines", {})
         if trait_name in disciplines:
             disciplines[trait_name]["level"] = value
-            return True
+            success = True
         elif category == 'discipline':
             # Create new discipline entry
             disciplines[trait_name] = {"level": value, "powers": []}
-            return True
+            success = True
 
-    # Try backgrounds
+    # Special handling for backgrounds (might not be in Django models)
     if category in [None, 'background', 'backgrounds']:
-        backgrounds = character.db.advantages.get("backgrounds", {})
-        if trait_name in backgrounds or category == 'background':
-            backgrounds[trait_name] = value
-            return True
+        if not hasattr(character.db, 'advantages'):
+            character.db.advantages = {"backgrounds": {}, "merits": {}, "flaws": {}}
 
-    return False
+        backgrounds = character.db.advantages.get("backgrounds", {})
+        backgrounds[trait_name] = value
+        success = True
+
+    # Recalculate derived stats if attributes changed
+    if category in ['attribute', 'attributes']:
+        character.update_derived_stats()
+
+    return success
 
 
 def add_trait_dots(character, trait_name, dots=1, category=None):

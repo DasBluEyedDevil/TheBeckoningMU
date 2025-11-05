@@ -692,16 +692,23 @@ class CmdImportCharacter(Command):
 
 class ChargenCmdSet(CmdSet):
     """
-    Command set for staff character approval commands.
+    Command set for character generation and staff approval commands.
     """
 
     key = "ChargenCmdSet"
 
     def at_cmdset_creation(self):
         """Add commands to the set."""
+        # Staff approval commands
         self.add(CmdPending())
         self.add(CmdReview())
         self.add(CmdCharEdit())
         self.add(CmdApprove())
         self.add(CmdReject())
         self.add(CmdImportCharacter())
+
+        # Player character creation commands (V5 system)
+        from commands.v5.chargen import CmdChargen, CmdSetStat, CmdSetDiscipline
+        self.add(CmdChargen())
+        self.add(CmdSetStat())
+        self.add(CmdSetDiscipline())

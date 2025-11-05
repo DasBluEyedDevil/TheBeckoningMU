@@ -400,6 +400,17 @@ def _build_hunger_humanity_blood(character):
     bp = vamp.get('blood_potency', 0)
     lines.append(f"{BONE_WHITE}BLOOD POTENCY{RESET}")
     lines.append(f"  {_dots(bp, 10)}")
+    lines.append("")
+
+    # Blood Resonance
+    current_res = vamp.get('current_resonance', None)
+    res_intensity = vamp.get('resonance_intensity', 0)
+    if current_res and res_intensity > 0:
+        intensity_names = ["None", "Fleeting", "Intense", "Dyscrasia"]
+        intensity_str = intensity_names[res_intensity] if res_intensity < len(intensity_names) else "Unknown"
+        res_color = BLOOD_RED if res_intensity >= 2 else GOLD
+        lines.append(f"{BONE_WHITE}RESONANCE{RESET}")
+        lines.append(f"  {res_color}{current_res}{RESET} ({intensity_str})")
 
     return lines
 

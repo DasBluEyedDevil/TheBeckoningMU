@@ -14,10 +14,10 @@ own cmdsets by inheriting from them or directly from `evennia.CmdSet`.
 
 """
 
-from evennia.commands.default import cmdset_character, cmdset_account, cmdset_session, cmdset_unloggedin
+from evennia import default_cmds
 
 
-class CharacterCmdSet(cmdset_character.CharacterCmdSet):
+class CharacterCmdSet(default_cmds.CharacterCmdSet):
     """
     The `CharacterCmdSet` contains general in-game commands like `look`,
     `get`, etc available on in-game Character objects. It is merged with
@@ -34,31 +34,6 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         #
         # any commands you add below will overload the default ones.
         #
-        import importlib
-        BBSCmdSet = getattr(importlib.import_module("bbs.commands"), "BBSCmdSet")
-        self.add(BBSCmdSet)
-
-        JobsCmdSet = getattr(importlib.import_module("jobs.cmdset"), "JobsCmdSet")
-        self.add(JobsCmdSet)
-
-        # Add staff chargen commands for builders and admins
-        from commands.chargen import ChargenCmdSet
-        self.add(ChargenCmdSet)
-
-        # Add V5 dice system (new comprehensive implementation)
-        from beckonmu.dice.cmdset import DiceCmdSet
-        self.add(DiceCmdSet)
-
-        # Old V5 dice commands (can be removed once new system is fully tested)
-        # from commands.v5.dice import CmdRoll, CmdRollStat, CmdRouseCheck
-        # self.add(CmdRoll)
-        # self.add(CmdRollStat)
-        # self.add(CmdRouseCheck)
-
-        # Add V5 sheet commands
-        from commands.v5.sheet import CmdSheet, CmdSheetShort
-        self.add(CmdSheet)
-        self.add(CmdSheetShort)
 
         # Add V5 hunting commands
         from commands.v5.hunt import CmdHunt, CmdFeed, CmdHuntingInfo, CmdHuntAction, CmdHuntCancel
@@ -95,7 +70,7 @@ class CharacterCmdSet(cmdset_character.CharacterCmdSet):
         self.add(CmdBoonAdmin)
 
 
-class AccountCmdSet(cmdset_account.AccountCmdSet):
+class AccountCmdSet(default_cmds.AccountCmdSet):
     """
     This is the cmdset available to the Account at all times. It is
     combined with the `CharacterCmdSet` when the Account puppets a
@@ -115,7 +90,7 @@ class AccountCmdSet(cmdset_account.AccountCmdSet):
         #
 
 
-class UnloggedinCmdSet(cmdset_unloggedin.UnloggedinCmdSet):
+class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """
     Command set available to the Session before being logged in.  This
     holds commands like creating a new account, logging in, etc.
@@ -133,7 +108,7 @@ class UnloggedinCmdSet(cmdset_unloggedin.UnloggedinCmdSet):
         #
 
 
-class SessionCmdSet(cmdset_session.SessionCmdSet):
+class SessionCmdSet(default_cmds.SessionCmdSet):
     """
     This cmdset is made available on Session level once logged in. It
     is empty by default.

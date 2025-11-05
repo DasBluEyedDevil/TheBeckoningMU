@@ -26,8 +26,8 @@ urlpatterns = [
     path("webclient/", include("web.webclient.urls")),
     # web admin
     path("admin/", include("web.admin.urls")),
-    # traits API
-    path("", include("traits.urls")),
+    # add any extra urls here:
+    # path("mypath/", include("path.to.my.urls.file")),
 ]
 
 # 'urlpatterns' must be named such for Django to find it.

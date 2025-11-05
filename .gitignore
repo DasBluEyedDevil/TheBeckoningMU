@@ -84,3 +84,7 @@ poetry.lock
 *.bak
 *_v1.md
 *.backup
+/docs/
+/.claude/
+/.skills/
+/cursor-agent-wrapper.sh

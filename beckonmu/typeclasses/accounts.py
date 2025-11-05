@@ -136,42 +136,7 @@ class Account(DefaultAccount):
 
     """
 
-    def at_post_login(self, session=None, **kwargs):
-        """
-        Called after successful login. Notifies staff of pending character approvals.
-
-        Args:
-            session (Session, optional): The session logging in.
-            **kwargs: Arbitrary keyword arguments.
-        """
-        # Call parent implementation first
-        super().at_post_login(session=session, **kwargs)
-
-        # Only show notifications to staff members
-        if not (self.is_superuser or self.check_permstring("Builder") or self.check_permstring("Admin")):
-            return
-
-        try:
-            from traits.models import CharacterBio
-
-            # Count pending character approvals
-            pending_count = CharacterBio.objects.filter(approved=False).count()
-
-            if pending_count > 0:
-                # Format the notification message
-                plural = "character" if pending_count == 1 else "characters"
-                self.msg("|y" + "=" * 78 + "|n")
-                self.msg(f"|y[STAFF NOTIFICATION]|n There {'is' if pending_count == 1 else 'are'} |w{pending_count}|n {plural} awaiting approval.")
-                self.msg("|y" + "-" * 78 + "|n")
-                self.msg("Use |w+pending|n to review or visit |chttp://localhost:4001/staff/character-approval/|n")
-                self.msg("|y" + "=" * 78 + "|n")
-        except ImportError:
-            # Silently fail if traits app is not available
-            pass
-        except Exception as e:
-            # Log error but don't interrupt login
-            import traceback
-            traceback.print_exc()
+    pass
 
 
 class Guest(DefaultGuest):

@@ -1104,8 +1104,99 @@ DISCIPLINES = {
     },
     "Thin-Blood Alchemy": {
         "type": "thin-blood",
-        "description": "Thin-blood formula crafting",
-        "powers": {}  # Populated in Phase 9
+        "description": "Alchemical formulae unique to thin-blooded vampires",
+        "powers": {
+            1: [
+                {
+                    "name": "Far Reach",
+                    "description": "Telekinesis to pull or push objects within short range (5 meters)",
+                    "rouse": False,
+                    "dice_pool": "Resolve + Thin-Blood Alchemy",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ingredients": ["vampire blood", "quicksilver"],
+                    "craft_difficulty": 2
+                },
+                {
+                    "name": "Haze",
+                    "description": "Cloud the minds of observers, making them forget your presence",
+                    "rouse": False,
+                    "dice_pool": "Manipulation + Thin-Blood Alchemy",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ingredients": ["vampire blood", "alcohol"],
+                    "craft_difficulty": 2
+                },
+                {
+                    "name": "Envelop",
+                    "description": "Wrap yourself in shadows, becoming harder to see",
+                    "rouse": False,
+                    "dice_pool": "Wits + Thin-Blood Alchemy",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ingredients": ["vampire blood", "ash"],
+                    "craft_difficulty": 2
+                }
+            ],
+            2: [
+                {
+                    "name": "Counterfeit",
+                    "description": "Create a temporary duplicate of a small object",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Thin-Blood Alchemy",
+                    "duration": "night",
+                    "amalgam": None,
+                    "ingredients": ["vampire blood", "clay", "piece of original object"],
+                    "craft_difficulty": 3
+                },
+                {
+                    "name": "Defractionate",
+                    "description": "Split your consciousness, perceive multiple locations",
+                    "rouse": False,
+                    "dice_pool": "Wits + Thin-Blood Alchemy",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ingredients": ["vampire blood", "mirror shards"],
+                    "craft_difficulty": 3
+                }
+            ],
+            3: [
+                {
+                    "name": "Airborne Momentum",
+                    "description": "Levitate and move through the air",
+                    "rouse": False,
+                    "dice_pool": "Dexterity + Thin-Blood Alchemy",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ingredients": ["vampire blood", "feather", "powdered bone"],
+                    "craft_difficulty": 4
+                }
+            ],
+            4: [
+                {
+                    "name": "Awaken the Sleeper",
+                    "description": "Temporarily grant a mortal a vampiric discipline power",
+                    "rouse": False,
+                    "dice_pool": "Manipulation + Thin-Blood Alchemy",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ingredients": ["vampire blood", "distilled adrenaline", "rare herb"],
+                    "craft_difficulty": 5
+                }
+            ],
+            5: [
+                {
+                    "name": "Discipline Distillation",
+                    "description": "Distill another vampire's blood to create a temporary discipline power",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Thin-Blood Alchemy",
+                    "duration": "night",
+                    "amalgam": None,
+                    "ingredients": ["vampire blood with discipline", "alchemical catalyst"],
+                    "craft_difficulty": 6
+                }
+            ]
+        }
     }
 }
 
@@ -1185,6 +1276,63 @@ PREDATOR_TYPES = {
         "merits": [],
         "flaws": []
     },
+}
+
+# ============================================================================
+# BACKGROUNDS (Advantages with mechanical benefits)
+# ============================================================================
+
+BACKGROUNDS = {
+    "Allies": {
+        "description": "Mortal or supernatural allies who can provide aid",
+        "benefit": "Can call for help. +[dots] to Social rolls when relevant",
+        "uses_per_session": "dots"
+    },
+    "Contacts": {
+        "description": "Information sources in various areas",
+        "benefit": "+[dots] to Investigation when using contacts for information",
+        "uses_per_session": "dots * 2"
+    },
+    "Fame": {
+        "description": "Recognition in mortal society",
+        "benefit": "+[dots] to Social rolls with those who recognize you",
+        "uses_per_session": "unlimited"
+    },
+    "Haven": {
+        "description": "Quality and security of your haven",
+        "benefit": "Security rating: +[dots] to defend against intrusion",
+        "uses_per_session": "passive"
+    },
+    "Herd": {
+        "description": "Regular feeding sources",
+        "benefit": "Reduce Hunger by [dots] per week without hunting. No risk",
+        "uses_per_session": "1 per week"
+    },
+    "Influence": {
+        "description": "Sway over mortal institutions",
+        "benefit": "+[dots] to Leadership/Politics in domain. Can requisition resources",
+        "uses_per_session": "dots"
+    },
+    "Mask": {
+        "description": "Strength of your mortal identity",
+        "benefit": "+[dots] to maintain Masquerade and resist investigation",
+        "uses_per_session": "passive"
+    },
+    "Resources": {
+        "description": "Wealth and material assets",
+        "benefit": "Can acquire items of [dots] rating or less. Income level",
+        "uses_per_session": "dots"
+    },
+    "Retainers": {
+        "description": "Loyal servants (ghouls, etc.)",
+        "benefit": "[dots] loyal servants who can perform tasks",
+        "uses_per_session": "unlimited"
+    },
+    "Status": {
+        "description": "Standing in vampire society",
+        "benefit": "+[dots] to Social rolls with Kindred. Access to Elysium",
+        "uses_per_session": "unlimited"
+    }
 }
 
 # ============================================================================

@@ -73,6 +73,15 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdHeal)
         self.add(CmdHealth)
 
+        # Add V5 Thin-Blood commands
+        from commands.v5.thinblood import CmdAlchemy, CmdDaylight
+        self.add(CmdAlchemy)
+        self.add(CmdDaylight)
+
+        # Add V5 Background commands
+        from commands.v5.backgrounds import CmdBackground
+        self.add(CmdBackground)
+
         # Add Status system commands
         from beckonmu.status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
         self.add(CmdStatus)
@@ -92,6 +101,11 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdBoonCall)
         self.add(CmdBoonFulfill)
         self.add(CmdBoonAdmin)
+
+        # Add V5 Social commands (Coteries)
+        from commands.v5.social import CmdCoterie, CmdSocial
+        self.add(CmdCoterie)
+        self.add(CmdSocial)
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):

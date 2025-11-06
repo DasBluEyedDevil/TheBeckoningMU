@@ -59,6 +59,20 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         from commands.v5.effects import CmdEffects
         self.add(CmdEffects)
 
+        # Add V5 Humanity commands
+        from commands.v5.humanity import CmdHumanity, CmdStain, CmdRemorse, CmdFrenzy
+        self.add(CmdHumanity)
+        self.add(CmdStain)
+        self.add(CmdRemorse)
+        self.add(CmdFrenzy)
+
+        # Add V5 Combat commands
+        from commands.v5.combat import CmdAttack, CmdDamage, CmdHeal, CmdHealth
+        self.add(CmdAttack)
+        self.add(CmdDamage)
+        self.add(CmdHeal)
+        self.add(CmdHealth)
+
         # Add Status system commands
         from beckonmu.status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
         self.add(CmdStatus)

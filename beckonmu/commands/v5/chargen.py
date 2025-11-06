@@ -88,6 +88,27 @@ class CmdChargen(Command):
 
         clan_name = self.args.strip()
 
+        # Check for Thin-Blood option
+        if clan_name.lower() in ["thin-blood", "thinblood", "thin blood"]:
+            # Set as Thin-Blood
+            if not hasattr(self.caller.db, 'vampire'):
+                self.caller.db.vampire = {}
+
+            self.caller.db.vampire["clan"] = "Thin-Blood"
+            self.caller.db.vampire["blood_potency"] = 0  # Thin-Bloods always BP 0
+
+            self.caller.msg(f"\n|gClan set to Thin-Blood!|n\n")
+            self.caller.msg("|yThin-Blood Traits:|n")
+            self.caller.msg("  - Blood Potency: 0 (cannot create Blood Bonds or ghouls)")
+            self.caller.msg("  - Sunlight: Takes bashing damage (not aggravated)")
+            self.caller.msg("  - Disciplines: Choose 1 Discipline with flaw OR Thin-Blood Alchemy")
+            self.caller.msg("  - Blush of Life: Easier to maintain mortal appearance")
+            self.caller.msg("\n|yNext:|n Use '+setdisc thin-blood alchemy = 1' to learn Alchemy")
+            self.caller.msg("       OR choose a standard discipline with a Thin-Blood flaw")
+
+            chargen_utils.set_chargen_step(self.caller, "disciplines")
+            return
+
         # Validate clan selection
         valid, error_msg = clan_utils.validate_clan_selection(self.caller, clan_name)
         if not valid:

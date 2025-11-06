@@ -1,0 +1,170 @@
+# Coteries
+
+## What is a Coterie?
+
+A coterie is a group of vampires who band together for mutual benefit, protection,
+and shared resources. In Vampire: The Masquerade 5th Edition, coteries represent
+the vampire equivalent of a "pack" or "crew" - a close-knit group that shares
+resources, secrets, and often works toward common goals.
+
+Coteries can control shared resources such as:
+- **Domain**: Territory controlled by the coterie
+- **Haven**: Shared safe houses and lairs
+- **Herd**: Reliable feeding sources
+- **Contacts**: Mortal allies and connections
+
+## Coterie Structure
+
+Coteries have a simple hierarchy:
+
+- **Leader**: The founder who manages the coterie and its resources. Only the
+  leader can invite members, manage resources, promote/demote members, and
+  disband the coterie.
+
+- **Lieutenant**: Trusted second-in-command. May have additional responsibilities
+  granted by the leader.
+
+- **Member**: Regular coterie members who share in the group's resources and
+  protection.
+
+## Creating a Coterie
+
+Use `+coterie/create <name>=<description>` to found a new coterie. You must not
+already be in a coterie.
+
+Example:
+  `+coterie/create Night Watch=Protectors of the Elysium who maintain order`
+
+## Managing Members
+
+**Inviting Members** (Leader only)
+  `+coterie/invite <character>`
+
+  Sends an invitation to another character. They must use `+coterie/join <your name>`
+  to accept.
+
+**Joining a Coterie**
+  `+coterie/join <leader name>`
+
+  Accept a pending invitation from a coterie leader.
+
+**Promoting Members** (Leader only)
+  `+coterie/promote <character>`
+
+  Promote a member to lieutenant rank.
+
+**Demoting Members** (Leader only)
+  `+coterie/demote <character>`
+
+  Demote a lieutenant back to member rank.
+
+**Removing Members** (Leader only)
+  `+coterie/kick <character>`
+
+  Remove a member from the coterie.
+
+**Leaving a Coterie**
+  `+coterie/leave`
+
+  Leave your current coterie. Leaders must disband the coterie instead.
+
+**Disbanding** (Leader only)
+  `+coterie/disband`
+
+  Disband the coterie completely. All members are removed.
+
+## Managing Resources
+
+**Viewing Resources**
+  `+coterie/resources`
+
+  View all coterie resources and their ratings.
+
+**Setting Resources** (Leader only)
+  `+coterie/resource <type>=<value>`
+
+  Set a resource rating (0-5).
+
+  Resource types: domain, haven, herd, contacts
+
+  Examples:
+    `+coterie/resource domain=3`
+    `+coterie/resource haven=2`
+    `+coterie/resource herd=1`
+    `+coterie/resource contacts=4`
+
+## Resource Descriptions
+
+**Domain (0-5)**
+  Territory under the coterie's control. Higher ratings indicate larger or more
+  valuable territory. Domain provides safe hunting grounds and political influence.
+
+**Haven (0-5)**
+  The quality and security of the coterie's shared havens. Higher ratings mean
+  better protected, more comfortable, or more numerous safe houses.
+
+**Herd (0-5)**
+  Reliable mortal feeding sources cultivated by the coterie. A higher Herd rating
+  means easier and safer feeding for coterie members.
+
+**Contacts (0-5)**
+  Mortal allies, informants, and connections the coterie can call upon. Higher
+  ratings provide access to more influential or numerous contacts.
+
+## Integration with Social Systems
+
+Coteries integrate with the broader social systems of Kindred society:
+
+**Status**: Coterie leaders often have Status in Kindred society. A well-respected
+coterie can enhance its members' standing.
+
+**Boons**: Coteries can owe and be owed boons as a group, not just as individuals.
+The leader manages collective prestation.
+
+**Political Standing**: Your coterie membership is displayed when using the
+`+social` command, showing your role and coterie affiliation.
+
+## Viewing Coterie Information
+
+**Your Coterie**
+  `+coterie`
+
+  View complete information about your coterie, including members (if leader),
+  resources, and your role.
+
+**Social Standing**
+  `+social`
+  `+social <character>`
+
+  View comprehensive social information including Status, Boons, and Coterie
+  membership all in one display.
+
+## Tips for Coterie Play
+
+1. **Choose complementary members**: A good coterie has vampires with different
+   skills, clans, and capabilities.
+
+2. **Pool your backgrounds**: The coterie system represents characters combining
+   their Background dots to create shared resources.
+
+3. **Communicate OOC**: Coordinate with your coterie members outside the game to
+   ensure everyone benefits from membership.
+
+4. **Use your resources**: Don't just track resources - incorporate them into
+   your roleplay. Feed from your Herd, meet in your Haven, leverage your Contacts.
+
+5. **Political power**: A united coterie has more influence than individual
+   vampires. Use this to your advantage in Kindred politics.
+
+## Related Commands
+
+- `+status` - View and manage Status
+- `+boon` - Manage boons and prestation
+- `+social` - View comprehensive social standing
+- `+sheet` - View your character sheet (includes coterie info)
+
+## See Also
+
+- `help Status`
+- `help Boons`
+- `help Backgrounds`

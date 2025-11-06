@@ -27,6 +27,7 @@ from world.ansi_theme import (
 
 from .clan_utils import get_clan, get_clan_info
 from .blood_utils import get_hunger, get_blood_potency
+from . import social_utils
 
 
 def format_character_sheet(character):
@@ -79,6 +80,12 @@ def format_character_sheet(character):
     boons_section = _format_boons_section(character)
     if boons_section:
         lines.append(boons_section)
+        lines.append("")
+
+    # Section 6.6: COTERIE (Group Membership)
+    coterie_section = _format_coterie_section(character)
+    if coterie_section:
+        lines.append(coterie_section)
         lines.append("")
 
     # Section 7: EXPERIENCE
@@ -654,6 +661,50 @@ def _format_boons_section(character):
         net_str = f"{SHADOW_GREY}Balanced{RESET}"
 
     lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Net:{RESET} {net_str}{'':50} {SHADOW_GREY}{BOX_V}{RESET}")
+
+    lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
+
+    return "\n".join(lines)
+
+
+def _format_coterie_section(character):
+    """Section 6.6: Coterie (Group Membership)."""
+    coterie = social_utils.get_coterie_info(character)
+
+    if not coterie:
+        return ""
+
+    role = social_utils.get_character_role(character)
+
+    lines = []
+    lines.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}COTERIE{RESET}{' ' * 70}{SHADOW_GREY}{BOX_V}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
+
+    # Name and role
+    coterie_name = coterie.get('name', 'Unknown')
+    role_display = role.capitalize() if role else "Member"
+    role_color = DARK_RED if role == 'leader' else GOLD if role == 'lieutenant' else PALE_IVORY
+
+    lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Name:{RESET} {DARK_RED}{coterie_name:<69}{RESET} {SHADOW_GREY}{BOX_V}{RESET}")
+    lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Your Role:{RESET} {role_color}{role_display:<65}{RESET} {SHADOW_GREY}{BOX_V}{RESET}")
+
+    # Resources (if leader or lieutenant)
+    if role in ['leader', 'lieutenant']:
+        resources = coterie.get('resources', {})
+        if any(resources.values()):
+            lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
+            lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Resources:{RESET}{' ' * 65}{SHADOW_GREY}{BOX_V}{RESET}")
+
+            resource_display = []
+            for res_type in ['domain', 'haven', 'herd', 'contacts']:
+                value = resources.get(res_type, 0)
+                if value > 0:
+                    resource_display.append(f"{res_type.capitalize()}: {value}")
+
+            if resource_display:
+                resource_str = ", ".join(resource_display)
+                lines.append(f"{SHADOW_GREY}{BOX_V}   {GOLD}{resource_str:<73}{RESET} {SHADOW_GREY}{BOX_V}{RESET}")
 
     lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
 

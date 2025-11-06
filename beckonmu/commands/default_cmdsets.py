@@ -49,6 +49,39 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdSpend)
         self.add(CmdXPAward)
 
+        # Add V5 Discipline commands
+        from commands.v5.disciplines import CmdDisciplines, CmdActivatePower, CmdDisciplineInfo
+        self.add(CmdDisciplines)
+        self.add(CmdActivatePower)
+        self.add(CmdDisciplineInfo)
+
+        # Add V5 Effects command
+        from commands.v5.effects import CmdEffects
+        self.add(CmdEffects)
+
+        # Add V5 Humanity commands
+        from commands.v5.humanity import CmdHumanity, CmdStain, CmdRemorse, CmdFrenzy
+        self.add(CmdHumanity)
+        self.add(CmdStain)
+        self.add(CmdRemorse)
+        self.add(CmdFrenzy)
+
+        # Add V5 Combat commands
+        from commands.v5.combat import CmdAttack, CmdDamage, CmdHeal, CmdHealth
+        self.add(CmdAttack)
+        self.add(CmdDamage)
+        self.add(CmdHeal)
+        self.add(CmdHealth)
+
+        # Add V5 Thin-Blood commands
+        from commands.v5.thinblood import CmdAlchemy, CmdDaylight
+        self.add(CmdAlchemy)
+        self.add(CmdDaylight)
+
+        # Add V5 Background commands
+        from commands.v5.backgrounds import CmdBackground
+        self.add(CmdBackground)
+
         # Add Status system commands
         from beckonmu.status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
         self.add(CmdStatus)
@@ -68,6 +101,11 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdBoonCall)
         self.add(CmdBoonFulfill)
         self.add(CmdBoonAdmin)
+
+        # Add V5 Social commands (Coteries)
+        from commands.v5.social import CmdCoterie, CmdSocial
+        self.add(CmdCoterie)
+        self.add(CmdSocial)
 
 
 class AccountCmdSet(default_cmds.AccountCmdSet):

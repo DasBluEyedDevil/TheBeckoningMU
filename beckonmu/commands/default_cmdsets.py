@@ -49,6 +49,12 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdSpend)
         self.add(CmdXPAward)
 
+        # Add V5 Discipline commands
+        from commands.v5.disciplines import CmdDisciplines, CmdActivatePower, CmdDisciplineInfo
+        self.add(CmdDisciplines)
+        self.add(CmdActivatePower)
+        self.add(CmdDisciplineInfo)
+
         # Add Status system commands
         from beckonmu.status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
         self.add(CmdStatus)

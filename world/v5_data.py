@@ -153,58 +153,954 @@ DISCIPLINES = {
     "Animalism": {
         "type": "standard",
         "description": "Commune with and command animals and the Beast",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Bond Famulus",
+                    "description": "Create supernatural bond with one animal, mental communication",
+                    "rouse": True,
+                    "dice_pool": "Charisma + Animal Ken",
+                    "duration": "permanent",
+                    "amalgam": None
+                },
+                {
+                    "name": "Sense the Beast",
+                    "description": "Sense presence and emotional state of animals and vampires nearby",
+                    "rouse": False,
+                    "dice_pool": "Resolve + Animalism",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Feral Whispers",
+                    "description": "Communicate with and command animals",
+                    "rouse": True,
+                    "dice_pool": "Manipulation/Charisma + Animalism",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "Animal Succulence",
+                    "description": "Slake 1 additional Hunger when feeding from animals",
+                    "rouse": False,
+                    "dice_pool": None,
+                    "duration": "passive",
+                    "amalgam": None
+                },
+                {
+                    "name": "Quell the Beast",
+                    "description": "Calm or rouse the Beast in others",
+                    "rouse": True,
+                    "dice_pool": "Charisma/Manipulation + Animalism",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Living Hive",
+                    "description": "Infest body with stinging insects for defense and concealment",
+                    "rouse": True,
+                    "dice_pool": "Composure + Animalism",
+                    "duration": "scene",
+                    "amalgam": "Obfuscate 2"
+                }
+            ],
+            4: [
+                {
+                    "name": "Subsume the Spirit",
+                    "description": "Project consciousness into animal, control it fully",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Animalism",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Animal Dominion",
+                    "description": "Command multiple animals or swarms simultaneously",
+                    "rouse": True,
+                    "dice_pool": "Charisma + Animalism",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Draw Out the Beast",
+                    "description": "Force another's Beast into frenzy or calm it entirely",
+                    "rouse": True,
+                    "dice_pool": "Charisma + Animalism",
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Auspex": {
         "type": "standard",
         "description": "Supernatural senses and perception",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Heightened Senses",
+                    "description": "Dramatically enhance all five senses",
+                    "rouse": False,
+                    "dice_pool": "Wits/Resolve + Auspex",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Sense the Unseen",
+                    "description": "Detect supernatural presences (Obfuscate, ghosts, magic)",
+                    "rouse": False,
+                    "dice_pool": "Wits/Resolve + Auspex",
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Premonition",
+                    "description": "Get glimpses of danger or future events",
+                    "rouse": False,
+                    "dice_pool": "Resolve + Auspex",
+                    "duration": "passive",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "Scry the Soul",
+                    "description": "Read aura, discern emotional state, vampiric nature, resonance",
+                    "rouse": True,
+                    "dice_pool": "Intelligence + Auspex",
+                    "duration": "instant",
+                    "amalgam": None
+                },
+                {
+                    "name": "Share the Senses",
+                    "description": "See/hear through another's senses remotely",
+                    "rouse": True,
+                    "dice_pool": "Resolve + Auspex",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "Spirit's Touch",
+                    "description": "Read psychic impressions from objects (psychometry)",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Auspex",
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Clairvoyance",
+                    "description": "Project senses to a distant familiar location",
+                    "rouse": True,
+                    "dice_pool": "Intelligence + Auspex",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Possession",
+                    "description": "Fully possess another person's body",
+                    "rouse": True,
+                    "dice_pool": "Resolve + Auspex",
+                    "duration": "scene",
+                    "amalgam": "Dominate 3"
+                },
+                {
+                    "name": "Telepathy",
+                    "description": "Read surface thoughts, project thoughts, mental communication",
+                    "rouse": True,
+                    "dice_pool": "Resolve + Auspex",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Blood Sorcery": {
         "type": "ritual",
         "description": "Blood magic and rituals",
-        "powers": {},  # Populated in Phase 5
-        "rituals": []  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Corrosive Vitae",
+                    "description": "Spit vitae as acid weapon",
+                    "rouse": True,
+                    "dice_pool": "Strength + Blood Sorcery",
+                    "duration": "instant",
+                    "amalgam": None
+                },
+                {
+                    "name": "Blood of Potency",
+                    "description": "Temporarily raise Blood Potency (ritual)",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Blood Sorcery",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ritual": True
+                }
+            ],
+            2: [
+                {
+                    "name": "Extinguish Vitae",
+                    "description": "Paralyze a vampire's limb (ritual)",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Blood Sorcery",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ritual": True
+                },
+                {
+                    "name": "Ward Against Ghouls",
+                    "description": "Create protective ward against ghouls (ritual)",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Blood Sorcery",
+                    "duration": "permanent",
+                    "amalgam": None,
+                    "ritual": True
+                }
+            ],
+            3: [
+                {
+                    "name": "Scorpion's Touch",
+                    "description": "Vitae becomes paralyzing poison in melee",
+                    "rouse": True,
+                    "dice_pool": "Strength + Blood Sorcery",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Incorporeal Passage",
+                    "description": "Walk through walls (ritual)",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Blood Sorcery",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ritual": True
+                }
+            ],
+            4: [
+                {
+                    "name": "Theft of Vitae",
+                    "description": "Drain vitae from target at a distance",
+                    "rouse": True,
+                    "dice_pool": "Wits + Blood Sorcery",
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Cauldron of Blood",
+                    "description": "Boil victim's blood, causing massive damage",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Blood Sorcery",
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ]
+        },
+        "rituals": []
     },
     "Celerity": {
         "type": "standard",
         "description": "Supernatural speed and reflexes",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Cat's Grace",
+                    "description": "Gain automatic success on Dexterity + Athletics roll. Passive: Add Celerity rating to Defense",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Fleetness",
+                    "description": "Double movement speed for scene",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "Blink",
+                    "description": "Move short distance instantly (appears to teleport)",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": None
+                },
+                {
+                    "name": "Traversal",
+                    "description": "Scale walls, run across water, perform impossible movements",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "Draught of Elegance",
+                    "description": "Gain Celerity rating as bonus dice to Dexterity rolls for scene",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Unerring Aim",
+                    "description": "Automatically hit target with ranged attack",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": "Auspex 2"
+                }
+            ],
+            5: [
+                {
+                    "name": "Lightning Strike",
+                    "description": "Make multiple attacks in single turn",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": None
+                },
+                {
+                    "name": "Split Second",
+                    "description": "Act first in turn order, interrupt actions",
+                    "rouse": True,
+                    "dice_pool": "Wits + Awareness",
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Dominate": {
         "type": "standard",
         "description": "Mind control and mental commands",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Cloud Memory",
+                    "description": "Remove or alter short-term memories",
+                    "rouse": True,
+                    "dice_pool": "Charisma + Dominate",
+                    "duration": "permanent",
+                    "amalgam": None
+                },
+                {
+                    "name": "Compel",
+                    "description": "Issue one-word command target must obey",
+                    "rouse": True,
+                    "dice_pool": "Charisma/Manipulation + Dominate",
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Mesmerize",
+                    "description": "Issue complex hypnotic commands",
+                    "rouse": True,
+                    "dice_pool": "Charisma/Manipulation + Dominate",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Dementation",
+                    "description": "Drive target temporarily insane with hallucinations",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Dominate",
+                    "duration": "scene",
+                    "amalgam": "Obfuscate 2"
+                },
+                {
+                    "name": "Submerged Directive",
+                    "description": "Plant delayed trigger command",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Dominate",
+                    "duration": "permanent",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "The Forgetful Mind",
+                    "description": "Rewrite or remove extensive memories",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Dominate",
+                    "duration": "permanent",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "Rationalize",
+                    "description": "Make victim justify/accept anything",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Dominate",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Mass Manipulation",
+                    "description": "Dominate multiple targets simultaneously",
+                    "rouse": True,
+                    "dice_pool": "Charisma + Dominate",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Terminal Decree",
+                    "description": "Implant suicidal or self-destructive command",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Dominate",
+                    "duration": "permanent",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Fortitude": {
         "type": "standard",
         "description": "Supernatural resilience and toughness",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Resilience",
+                    "description": "Add Fortitude rating to Health for scene",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Unswayable Mind",
+                    "description": "Add Fortitude rating to Resolve or Composure for resisting mental attacks",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Toughness",
+                    "description": "Reduce Aggravated damage from fire/sunlight by 1 per Bane Severity",
+                    "rouse": False,
+                    "dice_pool": None,
+                    "duration": "passive",
+                    "amalgam": None
+                },
+                {
+                    "name": "Enduring Beast",
+                    "description": "Ignore physical damage penalties for scene",
+                    "rouse": True,
+                    "dice_pool": "Stamina + Survival",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "Fortify the Inner Facade",
+                    "description": "Superficial damage becomes bashing for mortals witnessing violence",
+                    "rouse": True,
+                    "dice_pool": "Stamina + Fortitude",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "Draught of Endurance",
+                    "description": "Add Fortitude rating as bonus dice to Stamina rolls for scene",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Flesh of Marble",
+                    "description": "Become nearly invulnerable to physical harm",
+                    "rouse": True,
+                    "dice_pool": "Composure + Fortitude",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Prowess from Pain",
+                    "description": "Convert Health damage into bonus dice",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Obfuscate": {
         "type": "standard",
         "description": "Supernatural stealth and invisibility",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Cloak of Shadows",
+                    "description": "Become invisible while stationary",
+                    "rouse": True,
+                    "dice_pool": "Wits + Obfuscate",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Silence of Death",
+                    "description": "Suppress all sound you make",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Unseen Passage",
+                    "description": "Remain invisible while moving",
+                    "rouse": True,
+                    "dice_pool": "Wits + Obfuscate",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "Ghost in the Machine",
+                    "description": "Erase digital presence, disappear from cameras",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Obfuscate",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Mask of a Thousand Faces",
+                    "description": "Appear as a different person",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Obfuscate",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "Conceal",
+                    "description": "Hide objects or other people",
+                    "rouse": True,
+                    "dice_pool": "Wits + Obfuscate",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Vanish",
+                    "description": "Disappear instantly, even while observed",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Imposter's Guise",
+                    "description": "Perfectly mimic specific person (voice, mannerisms, etc.)",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Obfuscate",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Oblivion": {
         "type": "standard",
         "description": "Power over death and the Underworld",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Shadow Cloak",
+                    "description": "Obfuscate 1 equivalent using shadows",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Oblivion's Sight",
+                    "description": "See into lands of the dead",
+                    "rouse": False,
+                    "dice_pool": "Resolve + Oblivion",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Binding the Fetters",
+                    "description": "Strengthen ghost anchors (ritual)",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Oblivion",
+                    "duration": "permanent",
+                    "amalgam": None,
+                    "ritual": True
+                }
+            ],
+            2: [
+                {
+                    "name": "Tenebrous Avatar",
+                    "description": "Become shadow-form",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Where the Shroud Thins",
+                    "description": "Find weak points in death barrier (ritual)",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Oblivion",
+                    "duration": "scene",
+                    "amalgam": None,
+                    "ritual": True
+                }
+            ],
+            3: [
+                {
+                    "name": "Shadow Cast",
+                    "description": "Control shadows to attack or manipulate",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Oblivion",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Summon Spirit",
+                    "description": "Call ghost to appear",
+                    "rouse": True,
+                    "dice_pool": "Intelligence + Oblivion",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "Shadow Perspective",
+                    "description": "Scry through shadows",
+                    "rouse": True,
+                    "dice_pool": "Intelligence + Oblivion",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Compel Spirit",
+                    "description": "Force ghost to obey",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Oblivion",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Shadowstep",
+                    "description": "Teleport through shadows",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": None
+                },
+                {
+                    "name": "Shambling Hordes",
+                    "description": "Animate corpses",
+                    "rouse": True,
+                    "dice_pool": "Intelligence + Oblivion",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Potence": {
         "type": "standard",
         "description": "Supernatural strength",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Lethal Body",
+                    "description": "Unarmed attacks deal +1 damage, can be Aggravated",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Soaring Leap",
+                    "description": "Jump incredible distances",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Prowess",
+                    "description": "Add Potence rating as bonus dice to Strength rolls for scene",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "Brutal Feed",
+                    "description": "Gain additional Resonance benefit when feeding violently",
+                    "rouse": False,
+                    "dice_pool": None,
+                    "duration": "passive",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "Spark of Rage",
+                    "description": "Cause frenzy in nearby vampires",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": "Presence 3"
+                }
+            ],
+            5: [
+                {
+                    "name": "Earthshock",
+                    "description": "Shockwave knocks down all nearby",
+                    "rouse": True,
+                    "dice_pool": "Strength + Potence",
+                    "duration": "instant",
+                    "amalgam": None
+                },
+                {
+                    "name": "Fist of Caine",
+                    "description": "One devastating attack causing massive damage",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Presence": {
         "type": "standard",
         "description": "Supernatural charisma and emotion manipulation",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Awe",
+                    "description": "Become magnetic center of attention",
+                    "rouse": True,
+                    "dice_pool": "Charisma/Manipulation + Presence",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Daunt",
+                    "description": "Inspire terror in onlookers",
+                    "rouse": True,
+                    "dice_pool": "Charisma/Manipulation + Presence",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Lingering Kiss",
+                    "description": "Your Kiss causes euphoria, not pain",
+                    "rouse": False,
+                    "dice_pool": None,
+                    "duration": "passive",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "Dread Gaze",
+                    "description": "Paralyze target with terror",
+                    "rouse": True,
+                    "dice_pool": "Charisma/Manipulation + Presence",
+                    "duration": "instant",
+                    "amalgam": None
+                },
+                {
+                    "name": "Entrancement",
+                    "description": "Create obsessive fascination/love in target",
+                    "rouse": True,
+                    "dice_pool": "Charisma/Manipulation + Presence",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "Irresistible Voice",
+                    "description": "Commands carry supernatural compulsion",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Presence",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Summon",
+                    "description": "Call target to your location (they must come)",
+                    "rouse": True,
+                    "dice_pool": "Manipulation + Presence",
+                    "duration": "permanent",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Majesty",
+                    "description": "Radiate such magnificence others cannot act against you",
+                    "rouse": True,
+                    "dice_pool": "Charisma + Presence",
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Star Magnetism",
+                    "description": "Affect large crowds with Presence powers",
+                    "rouse": True,
+                    "dice_pool": "Charisma + Presence",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ]
+        }
     },
     "Protean": {
         "type": "standard",
         "description": "Shapeshifting and transformation",
-        "powers": {}  # Populated in Phase 5
+        "powers": {
+            1: [
+                {
+                    "name": "Eyes of the Beast",
+                    "description": "See perfectly in darkness, eyes glow red",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Weight of the Feather",
+                    "description": "Reduce falling damage, land gracefully",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "instant",
+                    "amalgam": None
+                }
+            ],
+            2: [
+                {
+                    "name": "Feral Weapons",
+                    "description": "Grow claws dealing Aggravated damage",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Metamorphosis",
+                    "description": "Transform into animal form (bat, wolf, rat)",
+                    "rouse": True,
+                    "dice_pool": "Stamina + Protean",
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            3: [
+                {
+                    "name": "Shapechange",
+                    "description": "Transform into mist form",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Earth Meld",
+                    "description": "Merge with earth/stone for day sleep",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                }
+            ],
+            4: [
+                {
+                    "name": "One with the Beast",
+                    "description": "Remain conscious while in frenzy",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "Fleshcraft",
+                    "description": "Sculpt flesh (self or others)",
+                    "rouse": True,
+                    "dice_pool": "Dexterity + Protean",
+                    "duration": "permanent",
+                    "amalgam": None
+                }
+            ],
+            5: [
+                {
+                    "name": "Horrid Form",
+                    "description": "Transform into massive combat monster",
+                    "rouse": True,
+                    "dice_pool": None,
+                    "duration": "scene",
+                    "amalgam": None
+                },
+                {
+                    "name": "The Unfettered Heart",
+                    "description": "Remove heart from body, hide it elsewhere (ritual)",
+                    "rouse": False,
+                    "dice_pool": "Intelligence + Protean",
+                    "duration": "permanent",
+                    "amalgam": None,
+                    "ritual": True
+                }
+            ]
+        }
     },
     "Thin-Blood Alchemy": {
         "type": "thin-blood",

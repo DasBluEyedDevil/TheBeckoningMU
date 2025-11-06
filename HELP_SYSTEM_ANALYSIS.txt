@@ -1,0 +1,795 @@
+================================================================================
+HELP FILE SYSTEM COMPREHENSIVE ANALYSIS
+TheBeckoningMU - Evennia-based V5: Vampire: The Masquerade MUD
+================================================================================
+
+Generated: 2025-11-06
+Current Help Entries: 1
+Total Commands: 47
+Help Coverage: 2.1% (1 of 47 commands have help documentation)
+
+================================================================================
+SECTION 1: HELP SYSTEM ARCHITECTURE
+================================================================================
+
+LOCATION: /home/user/TheBeckoningMU/beckonmu/world/help_entries.py
+
+IMPLEMENTATION DETAILS:
+- Uses Evennia's FILE_HELP_ENTRY_MODULES system
+- Entries defined as a HELP_ENTRY_DICTS list containing dictionaries
+- Each dictionary entry has:
+  * 'key': (str) - The help topic name/command to look up
+  * 'text': (str) - The help content (supports # subtopic sections)
+  * 'category': (str, optional) - Category for organizing help (defaults to DEFAULT_HELP_CATEGORY)
+  * 'aliases': (list, optional) - Alternative names for the help topic
+  * 'locks': (str, optional) - Access control ('view' for index visibility, 'read' for content visibility)
+
+FILE FORMAT EXAMPLE:
+```
+{
+    "key": "topic_name",
+    "aliases": ["alt_name"],
+    "category": "Category Name",
+    "locks": "read:perm(Developer)",
+    "text": """
+        Main help text here.
+        
+        # Subtopic 1
+        Subtopic content here.
+        
+        ## Sub-subtopic
+        More details.
+    """
+}
+```
+
+REGISTRATION:
+- Evennia reads HELP_ENTRY_DICTS list during server initialization
+- Settings configured in: beckonmu/server/conf/settings.py (FILE_HELP_ENTRY_MODULES)
+- Database-backed entries can also be added via the `sethelp` command in-game
+
+SUBTOPIC SYNTAX:
+- Single # creates a top-level subtopic
+- Double ## creates nested subtopics
+- Subtopics are navigable with: help <topic> <subtopic>
+
+================================================================================
+SECTION 2: EXISTING HELP FILES INVENTORY
+================================================================================
+
+HELP ENTRIES CURRENTLY DEFINED: 1
+
+1. "evennia" (Alias: "ev")
+   Location: /home/user/TheBeckoningMU/beckonmu/world/help_entries.py (lines 28-58)
+   Category: General
+   Access: read:perm(Developer) [Developer-only]
+   Content: Overview of Evennia, installation links, community resources
+   Subtopics: Installation, Community (with nested Discussions, Discord)
+   Status: ✓ EXISTS (Generic framework documentation only)
+
+GAPS IDENTIFIED:
+- Only 1 help entry exists for the entire game system
+- No game-specific help entries for any commands or features
+- No help for players about V5 mechanics, gameplay, roleplay
+- No help for staff about administrative commands
+
+================================================================================
+SECTION 3: COMMANDS INVENTORY
+================================================================================
+
+TOTAL COMMANDS: 47
+Categories: V5 (14), Admin (4), Staff (4), Character (5), V5 - Combat (4), 
+            V5 - Disciplines (3), V5 - Backgrounds (1), V5 - Thin-Blood (2),
+            V5 Social (2), General Evennia (default commands not listed)
+
+COMMAND LIST BY CATEGORY:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CHARACTER & CHARGEN (5 commands):
++chargen           - Character generation system                [Character]
++sheet             - Full character sheet display                [Character]
++st                - Abbreviated status display                  [Character]
++setstat           - Set character stat (during chargen)         [Character]
++setdisc           - Set character discipline (during chargen)   [Character]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/chargen.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EXPERIENCE POINTS (3 commands):
++xp                - View XP balance and log                     [V5]
++spend             - Spend XP on traits                          [V5]
++xpaward           - Award XP to character (admin)               [Admin]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/xp.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HUNTING & FEEDING (5 commands):
++hunt              - Hunt for prey to feed upon                  [V5]
++feed              - Feed on a target                            [V5]
++huntinfo          - View hunting info                           [V5]
++huntaction        - Perform hunting action                      [V5]
++huntcancel        - Cancel active hunt                          [V5]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/hunt.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DISCIPLINES (3 commands):
++disciplines       - View known disciplines and powers           [V5 - Disciplines]
++power             - Activate a discipline power                 [V5 - Disciplines]
++powerinfo         - Get info on specific discipline power       [V5 - Disciplines]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/disciplines.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ACTIVE EFFECTS (1 command):
++effects           - View and manage active discipline effects   [V5 - Disciplines]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/effects.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMBAT (4 commands):
++attack            - Perform attack roll against target          [V5 - Combat]
++damage            - Apply damage to target                      [V5 - Combat]
++heal              - Heal damage on target                       [V5 - Combat]
++health            - View health/damage status                   [V5 - Combat]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/combat.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HUMANITY SYSTEM (4 commands):
++humanity          - View and manage humanity, convictions, touchstones [V5]
++stain             - Add a stain (humanity violation)             [V5]
++remorse           - Attempt remorse roll                        [V5]
++frenzy            - Check frenzy status and resist frenzy       [V5]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/humanity.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BACKGROUNDS (1 command):
++background        - View and use background advantages          [V5 - Backgrounds]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/backgrounds.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+THIN-BLOOD ALCHEMY (2 commands):
++alchemy           - Craft and use thin-blood alchemy formulae   [V5 - Thin-Blood]
++daylight          - Thin-blood daylight power                   [V5 - Thin-Blood]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/thinblood.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BOONS/PRESTATION SYSTEM (7 commands):
++boon              - View boons (favors and debts)               [V5]
++boongive          - Offer a boon to another character           [V5]
++boonaccept        - Accept a boon offer                         [V5]
++boondecline       - Decline a boon offer                        [V5]
++booncall          - Call in a boon                              [V5]
++boonfulfill       - Fulfill a called boon                       [V5]
++boonadmin         - Admin boon management (admin)               [Admin]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/boons/commands.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STATUS SYSTEM (4 commands):
++status            - View Kindred social status                  [V5]
++positions         - View all positions and position holders     [V5]
++statusreq         - Request status change (position assignment) [V5]
++statusadmin       - Admin status management (admin)             [Admin]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/status/commands.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SOCIAL/COTERIES (2 commands):
++coterie           - Manage vampire groups and resources         [V5 Social]
++social            - View social standing and interactions       [V5 Social]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/v5/social.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STAFF CHARACTER APPROVAL (6 commands):
++pending           - List characters awaiting approval           [Staff]
++review            - Review a character application              [Staff]
++charedit          - Edit a character's traits/data              [Staff]
++approve           - Approve a character for play                [Staff]
++reject            - Reject a character application              [Staff]
++import            - Import character from JSON                  [Character]
+
+FILE: /home/user/TheBeckoningMU/beckonmu/commands/chargen.py
+
+================================================================================
+SECTION 4: SYSTEMS & FEATURES INVENTORY
+================================================================================
+
+MAJOR GAME SYSTEMS IDENTIFIED:
+
+1. CHARACTER GENERATION (Chargen)
+   - Supported by: v5_data.py (CHARGEN_RULES section)
+   - Commands: +chargen, +setstat, +setdisc
+   - Features:
+     * Clan selection (14 clans available)
+     * Predator Type selection (multiple types)
+     * Attribute allocation (7/5/3 V5 rules)
+     * Skill allocation (13/9/5 V5 rules)
+     * Discipline selection (2-3 dots at creation)
+     * Specialty selection
+   - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+2. ATTRIBUTES & SKILLS
+   - Attributes: Physical (Strength, Dexterity, Stamina), Social (Charisma, 
+     Manipulation, Composure), Mental (Intelligence, Wits, Resolve)
+   - Skills: 27 total, organized by Physical/Social/Mental
+   - Displayed via: +sheet, +st commands
+   - Help Coverage: ✗ NONE (no dedicated help entries)
+
+3. CLANS (14 total)
+   - Camarilla: Brujah, Gangrel, Malkavian, Nosferatu, Toreador, Tremere, Ventrue
+   - Sabbat: Lasombra, Tzimisce
+   - Independents: Ravnos, Banu Haqim
+   - Other: Ministry, Salubri, Caitiff, Thin-Blood
+   - Each has: in-clan disciplines, bane, compulsion
+   - Help Coverage: ✗ NONE
+
+4. DISCIPLINES (14 disciplines with 5 levels each)
+   - Animalism, Auspex, Blood Sorcery, Celerity, Dominate, Fortitude, Obfuscate,
+     Oblivion, Potence, Presence, Protean, Thin-Blood Alchemy
+   - Commands: +disciplines, +power, +powerinfo, +effects
+   - Each power has: name, description, rouse requirement, dice pool, duration
+   - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+5. EXPERIENCE POINTS (XP) SYSTEM
+   - Commands: +xp, +spend, +xpaward
+   - Features: XP earning, spending on attributes/skills/disciplines/humanity/willpower
+   - Cost scaling based on V5 rules
+   - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+6. HUNTING & FEEDING SYSTEM
+   - Commands: +hunt, +feed, +huntinfo, +huntaction, +huntcancel
+   - Features: 
+     * Multiple hunting locations (club, street, residential, hospital, secured, rural)
+     * Difficulty ratings (3-7)
+     * Predator type bonuses
+     * AI Storyteller integration
+     * Hunger tracking
+   - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+7. BLOOD & HUNGER SYSTEM
+   - Tracked in character database
+   - Affects hunting necessity, feeding, frenzy checks
+   - Part of vampire vitals display in +sheet
+   - Help Coverage: ✗ NONE (no dedicated help entries)
+
+8. HUMANITY SYSTEM
+   - Components: Humanity rating, Convictions, Touchstones, Stains, Remorse
+   - Commands: +humanity, +stain, +remorse, +frenzy
+   - Features:
+     * Conviction management (max 3)
+     * Touchstone management (max = Humanity ÷ 2)
+     * Stain tracking (violation of convictions)
+     * Remorse rolls for recovery
+     * Frenzy checks and resistance
+   - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+9. COMBAT SYSTEM
+   - Commands: +attack, +damage, +heal, +health
+   - Features:
+     * Dice pool-based combat
+     * Defense calculation
+     * Margin of success for damage
+     * Impairment penalties
+     * Discipline bonuses (Potence, Celerity)
+   - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+10. BACKGROUNDS SYSTEM
+    - Command: +background
+    - Features:
+      * Multiple background types (Contacts, Herd, Resources, etc.)
+      * Mechanical benefits (bonus dice, resources)
+      * Background uses/resets
+      * Feed from Herd
+      * Resources acquisition
+    - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+11. THIN-BLOOD SYSTEM
+    - Commands: +alchemy, +daylight
+    - Features:
+      * Thin-Blood Alchemy formulae
+      * Formula crafting and usage
+      * Ingredients management
+      * Daylight resistance mechanics
+    - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+12. BOONS/PRESTATION SYSTEM
+    - Commands: +boon, +boongive, +boonaccept, +boondecline, +booncall, +boonfulfill, +boonadmin
+    - Features:
+      * Boon types: Life, Blood, Major, Minor, Trivial
+      * Boon weight system
+      * Ledger tracking (what you owe vs what others owe you)
+      * Pending boons
+      * Admin dispute resolution
+    - Database Models: Boon, Ledger
+    - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+13. STATUS SYSTEM (Kindred Social Standing)
+    - Commands: +status, +positions, +statusreq, +statusadmin
+    - Features:
+      * Total status rating (0-5+)
+      * Position system (e.g., Prince, Sheriff, Harpy, Seneschal)
+      * Position bonuses
+      * Earned vs position status
+      * Status history tracking
+      * Status requests
+    - Database Models: CharacterStatus, CamarillaPosition, StatusRequest
+    - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+14. COTERIES/GROUPS SYSTEM
+    - Commands: +coterie, +social
+    - Features:
+      * Group creation and management
+      * Member invitation/acceptance
+      * Roles (leader, lieutenant, member)
+      * Group resources (Domain, Haven, Herd, Contacts)
+      * Resource pooling
+    - Database Models: Coterie, CoterieMember, CoteryResource
+    - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+15. STAFF CHARACTER APPROVAL SYSTEM
+    - Commands: +pending, +review, +charedit, +approve, +reject, +import
+    - Features:
+      * Character submission workflow
+      * Staff review and editing
+      * JSON import support
+      * Approval/rejection with feedback
+    - Database Models: CharacterBio, Trait, TraitCategory
+    - Help Coverage: ⚠ PARTIAL (commands have docstrings but no dedicated help entries)
+
+16. BLOOD POTENCY SYSTEM
+    - Tracked in character database
+    - Affects power level, sire requirements, ghoul creation
+    - Help Coverage: ✗ NONE (no dedicated help entries)
+
+================================================================================
+SECTION 5: GAP ANALYSIS
+================================================================================
+
+CRITICAL GAPS:
+
+⚠ SEVERE HELP COVERAGE SHORTAGE:
+- Current: 1 help entry (generic Evennia info)
+- Commands with inline help: 47 (via docstrings)
+- Dedicated help entries needed: 47+
+- Severity: CRITICAL - New players have no way to understand the game system
+
+⚠ MISSING HELP CATEGORIES:
+- [ ] General Game Information
+  * What is Vampire: The Masquerade?
+  * How to get started
+  * V5 basic rules overview
+  * Terminology glossary
+
+- [ ] Character Creation Help
+  * Chargen tutorial/walkthrough
+  * Clan selection guide
+  * Predator type explanations
+  * Attribute/Skill allocation strategy
+
+- [ ] V5 Mechanics Help
+  * How the dice system works
+  * Rouse checks explanation
+  * Success/failure interpretation
+  * Difficulty ratings
+
+- [ ] Attributes & Skills Help
+  * Physical attributes explained
+  * Social attributes explained
+  * Mental attributes explained
+  * All 27 skills with descriptions
+
+- [ ] Clans Help
+  * Each of 14 clans needs its own entry
+  * Explaining: in-clan disciplines, banes, compulsions
+  * Strategic advice for each clan
+  * Clan roleplay tips
+
+- [ ] Disciplines Help
+  * Each of 14 disciplines needs overview
+  * Power descriptions (1-5 levels)
+  * How to use discipline powers
+  * Amalgam explanations
+  * Common discipline combos
+
+- [ ] Combat Help
+  * Combat system overview
+  * How to perform attacks
+  * Damage calculation
+  * Defense mechanics
+  * Impairment penalties
+
+- [ ] Hunting & Feeding Help
+  * Hunting locations and difficulties
+  * Predator type bonuses explained
+  * AI Storyteller mode
+  * Failed hunt consequences
+  * Hunger management
+
+- [ ] Humanity System Help
+  * Humanity rating explanation
+  * Convictions system
+  * Touchstones system
+  * Stains and Remorse
+  * Frenzy mechanics
+  * Breaking points
+
+- [ ] Boons/Prestation Help
+  * What are boons?
+  * Boon types and weights
+  * How to give/accept/call boons
+  * Boon politics and strategy
+  * Harpy role explanation
+
+- [ ] Status System Help
+  * What is Kindred Status?
+  * Available positions
+  * How status affects gameplay
+  * Requesting positions
+  * Status politics
+
+- [ ] Coteries Help
+  * Group creation and management
+  * Member roles and responsibilities
+  * Resource types and uses
+  * Coterie advantages
+  * Coterie politics
+
+- [ ] Backgrounds Help
+  * All background types
+  * Background benefits
+  * How to use backgrounds
+  * Resource acquisition
+
+- [ ] Thin-Blood Help
+  * Thin-blood specific mechanics
+  * Alchemy system
+  * Formula types
+  * Ingredient management
+
+- [ ] Administrative Help
+  * Staff commands guide
+  * Character approval workflow
+  * How to review applications
+  * Admin commands reference
+  * How to use trait system
+
+MISSING COMMAND DOCUMENTATION:
+
+Commands with only docstring help (need dedicated entries):
+- Character Creation: +chargen, +setstat, +setdisc
+- Experience: +xp, +spend, +xpaward
+- Hunting: +hunt, +feed, +huntinfo, +huntaction, +huntcancel
+- Disciplines: +disciplines, +power, +powerinfo, +effects
+- Combat: +attack, +damage, +heal, +health
+- Humanity: +humanity, +stain, +remorse, +frenzy
+- Backgrounds: +background
+- Thin-Blood: +alchemy, +daylight
+- Boons: +boon, +boongive, +boonaccept, +boondecline, +booncall, +boonfulfill
+- Status: +status, +positions, +statusreq
+- Coteries: +coterie, +social
+- Staff: +pending, +review, +charedit, +approve, +reject, +import
+
+MISSING SYSTEM DOCUMENTATION:
+
+- [ ] Blood & Hunger System
+- [ ] Blood Potency System
+- [ ] Merits & Flaws System (defined in v5_data but not implemented)
+- [ ] Resonances (defined in v5_data but not documented)
+- [ ] Generation System
+- [ ] Thin-Blood specific weaknesses
+- [ ] Vampire creation via blood bond
+- [ ] Masquerade mechanics
+- [ ] Sect system (Camarilla vs Sabbat differences)
+- [ ] Roleplay guidelines
+- [ ] House rules specific to TheBeckoningMU
+
+MISSING REFERENCE DOCUMENTATION:
+
+- [ ] Quick reference card (all attributes/skills at glance)
+- [ ] Clan comparison matrix
+- [ ] Discipline power index
+- [ ] XP cost reference
+- [ ] Dice pool calculator guide
+- [ ] Common abbreviations glossary
+- [ ] Changelogs for custom implementations
+
+================================================================================
+SECTION 6: PRIORITIZED IMPLEMENTATION ROADMAP
+================================================================================
+
+PRIORITY 1 - CRITICAL (Needed immediately for playability):
+
+1. [ ] GENERAL GAME INFORMATION
+   Help topic: "V5" or "vampire"
+   Subtopics: overview, basics, start, glossary
+   Estimated effort: 2-3 hours
+
+2. [ ] CHARACTER CREATION TUTORIAL
+   Help topic: "chargen" (replace/supplement current docstring)
+   Subtopics: overview, step1-step5, attributes, skills, disciplines, clans
+   Estimated effort: 3-4 hours
+
+3. [ ] DICE & MECHANICS
+   Help topic: "mechanics"
+   Subtopics: dice, rouse, success, margin, difficulty, pools
+   Estimated effort: 2-3 hours
+
+4. [ ] CLANS GUIDE
+   Help topic: "clans"
+   Subtopics: camarilla, sabbat, independent (or individual clan entries)
+   Estimated effort: 4-5 hours
+
+PRIORITY 2 - HIGH (Important for new players):
+
+5. [ ] ATTRIBUTES & SKILLS
+   Help topic: "attributes" and "skills"
+   Subtopics: individual attribute/skill descriptions
+   Estimated effort: 3-4 hours
+
+6. [ ] DISCIPLINES OVERVIEW
+   Help topic: "disciplines"
+   Subtopics: overview + each major discipline
+   Estimated effort: 4-6 hours
+
+7. [ ] HUNTING & FEEDING
+   Help topic: "hunting"
+   Subtopics: locations, predator types, feeding mechanics
+   Estimated effort: 2-3 hours
+
+8. [ ] HUMANITY SYSTEM
+   Help topic: "humanity"
+   Subtopics: convictions, touchstones, stains, frenzy, remorse
+   Estimated effort: 2-3 hours
+
+PRIORITY 3 - MEDIUM (Helpful for regular play):
+
+9. [ ] COMBAT SYSTEM
+   Help topic: "combat"
+   Subtopics: attack, damage, defense, examples
+   Estimated effort: 2-3 hours
+
+10. [ ] BOONS/PRESTATION
+    Help topic: "boons"
+    Subtopics: overview, types, workflow, politics
+    Estimated effort: 2-3 hours
+
+11. [ ] STATUS SYSTEM
+    Help topic: "status"
+    Subtopics: overview, positions, mechanics
+    Estimated effort: 2-3 hours
+
+12. [ ] COTERIES/GROUPS
+    Help topic: "coterie"
+    Subtopics: creation, management, resources, politics
+    Estimated effort: 2-3 hours
+
+PRIORITY 4 - LOWER (Reference/polish):
+
+13. [ ] BACKGROUNDS GUIDE
+14. [ ] THIN-BLOOD SYSTEM
+15. [ ] STAFF/ADMIN GUIDE
+16. [ ] QUICK REFERENCE CARDS
+17. [ ] TROUBLESHOOTING GUIDE
+18. [ ] ADVANCED STRATEGIES GUIDE
+
+ESTIMATED TOTAL EFFORT: 30-40 hours of writing/formatting
+
+================================================================================
+SECTION 7: IMPLEMENTATION RECOMMENDATIONS
+================================================================================
+
+1. HELP FILE ORGANIZATION:
+
+   Suggested structure for help_entries.py:
+   
+   # Core Game Knowledge
+   - help_v5_overview
+   - help_mechanics_dice
+   - help_glossary
+   
+   # Character Creation
+   - help_chargen_tutorial
+   - help_clans (with subtopics for each clan)
+   - help_attributes
+   - help_skills
+   - help_disciplines_overview
+   
+   # Gameplay Systems
+   - help_hunting
+   - help_combat
+   - help_humanity
+   - help_boons
+   - help_status
+   - help_coteries
+   - help_backgrounds
+   - help_thinblood
+   
+   # Staff
+   - help_staff_approval
+   - help_staff_commands
+
+2. HELP FILE FORMAT:
+
+   - Keep entries under 2000 characters for readability
+   - Use ANSI color codes for formatting (consistent with game theme)
+   - Include examples with each command-related help entry
+   - Use consistent formatting across all entries
+   - Include "See also:" references to related help topics
+   - Add "Related commands:" for command help entries
+
+3. COMMAND HELP INTEGRATION:
+
+   Current situation:
+   - Commands have docstrings (good start)
+   - But players access help via `help <topic>` not command docstrings
+   - Need to create dedicated help entries for discoverability
+   
+   Recommendation:
+   - Keep command docstrings (they help staff reading code)
+   - Create comprehensive help_entries for each command
+   - Ensure help topics match command names where possible
+
+4. CONTENT DEVELOPMENT WORKFLOW:
+
+   Phase 1 (Week 1):
+   - Write critical priority topics
+   - Get staff review for accuracy
+   - Test with new players
+
+   Phase 2 (Week 2):
+   - Write high priority topics
+   - Refine based on new player feedback
+   - Create search-friendly aliases
+
+   Phase 3 (Ongoing):
+   - Add medium/lower priority topics
+   - Maintain and update as features change
+   - Gather player feedback on help clarity
+
+5. FILE ORGANIZATION BEST PRACTICES:
+
+   - Each major system should have its own help_entry dict
+   - Use aliases liberally for discoverability
+   - Add cross-references between related topics
+   - Include examples where applicable
+   - Keep language simple and clear (not overly technical)
+   - Include roleplay context and flavor text
+
+6. TESTING:
+
+   - Have staff test all help entries before going live
+   - Have new players test discoverability
+   - Ensure ANSI colors display correctly
+   - Test subtopic navigation
+   - Verify all references link correctly
+
+================================================================================
+APPENDIX A: COMMAND FILE MAPPING
+================================================================================
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/xp.py
+  - CmdXP (+xp)
+  - CmdSpend (+spend)
+  - CmdXPAward (+xpaward)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/chargen.py
+  - CmdChargen (+chargen)
+  - CmdSetStat (+setstat)
+  - CmdSetDiscipline (+setdisc)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/hunt.py
+  - CmdHunt (+hunt)
+  - CmdFeed (+feed)
+  - CmdHuntingInfo (+huntinfo)
+  - CmdHuntAction (+huntaction)
+  - CmdHuntCancel (+huntcancel)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/disciplines.py
+  - CmdDisciplines (+disciplines)
+  - CmdActivatePower (+power)
+  - CmdDisciplineInfo (+powerinfo)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/effects.py
+  - CmdEffects (+effects)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/combat.py
+  - CmdAttack (+attack)
+  - CmdDamage (+damage)
+  - CmdHeal (+heal)
+  - CmdHealth (+health)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/humanity.py
+  - CmdHumanity (+humanity)
+  - CmdStain (+stain)
+  - CmdRemorse (+remorse)
+  - CmdFrenzy (+frenzy)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/backgrounds.py
+  - CmdBackground (+background)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/thinblood.py
+  - CmdAlchemy (+alchemy)
+  - CmdDaylight (+daylight)
+
+/home/user/TheBeckoningMU/beckonmu/commands/v5/social.py
+  - CmdCoterie (+coterie)
+  - CmdSocial (+social)
+
+/home/user/TheBeckoningMU/beckonmu/commands/chargen.py
+  - CmdPending (+pending)
+  - CmdReview (+review)
+  - CmdCharEdit (+charedit)
+  - CmdApprove (+approve)
+  - CmdReject (+reject)
+  - CmdImportCharacter (+import)
+
+/home/user/TheBeckoningMU/beckonmu/boons/commands.py
+  - CmdBoon (+boon)
+  - CmdBoonGive (+boongive)
+  - CmdBoonAccept (+boonaccept)
+  - CmdBoonDecline (+boondecline)
+  - CmdBoonCall (+booncall)
+  - CmdBoonFulfill (+boonfulfill)
+  - CmdBoonAdmin (+boonadmin)
+
+/home/user/TheBeckoningMU/beckonmu/status/commands.py
+  - CmdStatus (+status)
+  - CmdPositions (+positions)
+  - CmdStatusRequest (+statusreq)
+  - CmdStatusAdmin (+statusadmin)
+
+================================================================================
+APPENDIX B: V5 DATA REFERENCE (from v5_data.py)
+================================================================================
+
+ATTRIBUTES: 9 total
+  Physical: Strength, Dexterity, Stamina
+  Social: Charisma, Manipulation, Composure
+  Mental: Intelligence, Wits, Resolve
+
+SKILLS: 27 total
+  Physical (9): Athletics, Brawl, Craft, Drive, Firearms, Melee, Larceny, Stealth, Survival
+  Social (9): Animal Ken, Etiquette, Insight, Intimidation, Leadership, Performance, Persuasion, Streetwise, Subterfuge
+  Mental (9): Academics, Awareness, Finance, Investigation, Medicine, Occult, Politics, Science, Technology
+
+CLANS: 14 total
+  Brujah, Gangrel, Malkavian, Nosferatu, Toreador, Tremere, Ventrue,
+  Lasombra, Tzimisce, Ravnos, Banu Haqim, Ministry, Salubri, Caitiff, Thin-Blood
+
+DISCIPLINES: 14 defined
+  Animalism, Auspex, Blood Sorcery, Celerity, Dominate, Fortitude,
+  Obfuscate, Oblivion, Potence, Presence, Protean, Thin-Blood Alchemy
+
+PREDATOR TYPES: Multiple defined (exact list in v5_data.py)
+
+BACKGROUNDS: Multiple defined
+
+XP COSTS: Defined by trait type (attribute, skill, specialty, discipline, humanity, willpower)
+
+================================================================================
+END REPORT
+================================================================================
+
+Report generated by: Help System Analysis Tool
+Analysis date: 2025-11-06
+Repository: TheBeckoningMU (Evennia-based VtM 5e MUD)
+GitHub branch: claude/review-help-file-system-011CUs21ZzPDimctQrJZ3p6R

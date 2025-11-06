@@ -1,0 +1,44 @@
+|[R+===================================================================+
+|W|                       CHARACTER SHEET                             |
+|[R+===================================================================+|n
+
+View your complete character sheet or another character's public information.
+
+|WUSAGE:|n
+
+  |y+sheet|n              - View your own complete character sheet
+  |y+sheet <character>|n  - View another character's sheet
+  |y+st|n                 - View abbreviated status (quick reference)
+
+|WDISPLAYED INFORMATION:|n
+
+|yPersonal Info:|n
+  - Name, Clan, Generation, Blood Potency
+  - Predator Type, Sire, Coterie
+
+|yVital Statistics:|n
+  - Health, Willpower, Humanity
+  - Blood Pool, Hunger level
+  - Experience Points (current/total/unspent)
+
+|yAttributes:|n Physical, Social, Mental (9 total)
+|ySkills:|n Physical, Social, Mental (27 total)
+|yDisciplines:|n Known disciplines with power levels
+|yAdvantages:|n Backgrounds, Merits, Flaws
+|ySocial:|n Status, Boons owed/owing
+
+|WEXAMPLES:|n
+
+  |y+sheet|n
+  |y+sheet Alice|n
+  |y+st|n
+
+|WNOTES:|n
+
+  - Your own sheet shows all private information
+  - Other characters' sheets show only public info
+  - Use |y+st|n for a quick at-a-glance summary
+
+|[r+===================================================================+|n
+
+|ySee also:|n help chargen, help xp, help status, help disciplines

@@ -6,6 +6,17 @@ Helper functions for managing and using discipline powers.
 
 from world.v5_data import DISCIPLINES
 from world.v5_dice import rouse_check
+from .discipline_effects import (
+    apply_effect,
+    get_power_duration,
+    apply_obfuscate_effect,
+    apply_dominate_effect,
+    apply_auspex_effect,
+    apply_celerity_effect,
+    apply_fortitude_effect,
+    apply_presence_effect,
+    apply_protean_effect
+)
 
 
 def get_character_disciplines(character):
@@ -176,12 +187,47 @@ def activate_discipline_power(character, discipline_name, power_name):
     # Check for Resonance bonus
     resonance_bonus = check_resonance_bonus(character, discipline_name)
 
+    # Apply effect tracking if power has duration
+    power_copy = power.copy()
+    power_copy['discipline'] = discipline_name
+
+    duration = get_power_duration(power_copy)
+    effect_applied = False
+    applied_effect = None
+
+    if duration and duration != 'instant':
+        # Apply generic effect
+        applied_effect = apply_effect(character, power_copy, duration)
+        effect_applied = True
+
+        # Apply discipline-specific effects
+        discipline_lower = discipline_name.lower()
+        power_name_lower = power['name'].lower()
+
+        if discipline_lower == 'obfuscate':
+            apply_obfuscate_effect(character, power['name'])
+        elif discipline_lower == 'dominate':
+            apply_dominate_effect(character, power['name'])
+        elif discipline_lower == 'auspex':
+            apply_auspex_effect(character, power['name'])
+        elif discipline_lower == 'celerity':
+            apply_celerity_effect(character, power['name'])
+        elif discipline_lower == 'fortitude':
+            apply_fortitude_effect(character, power['name'])
+        elif discipline_lower == 'presence':
+            apply_presence_effect(character, power['name'])
+        elif discipline_lower == 'protean':
+            apply_protean_effect(character, power['name'])
+
     result = {
         "success": True,
         "message": f"You successfully activate {power['name']}.",
         "rouse_result": rouse_result,
         "power": power,
-        "resonance_bonus": resonance_bonus
+        "resonance_bonus": resonance_bonus,
+        "duration": duration,
+        "effect_applied": effect_applied,
+        "effect": applied_effect
     }
 
     return result

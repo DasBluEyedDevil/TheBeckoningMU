@@ -219,6 +219,23 @@ class CmdActivatePower(Command):
                 bonus_text = f" {GOLD}(+1 resonance){RESET}"
             output.append(f"{SHADOW_GREY}Roll:{RESET} {dice_pool}{bonus_text}")
 
+        # Show effect information if applied
+        if result.get("effect_applied"):
+            effect = result.get("effect")
+            duration = result.get("duration", "unknown")
+
+            output.append("")
+            if duration == "scene":
+                output.append(f"{PALE_IVORY}Effect Duration:{RESET} Active until end of scene")
+            elif duration == "turn":
+                turns = effect.get("turns_remaining", 0) if effect else 0
+                output.append(f"{PALE_IVORY}Effect Duration:{RESET} {turns} turn{'s' if turns != 1 else ''}")
+            elif duration == "permanent":
+                output.append(f"{PALE_IVORY}Effect Duration:{RESET} Permanent")
+
+            if effect:
+                output.append(f"{SHADOW_GREY}Effect ID:{RESET} {effect.get('id', 'unknown')} {SHADOW_GREY}(Use +effects to view){RESET}")
+
         output.append(f"{GOLD}═══════════════════════════════════════════════════════════════════════{RESET}")
 
         # Announce to room

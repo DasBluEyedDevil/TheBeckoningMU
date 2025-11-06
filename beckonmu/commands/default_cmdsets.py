@@ -55,6 +55,10 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdActivatePower)
         self.add(CmdDisciplineInfo)
 
+        # Add V5 Effects command
+        from commands.v5.effects import CmdEffects
+        self.add(CmdEffects)
+
         # Add Status system commands
         from beckonmu.status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
         self.add(CmdStatus)

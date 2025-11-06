@@ -128,6 +128,7 @@ class Character(ObjectParent, DefaultCharacter):
 
         # Initialize active effects (discipline powers, conditions)
         self.db.effects = []  # List of dicts: {"name": "...", "expires": timestamp, "data": {}}
+        self.db.active_effects = []  # Discipline power effects with durations
 
         # Initialize character creation tracking
         self.db.chargen = {

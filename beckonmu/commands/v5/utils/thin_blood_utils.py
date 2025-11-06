@@ -5,7 +5,7 @@ Helper functions for Thin-Blood mechanics and Alchemy.
 """
 
 from world.v5_data import DISCIPLINES
-from world.v5_dice import roll_dice
+from world.v5_dice import roll_pool
 import random
 
 
@@ -106,9 +106,10 @@ def craft_formula(character, formula_name):
 
     pool = character.db.attributes.get("intelligence", 1) + alchemy_level
 
-    result = roll_dice(pool, difficulty)
+    # Thin-Bloods don't use Hunger dice for Alchemy (Blood Potency 0)
+    result = roll_pool(pool=pool, hunger=0, difficulty=difficulty)
 
-    if result["success"]:
+    if result.is_success():
         # Consume ingredients
         for ingredient in formula.get("ingredients", []):
             character.db.alchemy_ingredients[ingredient] -= 1

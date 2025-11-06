@@ -4,8 +4,8 @@ XP System Utility Functions for V5
 Handles experience point costs, spending, and tracking.
 """
 
-from commands.v5.utils.trait_utils import get_trait_value, set_trait_value
-from commands.v5.utils.clan_utils import get_clan, get_inclan_disciplines
+from .trait_utils import get_trait_value, set_trait_value
+from .clan_utils import get_clan, get_inclan_disciplines
 
 
 def get_xp_cost_attribute(character, attribute_name):

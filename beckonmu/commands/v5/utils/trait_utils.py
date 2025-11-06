@@ -6,17 +6,100 @@ including attributes, skills, disciplines, and advantages.
 
 These functions provide a clean interface between commands and character data,
 with proper error handling and validation.
-
-NOTE: This module uses the bridge functions from traits.utils to ensure
-compatibility with both the web-based character import system (Django models)
-and the in-game character creation system (char.db.stats).
 """
 
-# Import the bridge functions from the existing traits system
-from traits.utils import (
-    get_character_trait_value as _db_get_trait,
-    set_character_trait_value as _db_set_trait,
-)
+
+# ============================================================================
+# Internal Bridge Functions
+# ============================================================================
+# These provide a unified interface for accessing character traits,
+# whether stored in character.db.stats or in Django models (future).
+# ============================================================================
+
+def _db_get_trait(character, trait_name):
+    """
+    Internal function to get a trait value from character.db.stats.
+
+    Args:
+        character: Character object
+        trait_name (str): Name of the trait (normalized)
+
+    Returns:
+        int: Trait value, or 0 if not found
+    """
+    trait_name = trait_name.lower().replace(" ", "_")
+
+    if not hasattr(character.db, 'stats') or not character.db.stats:
+        return 0
+
+    stats = character.db.stats
+
+    # Check attributes (physical, social, mental)
+    for category in ['physical', 'social', 'mental']:
+        attrs = stats.get('attributes', {}).get(category, {})
+        if trait_name in attrs:
+            return attrs[trait_name]
+
+    # Check skills
+    for category in ['physical', 'social', 'mental']:
+        skills = stats.get('skills', {}).get(category, {})
+        if trait_name in skills:
+            return skills[trait_name]
+
+    # Check disciplines
+    disciplines = stats.get('disciplines', {})
+    if trait_name in disciplines:
+        return disciplines[trait_name].get('level', 0)
+
+    # Check advantages/backgrounds
+    if hasattr(character.db, 'advantages'):
+        backgrounds = character.db.advantages.get('backgrounds', {})
+        if trait_name in backgrounds:
+            return backgrounds[trait_name]
+
+    return 0
+
+
+def _db_set_trait(character, trait_name, value):
+    """
+    Internal function to set a trait value in character.db.stats.
+
+    Args:
+        character: Character object
+        trait_name (str): Name of the trait (normalized)
+        value (int): New value for the trait
+
+    Returns:
+        bool: True if trait was found and updated, False otherwise
+    """
+    trait_name = trait_name.lower().replace(" ", "_")
+
+    if not hasattr(character.db, 'stats') or not character.db.stats:
+        return False
+
+    stats = character.db.stats
+
+    # Try to set in attributes
+    for category in ['physical', 'social', 'mental']:
+        attrs = stats.get('attributes', {}).get(category, {})
+        if trait_name in attrs:
+            attrs[trait_name] = value
+            return True
+
+    # Try to set in skills
+    for category in ['physical', 'social', 'mental']:
+        skills = stats.get('skills', {}).get(category, {})
+        if trait_name in skills:
+            skills[trait_name] = value
+            return True
+
+    # Try to set in disciplines
+    disciplines = stats.get('disciplines', {})
+    if trait_name in disciplines:
+        disciplines[trait_name]['level'] = value
+        return True
+
+    return False
 
 
 def get_trait_value(character, trait_name, category=None):

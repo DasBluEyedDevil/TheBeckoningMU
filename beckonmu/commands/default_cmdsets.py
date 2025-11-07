@@ -128,6 +128,10 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         from beckonmu.jobs.cmdset import JobsCmdSet
         self.add(JobsCmdSet)
 
+        # Add News command
+        from commands.news import CmdNews
+        self.add(CmdNews)
+
 
 class AccountCmdSet(default_cmds.AccountCmdSet):
     """

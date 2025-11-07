@@ -1,0 +1,273 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                   |yROLEPLAY POLICY & GUIDELINES|n                    ║
+║              Standards for Roleplay on TheBeckoningMU            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c1. POSING STANDARDS|n
+
+|yMinimum Standards|n
+- Posts should be at least 2-3 sentences
+- Include actions, thoughts, or dialogue
+- Give other players something to respond to
+- Proofread for clarity (typos happen, but try!)
+
+|yGood Posing Practices|n
+```
+|gGood Example:|n
+  Sophia leans against the bar, her eyes tracking the newcomer with
+  predatory interest. "You're new here," she purrs, voice barely above
+  a whisper. Her fingers drum against her wine glass - a mortal
+  affectation she can't quite shake, even after fifty years.
+
+|rPoor Example:|n
+  She looks at him. "Hi."
+```
+
+|yPose Content|n
+- Describe your character's actions and demeanor
+- Include sensory details (what others see/hear)
+- Show, don't tell when possible
+- Avoid mind-reading or assumptions about others
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c2. POWER-POSING & GOD-MODING|n
+
+|yForbidden Actions|n
+- |rDon't|n decide the outcome of your actions on others
+- |rDon't|n control another player's character
+- |rDon't|n auto-hit in combat without dice rolls
+- |rDon't|n ignore established continuity
+
+|yExamples|n
+
+|rPower-Posing (Bad):|n
+  Marcus grabs the Tremere by the throat and slams him against the
+  wall, cutting off his air supply.
+
+|gProper Posing (Good):|n
+  Marcus lunges forward, attempting to grab the Tremere by the throat
+  and pin him against the wall.
+  OOC: |w+roll dexterity + brawl|n
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c3. CONSENT & COLLABORATION|n
+
+|yConsent Requirements|n
+
+|wAlways Require OOC Consent For:|n
+- Character death or permanent incapacitation
+- Permanent character changes (Embrace, diablerie, etc.)
+- Romance or ERP scenes
+- Torture or extreme violence
+- Triggering content (discuss beforehand)
+
+|wIC Actions That Need Discussion:|n
+- Blood Bonds (3 drinks over multiple scenes)
+- Major betrayals affecting multiple characters
+- Plots that significantly affect others' stories
+
+|yHow to Request Consent|n
+```
+OOC: Hey, I was thinking Marcus might try to blood bond your
+      character over the next few scenes. Is that something
+      you'd be interested in exploring?
+
+OOC: My character might attack yours if provoked. Are you okay
+      with that? We can use the combat system or narrate it.
+```
+
+|yFade to Black|n
+- Any player can call for FTB at any time
+- No explanation needed, no questions asked
+- Respect this boundary absolutely
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c4. SCENE ETIQUETTE|n
+
+|yJoining Scenes|n
+- Check if scene is open: read room desc or ask OOC
+- Private scenes: |w@lock here=enter:perm(Builder)|n
+- Don't interrupt intimate/private RP without invitation
+- Use |w+where|n (if available) to find public scenes
+
+|yPosting Order|n
+- 2-3 person scenes: Natural flow, no strict order
+- 4+ person scenes: Establish posting order
+- Skip yourself if you have nothing to add
+- Give 10-15 minutes before poking for poses
+
+|yLeaving Scenes|n
+- Give OOC notice if you need to leave suddenly
+- IC exit when possible ("Marcus excuses himself...")
+- Don't ghost - at least send page saying you had to go
+
+|yPacing|n
+- Match other players' posting speed when possible
+- Fast scenes: 5-10 min between poses
+- Slow scenes: 15-30 min acceptable
+- If you need time, say so OOC
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c5. IC vs OOC BOUNDARIES|n
+
+|yIC is IC, OOC is OOC|n
+- Your character's actions ≠ your personal views
+- Conflict IC should not create conflict OOC
+- If IC conflict becomes uncomfortable, discuss OOC
+
+|yMetagaming|n
+|rDon't:|n
+- Use OOC knowledge IC
+- Have your character "happen to" know things they shouldn't
+- Use alt characters to spy or gather intel
+- Read +bbs IC that your character wouldn't have access to
+
+|gDo:|n
+- Keep IC and OOC information separate
+- Play what your character would actually know
+- Ask STs for knowledge rolls if unsure what char knows
+
+|yRetcons|n
+- Minor retcons (typos, small details) are fine
+- Major retcons require all participants' agreement
+- Ask ST for mediation if needed
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c6. MATURE THEMES & CONTENT|n
+
+|yExpected Content|n
+- Violence and combat
+- Political intrigue and manipulation
+- Horror and psychological themes
+- Feeding and blood imagery
+- Moral struggles and Humanity loss
+
+|yContent Warnings|n
+Give OOC warning before RPing:
+- Graphic torture or extreme violence
+- Self-harm or suicide themes
+- Addiction or substance abuse themes
+- Sexual violence (requires explicit consent)
+
+|yForbidden Content|n
+- |rAbsolute ban:|n Sexual content involving minors
+- |rForbidden:|n Sexualized violence without explicit consent
+- |rAvoid:|n Real-world tragedies or recent sensitive events
+
+|yERP (Erotic Roleplay) Policy|n
+- Must be consensual between adult players
+- Keep to private rooms or pages
+- Not required for romance RP (FTB is always valid)
+- No ERP in public spaces
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c7. PLOT RUNNING & STORYTELLING|n
+
+|yPlayer-Run Plots|n
+- Players are encouraged to run plots for others!
+- Notify staff via |w+job|n before major plots
+- Don't break continuity or theme
+- Share spotlight - don't make it all about your character
+
+|yStoryteller (ST) Authority|n
+- STs have final say in their scenes
+- STs can adjudicate contested rolls
+- STs can add consequences or complications
+- Don't argue with ST decisions mid-scene (discuss after)
+
+|yCooperative Storytelling|n
+- Build on what others contribute
+- "Yes, and..." approach when possible
+- Let other characters shine
+- Create hooks for others to engage with
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c8. CHARACTER DEVELOPMENT|n
+
+|yGrowth Over Time|n
+- Characters should evolve through RP
+- React to events and consequences
+- Allow character flaws and failures
+- Not every scene needs to be "winning"
+
+|yBackground Integration|n
+- Use your backgrounds in RP (Allies, Contacts, etc.)
+- NPCs from your background should be run by STs
+- Backgrounds aren't automatic success, they're resources
+
+|yRelationships|n
+- Build IC relationships through RP, not backstory
+- Coteries form organically
+- Rivalries and alliances should have IC basis
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c9. ACTIVITY & AVAILABILITY|n
+
+|yActivity Requirements|n
+- Minimum 1 login per week
+- Participate in at least 1-2 scenes per week
+- Post to |w+bbs|n or +jobs if going inactive
+- Characters idle 30+ days may be frozen/retired
+
+|yFinding RP|n
+- Check |w+who|n for online players
+- Post RP availability on |w+bbs rp|n
+- Join public scenes in common locations
+- Reach out via page to arrange scenes
+
+|yScheduling|n
+- Different time zones are normal
+- Schedule scenes in advance if needed
+- Use |w+bbs|n to coordinate large events
+- Be flexible and accommodating
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c10. FOSTERING A GOOD COMMUNITY|n
+
+|yBe Welcoming|n
+- Help new players learn the ropes
+- Include newcomers in RP
+- Offer guidance on theme and mechanics
+- Don't gatekeep or form exclusive cliques
+
+|yBe Collaborative|n
+- Share spotlight with other players
+- Create hooks for others' stories
+- Support others' plots and character development
+- Cheer for other characters' successes
+
+|yBe Communicative|n
+- Use OOC communication liberally
+- Check in if you're uncertain about something
+- Give feedback kindly and constructively
+- Address problems before they escalate
+
+|yHave Fun!|n
+- This is a hobby, not a job
+- Don't stress about "winning"
+- Embrace the horror and drama
+- Enjoy the collaborative storytelling
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cQUESTIONS OR CONCERNS?|n
+
+- Read |w+news policy/rules|n for overall game rules
+- Create a |w+job|n for staff guidance
+- Ask on |w+bbs policy|n for clarification
+- Talk to other players - community helps community!
+
+|yRemember: We're all here to tell great stories together!|n
+
+|rLast Updated: November 2025|n

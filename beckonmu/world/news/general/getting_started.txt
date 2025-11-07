@@ -1,0 +1,151 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                   |yGETTING STARTED GUIDE|n                          ║
+║                 New Player Quick Reference                       ║
+╚══════════════════════════════════════════════════════════════════╝
+
+|cSTEP 1: CREATE YOUR CHARACTER|n
+
+You have two options for character creation:
+
+|wWeb-based Chargen|n (Recommended for new players)
+  Visit: |yhttp://localhost:4001/character-creation/|n
+  - Visual interface with tooltips
+  - Validation to prevent errors
+  - Submit for staff approval when complete
+
+|wIn-Game Chargen|n
+  Command: |w+chargen/start|n
+  - Text-based step-by-step process
+  - Type |w+chargen/help|n for guidance
+  - Finalize with |w+chargen/finalize|n
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cSTEP 2: LEARN THE BASICS|n
+
+|yEssential Commands|n
+
+  |w+help|n              - Access help system
+  |w+sheet|n             - View your character sheet
+  |w+who|n               - See who's online
+  |w+where|n             - See where players are (if implemented)
+  |wlook|n               - Look at your surroundings
+  |winventory|n          - Check your inventory
+
+|yCommunication|n
+
+  |wpage <name>=<msg>|n  - Send private message to player
+  |w+bbs|n               - Read bulletin boards
+  |w+bbs/post <board>/<subject>=<message>|n - Post to boards
+  |wsay <text>|n         - Speak in current room
+  |wpose <action>|n      - Describe your actions
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cSTEP 3: UNDERSTAND V5 MECHANICS|n
+
+|yCore Systems|n
+
+  |w+roll <pool>|n       - Roll dice (e.g., +roll strength + brawl)
+  |w+rouse|n             - Make a Rouse check to awaken blood
+  |w+hunt|n              - Feed on mortals
+  |w+hunger|n            - Check your Hunger level
+  |w+humanity|n          - View Humanity, Stains, Convictions
+
+|yDisciplines (Vampire Powers)|n
+
+  |w+disciplines|n       - List your disciplines
+  |w+power <name>|n      - Activate a discipline power
+  |w+powerinfo <name>|n  - Get info about a discipline power
+
+|yCombat (when needed)|n
+
+  |w+attack <target>|n   - Attack someone
+  |w+dodge|n             - Dodge an attack
+  |w+soak|n              - Soak damage
+  |w+heal|n              - Spend blood to heal
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cSTEP 4: JOIN THE COMMUNITY|n
+
+|yFind Roleplay|n
+
+  - Check |w+who|n to see who's online
+  - Read |w+bbs general|n for RP announcements
+  - Visit public gathering locations
+  - Join or form a Coterie with |w+coterie|n
+
+|yUnderstand Status|n
+
+  - Check your Status with |w+status|n
+  - Status represents political standing in vampire society
+  - Higher Status = more influence in Camarilla affairs
+
+|yTrack Boons|n
+
+  - Boons are favors owed between vampires
+  - Check your boons with |w+boon|n
+  - Give boons with |w+boon/give <target>=<type>|n
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cSTEP 5: ADVANCED FEATURES|n
+
+|yExperience & Advancement|n
+
+  |w+xp|n                - Check your XP
+  |w+xp/spend <trait>|n  - Spend XP to improve
+
+|yStaff Interaction|n
+
+  |w+job/create <category>=<message>|n - Create a staff request
+  |w+myjobs|n            - Check your jobs
+
+|yHelp System|n
+
+  |w+help <topic>|n      - Get help on specific topics
+  |w+help v5|n           - V5 mechanics overview
+  |w+help commands|n     - Command reference
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cKEY CONCEPTS FOR NEW PLAYERS|n
+
+|yThe Hunger|n
+- Ranges from 0 (satiated) to 5 (ravenous)
+- Increases when you use Disciplines or take damage
+- Feed with |w+hunt|n to reduce Hunger
+- At Hunger 5, risk of frenzy is extreme
+
+|yThe Masquerade|n
+- NEVER reveal your vampire nature to mortals
+- Violations = Blood Hunt (other vampires hunt you)
+- Use Disciplines discreetly
+- Clean up after feeding
+
+|yHumanity & Stains|n
+- Humanity measures your moral compass (1-10)
+- Stains accumulate from immoral acts
+- Roll Remorse at session end with |w+remorse|n
+- Lose Humanity if you fail Remorse roll
+
+|yFrenzy|n
+- The Beast taking control
+- Triggered by fire, hunger, provocation
+- Resist with |w+frenzy/resist <difficulty>|n
+- Consequences can be severe
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cNEED MORE HELP?|n
+
+- Read all |w+help v5|n topics for detailed mechanics
+- Check |w+news policy|n for game rules
+- Post questions on |w+bbs general|n
+- Create a |w+job|n for staff assistance
+- Ask experienced players for guidance
+
+|yMost importantly: Have fun and embrace the darkness!|n
+
+|rWelcome to the night. Welcome to the Masquerade.|n

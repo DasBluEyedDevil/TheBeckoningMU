@@ -50,6 +50,9 @@ INSTALLED_APPS += (
 # Load help entries from text files in world/help/
 FILE_HELP_ENTRY_MODULES = ["world.help_entries"]
 
+# File-based news entries
+FILE_NEWS_ENTRY_MODULES = ["world.news_entries"]
+
 ######################################################################
 # Settings given in secret_settings.py override those in this file.
 ######################################################################

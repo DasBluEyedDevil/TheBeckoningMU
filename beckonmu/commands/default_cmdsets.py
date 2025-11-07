@@ -107,6 +107,14 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdCoterie)
         self.add(CmdSocial)
 
+        # Add BBS commands
+        from beckonmu.bbs.commands import BBSCmdSet
+        self.add(BBSCmdSet)
+
+        # Add Jobs commands
+        from beckonmu.jobs.cmdset import JobsCmdSet
+        self.add(JobsCmdSet)
+
 
 class AccountCmdSet(default_cmds.AccountCmdSet):
     """

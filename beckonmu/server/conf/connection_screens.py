@@ -7,7 +7,7 @@ they log in).
 
 To change the login screen in this module, do one of the following:
 
-- Define a function `connection_screen()`, taking no arguments. This will be
+- Define a function 'connection_screen()', taking no arguments. This will be
   called first and must return the full string to act as the connection screen.
   This can be used to produce more dynamic screens.
 - Alternatively, define a string variable in the outermost scope of this module
@@ -24,17 +24,47 @@ from django.conf import settings
 
 from evennia import utils
 
-CONNECTION_SCREEN = """
-|b==============================================================|n
- Welcome to |g{}|n, version {}!
+CONNECTION_SCREEN = """                                                    
 
- If you have an existing account, connect to it by typing:
-      |wconnect <username> <password>|n
- If you need to create an account, type (without the <>'s):
-      |wcreate <username> <password>|n
+=============================                                  
+=        ==  ================                                  
+====  =====  ================                                  
+====  =====  ================                                  
+====  =====  ======   =======                                  
+====  =====    ===  =  ======                                  
+====  =====  =  ==     ======                                  
+====  =====  =  ==  =========                                  
+====  =====  =  ==  =  ======                                  
+====  =====  =  ===   =======                                  
+=============================                                  
+===============================================================
+=      ==================  ====================================
+=  ===  =================  ====================================
+=  ====  ================  ====================================
+=  ===  ====   ====   ===  =  ===   ===  = ===  ==  = ====   ==
+=      ====  =  ==  =  ==    ===     ==     ======     ==  =  =
+=  ===  ===     ==  =====   ====  =  ==  =  ==  ==  =  ===    =
+=  ====  ==  =====  =====    ===  =  ==  =  ==  ==  =  =====  =
+=  ===  ===  =  ==  =  ==  =  ==  =  ==  =  ==  ==  =  ==  =  =
+=      =====   ====   ===  =  ===   ===  =  ==  ==  =  ===   ==
+===============================================================
+  _                         __                             
+ /_) _)_ ( _   _   _   _    )_)         )\ ) o  _ ( _  _)_ 
+/ /  (_   ) ) )_) ) ) (    /__) (_(    (  (  ( (_( ) ) (_  
+             (_       _)          _)             _)        
 
- If you have spaces in your username, enclose it in quotes.
- Enter |whelp|n for more info. |wlook|n will re-show this screen.
-|b==============================================================|n""".format(
-    settings.SERVERNAME, utils.get_evennia_version("short")
+    A World of Darkness MUSH                                                                                             
+
+    To connect, type '|wconnect <username> <password>|n'
+    to create,  type '|wcreate  <username> <password>|n'
+
+    If you have spaces in your username, enclose it in quotes.
+  
+    Enter |whelp|n for more info.
+
+    Original Work by lcanady (github/lcanady)
+    Modifications by Devil and erratic
+    Powered By Evennia v{}""".format(
+    utils.get_evennia_version("short")
 )
+

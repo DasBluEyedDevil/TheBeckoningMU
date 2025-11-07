@@ -44,6 +44,8 @@ evennia shell
 ### Server Access
 - MUD client: `localhost:4000`
 - Web client: `http://localhost:4001`
+- Web character creation: `http://localhost:4001/character-creation/`
+- Staff character approval: `http://localhost:4001/staff/character-approval/`
 - Admin interface: `http://localhost:4001/admin`
 
 ## Architecture

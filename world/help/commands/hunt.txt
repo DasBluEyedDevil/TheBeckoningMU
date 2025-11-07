@@ -1,0 +1,91 @@
+|[R+===================================================================+
+|W|                      HUNTING COMMANDS                             |
+|[R+===================================================================+|n
+
+Hunt for mortal prey to slake your Hunger.
+
+|WCOMMANDS:|n
+
+  |y+hunt <location>|n     - Begin hunting in a location
+  |y+feed <target>|n       - Feed on a specific target (consensual)
+  |y+huntinfo|n            - View hunting location information
+  |y+huntaction <action>|n - Take action during active hunt
+  |y+huntcancel|n          - Cancel your active hunt
+
+|WHUNTING LOCATIONS:|n
+
+  |yClub|n - Nightclubs and parties (Difficulty 3)
+    - Loud music, crowds, easy prey
+    - Predator bonus: Scene Queen
+
+  |yStreet|n - Dark alleys and back streets (Difficulty 4)
+    - Dangerous, unpredictable
+    - Predator bonus: Alleycat
+
+  |yResidential|n - Homes and apartments (Difficulty 5)
+    - Private, requires breaking and entering
+    - Predator bonus: Sandman
+
+  |yHospital|n - Medical facilities (Difficulty 5)
+    - Security, but access to blood bags
+    - Predator bonus: Bagger
+
+  |ySecured|n - Gated communities, secure buildings (Difficulty 6)
+    - High security, wealthy prey
+    - Predator bonus: Siren
+
+  |yRural|n - Outskirts, wilderness (Difficulty 4)
+    - Animals and isolated prey
+    - Predator bonus: Farmer
+
+|WHUNT FLOW:|n
+
+1. |y+hunt <location>|n - Start hunting
+2. System rolls your dice pool (usually Wits + appropriate skill)
+3. On success: Find prey
+4. |y+huntaction approach/ambush/seduce|n - Choose your method
+5. Feed or face consequences
+
+|WPREDATOR TYPE BONUSES:|n
+
+Your Predator Type grants bonuses to specific hunting methods:
+  - |yAlleycat:|n +2 dice on Street hunts
+  - |yBagger:|n +2 dice at Hospital
+  - |yScene Queen:|n +2 dice at Club
+  - |ySandman:|n +2 dice in Residential
+  - |ySiren:|n +2 dice in Secured areas
+  - |yFarmer:|n +2 dice in Rural areas
+
+|WEXAMPLES:|n
+
+  |y+hunt club|n
+    Hunt for prey at a nightclub
+
+  |y+huntinfo|n
+    View all hunting locations and difficulties
+
+  |y+huntaction seduce|n
+    Attempt to seduce your prey
+
+  |y+huntcancel|n
+    Cancel your active hunt
+
+  |y+feed Alice|n
+    Feed on Alice (requires consent)
+
+|WFEEDING RESULTS:|n
+
+  - |gSuccess:|n Reduce Hunger by 1-2 (depending on prey quality)
+  - |yPartial:|n Reduce Hunger by 1, possible complications
+  - |[RFailure:|n No Hunger reduction, possible Masquerade breach
+
+|WNOTES:|n
+
+  - Hunting at Hunger 5 is |[Rdesperate and dangerous|n
+  - Failed hunts may attract attention or cause Masquerade breaches
+  - Some locations are riskier but offer better prey
+  - Use your Herd background for easy, safe feeding
+
+|[r+===================================================================+|n
+
+|ySee also:|n help hunger, help predator, help backgrounds, help masquerade

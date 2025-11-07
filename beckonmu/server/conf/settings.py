@@ -34,14 +34,21 @@ from evennia.settings_default import *
 # This is the name of your game. Make it catchy!
 SERVERNAME = "beckonmu"
 
-# Add custom Django apps (BBS, Jobs, Status, Boons)
+# Add custom Django apps (BBS, Jobs, Status, Boons, Traits)
 INSTALLED_APPS += (
     "beckonmu.bbs",
     "beckonmu.jobs",
     "beckonmu.status",
     "beckonmu.boons",
+    "beckonmu.traits",
 )
 
+######################################################################
+# Help System Configuration
+######################################################################
+
+# Load help entries from text files in world/help/
+FILE_HELP_ENTRY_MODULES = ["world.help_entries"]
 
 ######################################################################
 # Settings given in secret_settings.py override those in this file.

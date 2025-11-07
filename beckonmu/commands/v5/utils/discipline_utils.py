@@ -6,6 +6,7 @@ Helper functions for managing and using discipline powers.
 
 from world.v5_data import DISCIPLINES
 from world.v5_dice import rouse_check
+from .blood_utils import get_blood_potency, increase_hunger
 from .discipline_effects import (
     apply_effect,
     get_power_duration,
@@ -171,16 +172,20 @@ def activate_discipline_power(character, discipline_name, power_name):
     power, power_level = get_power_by_name(discipline_name, power_name)
 
     # Handle Rouse check if required
-    rouse_result = None
+    rouse_success = True
+    rouse_die = None
     if power["rouse"]:
-        rouse_result = rouse_check(character)
+        # Get character's Blood Potency for the Rouse check
+        bp = get_blood_potency(character)
+        rouse_success, rouse_die = rouse_check(bp)
 
-        # If messy critical (bestial failure), power still works but with complications
-        if rouse_result.get("result") == "failure":
+        # If Rouse check fails, Hunger increases
+        if not rouse_success:
+            new_hunger = increase_hunger(character, 1)
             return {
                 "success": True,
-                "message": f"You activate {power['name']}, but your Beast stirs dangerously...",
-                "rouse_result": rouse_result,
+                "message": f"You activate {power['name']}, but your Beast stirs... (Hunger increased to {new_hunger})",
+                "rouse_result": {"success": False, "die": rouse_die, "hunger_increased": True},
                 "power": power
             }
 
@@ -219,10 +224,19 @@ def activate_discipline_power(character, discipline_name, power_name):
         elif discipline_lower == 'protean':
             apply_protean_effect(character, power['name'])
 
+    # Build rouse_result dictionary if a Rouse check was performed
+    rouse_result_dict = None
+    if power["rouse"]:
+        rouse_result_dict = {
+            "success": rouse_success,
+            "die": rouse_die,
+            "hunger_increased": not rouse_success
+        }
+
     result = {
         "success": True,
         "message": f"You successfully activate {power['name']}.",
-        "rouse_result": rouse_result,
+        "rouse_result": rouse_result_dict,
         "power": power,
         "resonance_bonus": resonance_bonus,
         "duration": duration,

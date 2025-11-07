@@ -488,9 +488,11 @@ def check_frenzy_risk(character, trigger_type):
         }
     """
     from .blood_utils import get_hunger
+    from .clan_utils import get_clan
 
     hunger = get_hunger(character)
     humanity = get_humanity(character)
+    clan = get_clan(character)
 
     # Base difficulty by trigger type
     if trigger_type == 'hunger':
@@ -511,15 +513,23 @@ def check_frenzy_risk(character, trigger_type):
         base_diff = 2
         message = f"You feel the Beast stirring ({trigger_type})."
 
+    # Apply clan bane modifiers
+    clan_modifier = 0
+    if clan == "Brujah" and trigger_type == 'fury':
+        clan_modifier = 2
+        message += " |r(Brujah Bane: +2 difficulty to resist fury)|n"
+
     # Hunger increases difficulty
-    difficulty = base_diff + (hunger // 2)
+    hunger_modifier = hunger // 2
+    difficulty = base_diff + hunger_modifier + clan_modifier
 
     return {
         'at_risk': True,
         'difficulty': difficulty,
         'trigger_type': trigger_type,
         'base_difficulty': base_diff,
-        'hunger_modifier': hunger // 2,
+        'hunger_modifier': hunger_modifier,
+        'clan_modifier': clan_modifier,
         'message': message
     }
 

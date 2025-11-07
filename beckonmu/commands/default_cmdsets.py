@@ -35,6 +35,15 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         # any commands you add below will overload the default ones.
         #
 
+        # Add V5 Character Sheet commands
+        from commands.v5.sheet import CmdSheet, CmdSheetShort
+        self.add(CmdSheet)
+        self.add(CmdSheetShort)
+
+        # Add V5 Character Generation commands
+        from commands.v5.chargen import CmdChargen
+        self.add(CmdChargen)
+
         # Add V5 hunting commands
         from commands.v5.hunt import CmdHunt, CmdFeed, CmdHuntingInfo, CmdHuntAction, CmdHuntCancel
         self.add(CmdHunt)

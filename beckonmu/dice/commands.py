@@ -81,6 +81,19 @@ class CmdRoll(Command):
         # Format the output
         message = self._format_roll_message(result, pool_size, hunger, difficulty)
 
+        # Handle Messy Critical - automatically add Stain
+        if result.is_messy_critical:
+            try:
+                from beckonmu.commands.v5.utils import humanity_utils
+                stain_result = humanity_utils.add_stain(self.caller, 1)
+                message += f"\n\n|r*** MESSY CRITICAL ***|n"
+                message += f"\n|yYour Beast influenced your success!|n"
+                message += f"\n{stain_result['message']}"
+            except Exception as e:
+                # Don't block the roll if stain addition fails
+                message += f"\n\n|r*** MESSY CRITICAL ***|n"
+                message += f"\n|yYour Beast influenced your success! (Stain addition failed: {e})|n"
+
         # Handle Willpower reroll offer
         if use_willpower and not result.is_success:
             willpower = self._get_willpower()
@@ -263,6 +276,20 @@ class CmdRollPower(Command):
 
         # Display result (pre-formatted by discipline_roller)
         self.caller.msg(result['message'])
+
+        # Handle Messy Critical - automatically add Stain
+        roll_result = result.get('roll_result')
+        if roll_result and roll_result.is_messy_critical:
+            try:
+                from beckonmu.commands.v5.utils import humanity_utils
+                stain_result = humanity_utils.add_stain(self.caller, 1)
+                self.caller.msg(f"\n|r*** MESSY CRITICAL ***|n")
+                self.caller.msg(f"|yYour Beast influenced your power!|n")
+                self.caller.msg(f"{stain_result['message']}")
+            except Exception as e:
+                # Don't block the roll if stain addition fails
+                self.caller.msg(f"\n|r*** MESSY CRITICAL ***|n")
+                self.caller.msg(f"|yYour Beast influenced your power! (Stain addition failed: {e})|n")
 
         # Handle Willpower reroll offer
         if use_willpower and not result['success']:

@@ -181,10 +181,53 @@ class CmdChargen(Command):
         self.caller.msg("Staff will review your character and approve or provide feedback.")
         self.caller.msg("\nYou can view your character with '+sheet'.")
 
-        # TODO: Create a job in the Approval bucket (Phase 3 integration)
-        # For now, just notify staff
-        self.caller.msg("\n|xNote: Automatic job creation not yet implemented.|n")
-        self.caller.msg("|xPlease notify staff that your character is ready for approval.|n")
+        # Create approval job in Jobs system
+        try:
+            from beckonmu.jobs.models import Job, Bucket
+
+            # Get or create Approval bucket
+            approval_bucket, created = Bucket.objects.get_or_create(
+                name="Approval",
+                defaults={
+                    'description': 'Character approval requests',
+                    'created_by': self.caller.account
+                }
+            )
+
+            # Create character sheet summary for job description
+            clan = clan_utils.get_clan(self.caller)
+            predator = self.caller.db.vampire.get("predator_type", "Unknown")
+
+            description = f"""New character approval request for {self.caller.name}
+
+Clan: {clan}
+Predator Type: {predator}
+
+Please review the character sheet using: +sheet {self.caller.name}
+
+To approve: +approve {self.caller.name}
+To reject: +reject {self.caller.name} <reason>"""
+
+            # Create the job
+            job = Job.objects.create(
+                title=f"Character Approval: {self.caller.name}",
+                description=description,
+                creator=self.caller.account,
+                bucket=approval_bucket,
+                priority='MEDIUM'
+            )
+
+            # Add player to the job
+            job.players.add(self.caller.account)
+            job.save()
+
+            self.caller.msg(f"\n|gApproval request created as Job #{job.sequence_number} in {approval_bucket.name} bucket.|n")
+            self.caller.msg("|yStaff have been notified and will review your character.|n")
+
+        except Exception as e:
+            # If job creation fails, don't block character creation
+            self.caller.msg(f"\n|yWarning:|n Could not create approval job: {e}")
+            self.caller.msg("|yPlease notify staff that your character is ready for approval.|n")
 
     def reset_chargen(self):
         """Reset character creation (WARNING: deletes all data)."""

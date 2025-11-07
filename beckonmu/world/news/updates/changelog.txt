@@ -1,0 +1,119 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                    |yUPDATES & CHANGELOG|n                           ║
+║               TheBeckoningMU Development Log                     ║
+╚══════════════════════════════════════════════════════════════════╝
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c[NOVEMBER 2025] - ROADMAP COMPLETION|n
+
+|yPhase 1b: News System Implemented|n
+- Added news system for game announcements and information
+- Commands: |w+news|n, |w+news <category>|n, |w+news <category>/<topic>|n
+- Categories: general, updates, policy
+- Files support ANSI colors and formatting
+
+|yRoadmap Status: 100% COMPLETE|n
+- All 20 phases of V5 implementation complete
+- 13/13 clans implemented
+- 11/11 disciplines implemented
+- Full V5 mechanics: Dice, Hunger, Blood, Combat, Humanity, Frenzy
+- MUSH infrastructure: BBS, Jobs, Help, News, Status, Boons
+- Advanced systems: XP, Thin-Blood Alchemy, Coteries, Backgrounds
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c[OCTOBER 2025] - PHASE 16-18 COMPLETE|n
+
+|yPhase 16: Humanity & Frenzy System|n
+- Stain accumulation with |w+stain|n
+- Remorse rolls with |w+remorse|n
+- Frenzy resistance with |w+frenzy/resist|n
+- Touchstones and Convictions management
+
+|yPhase 17: Coterie & Prestation|n
+- Coterie creation and management with |w+coterie|n
+- Social standing display with |w+social|n
+
+|yPhase 18: Thin-Bloods|n
+- Thin-Blood character support
+- Alchemy system with |w+alchemy|n
+- Thin-Blood merits and flaws
+
+|yPhase 18b: Background Effects|n
+- Background activation with |w+background|n
+- Mechanical effects for all backgrounds
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c[SEPTEMBER 2025] - PHASE 14-15 COMPLETE|n
+
+|yPhase 14: Advanced Disciplines|n
+- Discipline effect tracking system
+- Scene, turn, and permanent duration effects
+- Effect management with |w+effects|n
+- Amalgam power framework
+
+|yPhase 15: Combat & Conflict|n
+- Full V5 combat system
+- Commands: |w+attack|n, |w+dodge|n, |w+soak|n, |w+heal|n
+- Damage types, Health tracking, Willpower
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c[AUGUST 2025] - CORE SYSTEMS COMPLETE|n
+
+|yPhase 4-10: Core V5 Mechanics|n
+- Trait system with database-driven models
+- Dice rolling engine with Hunger dice and Rouse checks
+- Blood/Hunger systems with feeding mechanics
+- Clan system with all 13 clans
+- Discipline framework with all 11 disciplines
+- Character creation (web + in-game)
+- Character sheet display
+
+|yPhase 11-13: Social Systems|n
+- Status system with Camarilla positions
+- Boons system with 5 boon types
+- XP/Advancement system
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c[JULY 2025] - MUSH INFRASTRUCTURE|n
+
+|yPhase 0-3: Foundation|n
+- Project architecture established
+- Help system with file-based entries
+- BBS system for bulletin boards
+- Jobs system for staff requests
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cUPCOMING ENHANCEMENTS|n
+
+|yHigh Priority|n
+- Scene system with automatic effect expiration
+- Active effects display in character sheet
+- Automatic Stain application from Messy Criticals
+
+|yMedium Priority|n
+- Social conflict mechanics
+- Status mechanical bonuses for dice rolls
+- Full Blood Sorcery ritual library
+- Combat turn-based effect ticking
+
+|yLow Priority|n
+- Automated nightly blood expenditure ticker
+- BBS anonymous posting
+- Additional social commands (+where, +mail)
+- Wiki integration
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cSTAY INFORMED|n
+
+Check |w+news updates|n regularly for new announcements and changes.
+
+Report bugs or request features using |w+job/create|n.
+
+|yThe night is long, but development never sleeps!|n

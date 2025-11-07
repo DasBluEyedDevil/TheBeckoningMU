@@ -1,0 +1,315 @@
+╔══════════════════════════════════════════════════════════════════╗
+║              |yCHARACTER GENERATION POLICY & GUIDELINES|n             ║
+║               Creating Characters for TheBeckoningMU             ║
+╚══════════════════════════════════════════════════════════════════╝
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c1. CHARACTER APPROVAL PROCESS|n
+
+|yApproval Required|n
+- ALL characters must be approved by staff before play
+- Use web chargen OR in-game |w+chargen|n system
+- Submit with |w+chargen/finalize|n or web "Submit for Approval"
+- Approval typically within 24-48 hours
+
+|yWhat Staff Reviews|n
+- Concept fits V5 Vampire theme
+- Mechanical stats are legal and balanced
+- Background is realistic and grounded
+- Character doesn't break game continuity
+- No "special snowflake" concepts without approval
+
+|yRevisions|n
+- Staff may request changes before approval
+- Check your |w+jobs|n for staff feedback
+- Resubmit after making requested changes
+- Usually approved within 1-2 revision rounds
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c2. CHARACTER CONCEPT GUIDELINES|n
+
+|yAppropriate Concepts|n
+- Newly-Embraced vampires (neonates)
+- Thin-Bloods (Duskborn)
+- Ancillae (100-300 years old, with strong justification)
+- Characters who fit the V5 modern nights setting
+- Concepts that create RP opportunities for others
+
+|yForbidden Concepts|n
+- Methuselahs or Elders (1000+ years, too powerful)
+- Canon characters from published books (Beckett, Hardestadt, etc.)
+- Children of canon characters (without exceptional justification)
+- Diablerists (without plot approval)
+- Sabbat vampires (NPC faction in V5)
+- Werewolves, Mages, or other supernatural types (Vampire game only)
+
+|yGrey Area (Requires Staff Approval)|n
+- Ancillae (older than 100 years)
+- Characters with exotic bloodlines
+- Characters involved in major historical events
+- Characters with unusual merits or flaws
+- Cross-clan disciplines
+- Characters related to other PCs
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c3. MECHANICAL GUIDELINES|n
+
+|yStarting Character Stats|n
+
+|wAttributes:|n
+- 1 dot in all attributes for free
+- Assign 7/5/3 dots across Physical/Social/Mental
+- No attribute above 3 at character creation (rare exceptions)
+
+|wSkills:|n
+- Assign 13/9/5 dots across Talents/Skills/Knowledges
+- No skill above 3 at character creation (without justification)
+- At least one specialty (dot represents specialized training)
+
+|wDisciplines:|n
+- 2 dots in-clan disciplines (e.g., 2/0/0 or 1/1/0)
+- Caitiff: 2 dots in any disciplines (with justification)
+- Thin-Bloods: Thin-Blood Alchemy instead
+- Out-of-clan disciplines require strong IC justification
+
+|wBackgrounds:|n
+- 3 dots total to distribute
+- Resources 3+ requires justification (you're rich!)
+- Herd 3+ means significant mortal blood supply
+- Allies/Contacts: Define who they are
+
+|wAdvantages:|n
+- Humanity starts at 7 (adjust with merits/flaws if desired)
+- Willpower = Composure + Resolve (max 10)
+- Health levels standard for vampires
+- Blood Potency 0-1 for neonates
+
+|wMerits & Flaws:|n
+- Balanced - don't min-max
+- Must have RP justification
+- Some require staff approval (check merit descriptions)
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c4. BACKGROUND WRITING|n
+
+|yRequired Elements|n
+- Mortal life: Who were you before the Embrace?
+- The Embrace: How and why were you turned?
+- Adjustment: How did you adapt to being a vampire?
+- Recent history: What have you been doing lately?
+- Motivation: Why are you in the city? What do you want?
+
+|yLength Guidelines|n
+- Minimum: 500 words
+- Recommended: 1000-1500 words
+- Maximum: No limit, but be concise
+
+|yGood Background Practices|n
+- Grounded and realistic
+- Leaves hooks for staff plots
+- Creates connections to other PCs (with their permission)
+- Explains why you're in the city now
+- Shows character growth and motivation
+
+|yBackground Red Flags (Avoid These)|n
+- "Most powerful X in the world"
+- Killed an Elder single-handedly
+- Secret royal bloodline
+- Trained by famous canon NPCs
+- Extensive tragic backstory with no flaws
+- No connections to anything/anyone (lone wolf)
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c5. CLAN SELECTION|n
+
+|yAvailable Clans|n
+All 13 V5 core clans are available:
+
+|wCamarilla:|n Ventrue, Toreador, Tremere, Malkavian, Nosferatu, Brujah
+|wIndependent:|n Banu Haqim, Gangrel, Ravnos, Hecata, Lasombra
+|wAnarch:|n Ministry, Tzimisce
+|wClanless:|n Caitiff, Thin-Bloods
+
+|yConsider Before Choosing|n
+- Clan banes and how they affect RP
+- In-clan disciplines and what powers interest you
+- Clan culture and whether it fits your concept
+- Clan stereotypes vs. your character's personality
+
+|yDifficult Clans for New Players|n
+- |yMalkavian|n: Requires maturity to play mental illness well
+- |yNosferatu|n: Social penalty (Hideous) limits some RP
+- |yTzimisce|n: Complex mechanics and alien mindset
+- |yHecata|n: Death-focused, niche roleplay
+
+|yGood Starter Clans|n
+- |gVentrue|n: Leadership, political play
+- |gToreador|n: Social, artistic, passionate
+- |gBrujah|n: Rebellious, physical, passionate
+- |gGangrel|n: Survivalist, independent, adaptable
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c6. PREDATOR TYPE|n
+
+|yRequired Choice|n
+- ALL characters must choose a Predator Type
+- Defines how you feed and your relationship with Hunger
+- Affects starting dots in certain skills/disciplines
+
+|yAvailable Predator Types|n
+- |wAlleycat|n - Street predator, opportunistic feeding
+- |wBagger|n - Feed on blood bags, hospitals
+- |wBlood Leech|n - Feed on other vampires
+- |wClercestory|n - Feed on your herd, sustainable
+- |wConsensusalist|n - Feed only with permission
+- |wFarmer|n - Feed on animals
+- |wOsmosis|n - Feed during sex
+- |wSandman|n - Break into homes, sleeping victims
+- |wSiren|n - Seduction and willing victims
+- |wScene Queen|n - Feed at clubs and parties
+
+|yConsiderations|n
+- How does this fit your Humanity?
+- What are the risks of your feeding style?
+- How does it affect your nightly routine?
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c7. NAME & DESCRIPTION|n
+
+|yName Guidelines|n
+- Appropriate for character's cultural background
+- Not obviously silly or joke names
+- Not names of famous people (real or fictional)
+- Nicknames/aliases are fine for everyday use
+
+|yDescription Guidelines|n
+- Physical appearance: height, build, features
+- Fashion sense and typical attire
+- Mannerisms and body language
+- First impression others get
+- Minimum 200 words, no maximum
+
+|yVampire-Specific Details|n
+- Apparent age (age at Embrace)
+- Any visible signs of clan (Nosferatu especially)
+- How you hide fangs in public
+- Mortal disguise vs. true appearance
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c8. CONVICTIONS & TOUCHSTONES|n
+
+|yConvictions (Max 3)|n
+- Personal moral code
+- What lines won't you cross?
+- What do you value most?
+- Examples: "Never harm children", "Protect the weak", "Always repay debts"
+
+|yTouchstones (Max = Humanity ÷ 2)|n
+- Mortals who anchor your Humanity
+- People you care about
+- Connections to mortal world
+- Must define name and relationship
+- Examples: Sister, childhood friend, former lover, priest
+
+|yImportance|n
+- These drive Humanity mechanics
+- Losing Touchstones = Humanity loss potential
+- Convictions guide when you gain Stains
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c9. STARTING EQUIPMENT|n
+
+|yStandard Assumption|n
+- Clothing appropriate to concept
+- Basic personal items (phone, wallet, keys)
+- Haven (based on Resources background)
+
+|yResources Background|n
+- Resources 0-1: Poor, struggling
+- Resources 2-3: Middle class, comfortable
+- Resources 4-5: Rich, wealthy (requires justification)
+
+|yWeapons|n
+- Basic weapons okay (knife, small firearm)
+- Serious weapons require justification
+- Illegal weapons need good backstory reason
+
+|yNo Starting Equipment|n
+- Magical items
+- Elder artifacts
+- Experimental SI tech
+- Anything game-breaking
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|c10. AFTER APPROVAL|n
+
+|yFirst Steps|n
+1. Read |w+news general/welcome|n and |w+news general/getting_started|n
+2. Post introduction on |w+bbs introductions|n
+3. Set your |w@desc me|n with full description
+4. Find RP! Use |w+who|n and |w+bbs rp|n
+5. Join or form a Coterie with |w+coterie|n
+
+|yIC Integration|n
+- Your character is assumed to arrive in the city
+- Introduce yourself to the Prince (if Camarilla)
+- Find allies and enemies through RP
+- Build your story from there
+
+|yOngoing Development|n
+- Use |w+xp/spend|n to improve your character over time
+- All major changes (new disciplines, major merits) need |w+job|n request
+- Character growth should be reflected in RP
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cCHARGEN HELP & RESOURCES|n
+
+|yIn-Game Help|n
+- |w+help chargen|n - Chargen command help
+- |w+help v5|n - V5 mechanics overview
+- |w+help <clan>|n - Specific clan info
+
+|yWeb Resources|n
+- Web chargen: |yhttp://localhost:4001/character-creation/|n
+- Character approval status: Check your |w+jobs|n
+
+|yStaff Assistance|n
+- |w+job/create chargen=<question>|n for help
+- Ask on |w+bbs chargen|n for advice from community
+- Page staff if online for quick questions
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cFINAL NOTES|n
+
+|yBe Patient|n
+- Character creation takes time - don't rush!
+- Quality concept > min-maxed stats
+- Your character will grow through play
+
+|yBe Creative|n
+- Make a character YOU want to play
+- Don't copy concepts from books or other media
+- Find your unique angle
+
+|yBe Collaborative|n
+- Leave hooks for staff and other players
+- Be open to connections with other PCs
+- Think about how your character fits the larger story
+
+|yMost Important:|n Have fun creating your vampire!
+
+|rWelcome to the night. Welcome to the Masquerade.|n
+
+|rLast Updated: November 2025|n

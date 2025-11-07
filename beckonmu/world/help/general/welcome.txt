@@ -1,0 +1,41 @@
+|[R+===============================================================+
+|[R|  |WT H E   B E C K O N I N G                                 |[R|
+|[R|  |wVampire: The Masquerade - 5th Edition                    |[R|
+|[R+===============================================================+|n
+
+|wWelcome to TheBeckoningMU, Kindred.|n
+
+You have entered the World of Darkness, where vampires lurk in the shadows
+of modern cities, struggling against their Beast while maintaining the
+Masquerade. This game uses the |yVampire: The Masquerade 5th Edition|n
+rules for a MUSH-style roleplay-focused experience.
+
+|WKEY CONCEPTS:|n
+
+|y- The Masquerade|n - The First Tradition: hide vampire existence from mortals
+|y- The Beast|n - The predatory nature within all vampires
+|y- Hunger|n - Replaces Blood Pool; drives vampire desperation (0-5 scale)
+|y- Disciplines|n - Supernatural vampire powers unique to each clan
+|y- Status & Boons|n - The political currency of Camarilla society
+
+|WGETTING STARTED:|n
+
+|whelp commands|n        - List of all available commands
+|whelp v5|n              - V5 game mechanics overview
+|whelp hunger|n          - Understanding the Hunger system
+|whelp disciplines|n     - Vampire supernatural powers
+|whelp status|n          - The Status and Boons political system
+|whelp chargen|n         - Character creation guide
+
+|WIMPORTANT MUSH ETIQUETTE:|n
+
+- This is a |yrolep lay-focused|n game - commands provide mechanical support
+- |yDescribe your actions|n - commands calculate results, you narrate outcomes
+- |yRespect the Masquerade|n - keep vampire nature hidden from mortals
+- |yCoordinate with others|n - use +roll for contested actions
+- |yAsk staff for help|n - we're here to support great stories
+
+|[r+================================================================+|n
+
+|wType |yhelp <topic>|w for more information on any subject.|n
+|wType |ylook|w to see your current location and who is present.|n

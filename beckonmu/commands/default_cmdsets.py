@@ -82,6 +82,10 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         from commands.v5.backgrounds import CmdBackground
         self.add(CmdBackground)
 
+        # Add V5 dice system
+        from beckonmu.dice.cmdset import DiceCmdSet
+        self.add(DiceCmdSet)
+
         # Add Status system commands
         from beckonmu.status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
         self.add(CmdStatus)

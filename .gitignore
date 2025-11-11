@@ -87,4 +87,5 @@ poetry.lock
 /docs/
 /.claude/
 /.skills/
+/.devilmcp/
 /cursor-agent-wrapper.sh

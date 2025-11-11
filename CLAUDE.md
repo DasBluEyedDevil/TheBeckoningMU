@@ -2,6 +2,49 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Session Start Protocol
+
+**MANDATORY: Always start each session by:**
+1. Reading `.devilmcp/LAST_SESSION.md` for immediate context
+2. Reading recent entries in `.devilmcp/CHANGELOG.md` (last 3-5 sessions)
+3. Checking `git status` for current working state
+4. Reviewing `.devilmcp/PROJECT_CONTEXT.md` for architectural reference (as needed)
+
+## Session End Protocol
+
+**MANDATORY: Always end each session by:**
+1. Updating `.devilmcp/CHANGELOG.md` with all changes made
+2. Updating `.devilmcp/LAST_SESSION.md` with current state and context
+3. Documenting any incomplete work or next steps
+4. Running tests if significant changes were made (when applicable)
+5. Committing changes if requested by user
+
+## DevilMCP Context Management
+
+This project uses **DevilMCP** (Model Context Protocol) for comprehensive project context management and decision tracking.
+
+### DevilMCP Storage
+- **Location:** `.devilmcp/` directory in project root
+- **PROJECT_CONTEXT.md:** Comprehensive architectural documentation
+- **CHANGELOG.md:** Session-based change history (append-only)
+- **LAST_SESSION.md:** Quick context for session resumption (overwrite each session)
+
+### When to Update DevilMCP Files
+- **Always:** Update LAST_SESSION.md at end of session
+- **Always:** Append to CHANGELOG.md for significant changes
+- **When needed:** Update PROJECT_CONTEXT.md for architectural changes
+- **Best practice:** Use DevilMCP tools for decision tracking and impact analysis
+
+### DevilMCP Tools Available
+If DevilMCP server is running, you have access to 30+ tools:
+- Project structure analysis
+- Decision logging and tracking
+- Change impact assessment
+- Cascade failure detection
+- Thought process management
+
+**See:** DevilMCP README at `C:\Users\dasbl\AndroidStudioProjects\DevilMCP\README.md`
+
 ## Project Overview
 
 TheBeckoningMU is an Evennia-based MUD (Multi-User Dungeon) game project. Evennia is a Python framework for building MUDs and other multiplayer text-based games. This project uses Python 3.13+ and Poetry for dependency management.

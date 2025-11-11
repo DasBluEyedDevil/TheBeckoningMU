@@ -237,6 +237,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Auspex": {
         "type": "standard",
@@ -325,6 +326,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Blood Sorcery": {
         "type": "ritual",
@@ -410,6 +412,8 @@ DISCIPLINES = {
             ]
         },
         "rituals": []
+        "powers": {},  # Populated in Phase 5
+        "rituals": []  # Populated in Phase 5
     },
     "Celerity": {
         "type": "standard",
@@ -490,6 +494,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Dominate": {
         "type": "standard",
@@ -578,6 +583,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Fortitude": {
         "type": "standard",
@@ -658,6 +664,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Obfuscate": {
         "type": "standard",
@@ -738,6 +745,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Oblivion": {
         "type": "standard",
@@ -844,6 +852,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Potence": {
         "type": "standard",
@@ -916,6 +925,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Presence": {
         "type": "standard",
@@ -1004,6 +1014,7 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
     },
     "Protean": {
         "type": "standard",
@@ -1197,6 +1208,12 @@ DISCIPLINES = {
                 }
             ]
         }
+        "powers": {}  # Populated in Phase 5
+    },
+    "Thin-Blood Alchemy": {
+        "type": "thin-blood",
+        "description": "Thin-blood formula crafting",
+        "powers": {}  # Populated in Phase 9
     }
 }
 

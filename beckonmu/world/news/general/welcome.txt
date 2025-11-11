@@ -1,0 +1,49 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                 |rWELCOME TO THEBEKCONINGMU|n                        ║
+║          A Vampire: The Masquerade 5th Edition MUSH              ║
+╚══════════════════════════════════════════════════════════════════╝
+
+|yTheBeckoningMU|n is a text-based roleplaying game set in the World of
+Darkness, using the Vampire: The Masquerade 5th Edition rules. This
+game focuses on the eternal struggle between vampires and their Beast,
+the political machinations of the Camarilla, and the personal horror
+of unlife in the modern nights.
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cGETTING STARTED|n
+
+If you're new to the game, try these commands:
+
+  |w+help|n           - Access the help system
+  |w+news updates|n   - Read about recent changes
+  |w+news policy|n    - Read game policies
+  |w+bbs|n            - Read the bulletin boards
+  |w+who|n            - See who's online
+
+For character creation, visit the web interface at:
+  |yhttp://localhost:4001/character-creation/|n
+
+Or use the in-game chargen system:
+  |w+chargen/start|n
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cTHE BECKONING|n
+
+The Second Inquisition hunts. The Blood Hunt is called. The Beckoning
+pulls ancient Kindred eastward. In these Final Nights, you must choose
+your path carefully...
+
+Will you embrace the Beast, or fight to maintain your Humanity?
+
+|w═══════════════════════════════════════════════════════════════════|n
+
+|cNEED HELP?|n
+
+- Read |w+help getting_started|n for a full new player guide
+- Ask questions on |w+bbs general|n
+- Use |w+job/create|n to request staff assistance
+- Contact staff with |wpage <staffname>=<message>|n
+
+|rThe Beast is always watching. Welcome to the Masquerade.|n

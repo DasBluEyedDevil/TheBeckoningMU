@@ -8,5 +8,3 @@ Provides a structured task/request management system with:
 - Tags for categorization
 - BBS-style sequence numbering
 """
-
-default_app_config = 'jobs.apps.JobsConfig'

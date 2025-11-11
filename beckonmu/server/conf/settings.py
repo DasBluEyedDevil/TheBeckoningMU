@@ -36,10 +36,10 @@ SERVERNAME = "beckonmu"
 
 # Add custom Django apps (BBS, Jobs, Status, Boons)
 INSTALLED_APPS += (
-    "beckonmu.bbs",
-    "beckonmu.jobs",
-    "beckonmu.status",
-    "beckonmu.boons",
+    "bbs",
+    "jobs",
+    "status",
+    "boons",
 )
 
 

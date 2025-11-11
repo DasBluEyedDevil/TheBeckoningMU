@@ -18,6 +18,13 @@ from evennia.utils.search import object_search
 from evennia.utils import evtable
 from django.utils import timezone
 import datetime
+
+# Import Jobs system for approval integration
+try:
+    from beckonmu.jobs.models import Job, Bucket, Comment
+    JOBS_AVAILABLE = True
+except ImportError:
+    JOBS_AVAILABLE = False
 import json
 import os
 from django.conf import settings
@@ -467,13 +474,43 @@ class CmdApprove(Command):
         # Log the approval
         if not hasattr(character.db, 'staff_actions'):
             character.db.staff_actions = []
-        
+
         character.db.staff_actions.append({
             'action': 'approved',
             'staff': self.caller.key,
             'timestamp': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
             'message': message or ''
         })
+
+        # Close related Job in Jobs system if it exists
+        if JOBS_AVAILABLE:
+            try:
+                # Find Job for this character (created during +chargen/finalize)
+                jobs = Job.objects.filter(
+                    title__icontains=f"Character Approval: {character.key}",
+                    status='OPEN'
+                )
+
+                for job in jobs:
+                    # Add approval comment
+                    comment_text = f"Character APPROVED by {self.caller.key}"
+                    if message:
+                        comment_text += f"\n\nStaff message: {message}"
+
+                    Comment.objects.create(
+                        job=job,
+                        author=self.caller.account,
+                        text=comment_text
+                    )
+
+                    # Close the job
+                    job.status = 'CLOSED'
+                    job.save()
+
+                    self.caller.msg(f"|gJob #{job.sequence_number} closed.|n")
+            except Exception as e:
+                # Don't fail approval if Jobs integration has issues
+                self.caller.msg(f"|yWarning:|n Could not update related Job: {e}")
 
 
 class CmdReject(Command):
@@ -550,13 +587,38 @@ class CmdReject(Command):
         # Log the rejection
         if not hasattr(character.db, 'staff_actions'):
             character.db.staff_actions = []
-        
+
         character.db.staff_actions.append({
             'action': 'rejected',
             'staff': self.caller.key,
             'timestamp': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
             'reason': reason
         })
+
+        # Add rejection comment to related Job in Jobs system
+        if JOBS_AVAILABLE:
+            try:
+                # Find Job for this character (created during +chargen/finalize)
+                jobs = Job.objects.filter(
+                    title__icontains=f"Character Approval: {character.key}",
+                    status='OPEN'
+                )
+
+                for job in jobs:
+                    # Add rejection comment
+                    comment_text = f"Character requires revisions - feedback provided by {self.caller.key}:\n\n{reason}\n\nCharacter remains pending. Player has been notified to make changes and resubmit."
+
+                    Comment.objects.create(
+                        job=job,
+                        author=self.caller.account,
+                        text=comment_text
+                    )
+
+                    # Keep job OPEN for resubmission
+                    self.caller.msg(f"|yJob #{job.sequence_number} updated with rejection feedback (remains open).|n")
+            except Exception as e:
+                # Don't fail rejection if Jobs integration has issues
+                self.caller.msg(f"|yWarning:|n Could not update related Job: {e}")
 
 
 class CmdImportCharacter(Command):

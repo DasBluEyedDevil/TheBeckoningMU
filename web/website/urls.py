@@ -7,13 +7,14 @@ so it can reroute to all website pages.
 """
 
 from django.urls import path
+from .views import CharacterApprovalView, CharacterCreationView
 
 from evennia.web.website.urls import urlpatterns as evennia_website_urlpatterns
 
 # add patterns here
 urlpatterns = [
-    # path("url-pattern", imported_python_view),
-    # path("url-pattern", imported_python_view),
+    path("staff/character-approval/", CharacterApprovalView.as_view(), name='character_approval'),
+    path("character-creation/", CharacterCreationView.as_view(), name='character_creation'),
 ]
 
 # read by Django

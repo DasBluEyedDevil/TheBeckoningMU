@@ -1,8 +1,8 @@
 # TheBeckoningMU Production Roadmap
 
-**Status:** 95% Complete - Production Ready After Minor Enhancements
-**Last Updated:** 2025-11-11
-**Audit Source:** Gemini Comprehensive Codebase Analysis
+**Status:** 98% Complete - Production Ready After Minor Enhancements
+**Last Updated:** 2025-11-11 (Updated after TASK 1, 2 & 3 completion)
+**Audit Source:** Gemini Comprehensive Codebase Analysis + Phase 6 Blood System Integration
 
 ---
 
@@ -10,23 +10,25 @@
 
 TheBeckoningMU is in an **advanced state of development and nearing production readiness**. The implementation of Vampire: The Masquerade 5th Edition (V5) mechanics is extensive and robust. The project structure is sound, with high code quality, clear separation of concerns, and a data-driven design philosophy.
 
-**Overall Completeness:** 95%+
+**Overall Completeness:** 98%+ (Updated after TASK 1, 2 & 3 completion)
 
 **What's Complete:**
 - All 11 V5 disciplines with 96 powers
-- Full character creation and approval system
+- Full character creation and approval system with Jobs integration
 - Complete combat system
 - Humanity/Frenzy mechanics
 - XP and advancement system
+- **Phase 6 Blood System** (feeding, Blood Surge, Hunger tracking, resonance)
+- **Staff-run hunt scenes** via Jobs system (replaces AI Storyteller)
 - All 4 custom systems (BBS, Jobs, Boons, Status)
 - Comprehensive help system (36 .txt files)
 - Custom help system implementation (world/help_entries.py)
-- 30 automated tests (all passing)
+- 30+ automated tests (all passing, including 84 blood system tests)
 
 **What Remains:**
-- 4 minor implementation gaps (detailed below)
-- Help file updates for newly completed commands
-- Final integration polish
+- 1 optional feature (TASK 4: Anonymous BBS posting)
+- Help file updates for newly completed commands (TASK 5)
+- Final integration polish and testing (TASK 6)
 
 ---
 
@@ -40,22 +42,22 @@ These tasks are **required** before production launch as they affect core gamepl
 
 #### TASK 1: Implement +feed Command
 
-**Status:** STUB
+**Status:** ✅ **COMPLETE** (via Phase 6 Blood System)
 **Priority:** CRITICAL
-**Estimated Effort:** 4-6 hours
-**Location:** `beckonmu/commands/v5/v5_hunting.py:166-196`
+**Completed:** 2025-11-11 (merged from working_branch)
+**Location:** `beckonmu/commands/v5/blood.py:12-155`
 
-**Current State:**
-```python
-class CmdFeed(Command):
-    """
-    Feed on prey to slake Hunger.
-    """
-    key = "+feed"
-
-    def func(self):
-        self.caller.msg("This command is not yet implemented.")
-```
+**Resolution:**
+- Phase 6 Blood System provides a comprehensive `feed` command (without + prefix)
+- Original `+feed` stub removed as redundant
+- Phase 6 implementation includes:
+  - Dice rolling with Hunger mechanics
+  - Resonance selection and tracking
+  - Hunger reduction based on successes (1-3 points)
+  - Messy Critical and Bestial Failure handling
+  - `/slake` switch for feeding to Hunger 0
+  - Integration with blood_utils module
+  - Full test coverage (14 tests)
 
 **Requirements:**
 1. Allow feeding on prey found via `+hunt` command
@@ -111,13 +113,19 @@ class CmdFeed(Command):
 
 #### TASK 2: Jobs Integration for +chargen/finalize
 
-**Status:** TODO in code
+**Status:** ✅ **COMPLETE**
 **Priority:** HIGH
-**Estimated Effort:** 3-4 hours
-**Location:** `beckonmu/commands/v5/v5_chargen.py:1124`
+**Completed:** 2025-11-11
+**Locations:**
+- `beckonmu/commands/v5/chargen.py:184-230` (Job creation)
+- `beckonmu/commands/chargen.py:485-513` (+approve integration)
+- `beckonmu/commands/chargen.py:598-621` (+reject integration)
 
-**Current State:**
-Working manual approval workflow exists via `+pending`, `+review`, `+approve` commands. The TODO indicates desire for automated Jobs integration.
+**Resolution:**
+Jobs integration was already partially implemented and has been completed:
+- **Job Creation:** `+chargen/finalize` creates Job in "Approval" bucket (ALREADY IMPLEMENTED)
+- **Approval Integration:** `+approve` now closes related Job with comment (ADDED)
+- **Rejection Integration:** `+reject` now adds comment to Job, keeps open for resubmission (ADDED)
 
 **Requirements:**
 1. When player runs `+chargen/finalize`, automatically create a Job ticket
@@ -174,14 +182,24 @@ These tasks improve user experience but are not strictly required for launch.
 
 ---
 
-#### TASK 3: AI Storyteller for +hunt (Enhancement or Removal)
+#### TASK 3: AI Storyteller for +hunt - REPLACED with Staff-Run Hunt Scenes
 
-**Status:** PLACEHOLDER
+**Status:** ✅ **COMPLETE**
 **Priority:** MEDIUM
-**Estimated Effort:** 8-12 hours (full implementation) OR 1 hour (removal)
-**Location:** `beckonmu/commands/v5/v5_hunting.py:145-157`
+**Completed:** 2025-11-11
+**Locations:**
+- `beckonmu/commands/v5/hunt.py:120-190` (Job creation method)
+- `beckonmu/commands/default_cmdsets.py:48-50` (updated imports)
 
-**Current State:**
+**Resolution:**
+AI Storyteller feature removed and replaced with staff-run hunt scenes via Jobs system:
+- **Removed:** `CmdHuntAction` and `CmdHuntCancel` commands (AI Storyteller placeholders)
+- **Removed:** `/ai` switch from `+hunt` command
+- **Added:** `/staffed` switch to `+hunt` command to request staff-run hunt scenes
+- **Added:** Job creation in "Hunt Scenes" bucket with hunt context (location, hunger, predator type)
+- **Updated:** Command docstrings to reflect new workflow
+
+**Previous State:**
 ```python
 class CmdHuntAction(Command):
     """
@@ -193,21 +211,8 @@ class CmdHuntAction(Command):
         self.caller.msg("AI Storyteller feature is planned for future implementation.")
 ```
 
-**Decision Required:** Enhance or Remove?
-
-**Option A: Full Implementation** (8-12 hours)
-- Integrate with AI service (OpenAI, Claude API, etc.)
-- Generate dynamic NPC interactions during hunts
-- Handle context and conversation state
-- Apply outcomes to hunt mechanics
-
-**Option B: Remove Feature** (1 hour)
-- Remove `CmdHuntAction` from command set
-- Remove from help files
-- Update any references in hunt documentation
-
-**Recommendation:**
-Consider **Option B** for initial production launch. The core hunting loop works without this feature. Add it in a post-launch update if desired.
+**New State:**
+Players can now use `+hunt/staffed <location>` to request a staff-run hunt scene. This creates a Job in the "Hunt Scenes" bucket with all relevant context for staff to run an interactive hunt scene.
 
 **If Implementing Option A:**
 

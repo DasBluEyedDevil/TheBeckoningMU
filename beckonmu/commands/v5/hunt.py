@@ -1,7 +1,7 @@
 """
 V5 Hunting Commands
 
-Commands for hunting and feeding mechanics with AI Storyteller integration.
+Commands for hunting and feeding mechanics with staff-run hunt scenes.
 """
 
 from evennia import Command
@@ -26,7 +26,7 @@ class CmdHunt(Command):
     Usage:
         +hunt [<location>]
         +hunt/quick [<location>]
-        +hunt/ai [<location>]
+        +hunt/staffed [<location>]
 
     Locations:
         club       - Nightclubs, bars, scenes (Difficulty 3)
@@ -38,12 +38,12 @@ class CmdHunt(Command):
 
     Switches:
         /quick - Quick automated hunt (single roll)
-        /ai    - AI Storyteller guided hunt (interactive)
+        /staffed - Request staff-run hunt scene (creates a Job)
 
     Examples:
         +hunt club
         +hunt/quick street
-        +hunt/ai residential
+        +hunt/staffed residential
     """
 
     key = "+hunt"
@@ -76,9 +76,9 @@ class CmdHunt(Command):
         # Get Predator Type bonuses
         predator_info = get_predator_hunting_bonus(caller)
 
-        # Check if using /ai switch for AI Storyteller
-        if "ai" in self.switches:
-            self._ai_storyteller_hunt(location, predator_info)
+        # Check if using /staffed switch for staff-run hunt scene
+        if "staffed" in self.switches:
+            self._create_hunt_job(location, predator_info, hunger)
             return
 
         # Quick hunt (default)
@@ -117,40 +117,77 @@ class CmdHunt(Command):
         # Display results
         self._display_hunt_result(result, location)
 
-    def _ai_storyteller_hunt(self, location, predator_info):
-        """AI Storyteller guided hunt (interactive)."""
-        from .utils.ai_storyteller import get_storyteller
-
-        caller = self.caller
-        storyteller = get_storyteller()
-
-        # Start AI storyteller session
-        scene = storyteller.start_hunt(caller, location)
-
-        # Display opening scene
-        self._display_ai_scene(scene)
-
-        caller.msg(
-            f"\n{GOLD}[AI Storyteller Mode Active]{RESET}\n"
-            f"Describe your actions using |y+huntaction <your action>|n\n"
-            f"Or type |y+huntcancel|n to abandon this hunt."
-        )
-
-    def _display_ai_scene(self, scene):
-        """Display AI Storyteller scene."""
+    def _create_hunt_job(self, location, predator_info, hunger):
+        """Create a Job for staff to run a hunt scene."""
         caller = self.caller
 
-        output = []
-        output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {BLOOD_RED}{CIRCLE_FILLED}{RESET} {PALE_IVORY}THE HUNT{RESET}{' ' * 65}{BOX_V}")
-        output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
-        output.append("")
-        output.append(scene["narrative"])
-        output.append("")
-        if scene.get("prompt"):
-            output.append(f"{GOLD}>{RESET} {scene['prompt']}")
+        # Import Jobs system
+        try:
+            from beckonmu.jobs.models import Job, Bucket
+        except ImportError:
+            caller.msg("|rJobs system not available. Please contact staff.|n")
+            return
 
-        caller.msg("\n".join(output))
+        # Get vampire data for job context
+        vamp = caller.db.vampire if hasattr(caller.db, 'vampire') else {}
+        predator_type = vamp.get('predator_type', 'Unknown')
+
+        # Get or create Hunt Scenes bucket
+        try:
+            hunt_bucket, created = Bucket.objects.get_or_create(
+                name="Hunt Scenes",
+                defaults={
+                    'description': 'Staff-run hunting scenes for players',
+                    'created_by': caller.account
+                }
+            )
+
+            # Build job description with hunt context
+            description = f"""Hunt Scene Request from {caller.name}
+
+**Location:** {location.title()} (Difficulty {HUNTING_DIFFICULTIES[location]})
+**Current Hunger:** {hunger}/5
+**Predator Type:** {predator_type}
+**Hunting Bonus:** +{predator_info.get('bonus_dice', 0)} dice
+**Preferred Locations:** {', '.join(predator_info.get('preferred_locations', ['none']))}
+
+Player has requested a staff-run hunt scene at this location. Staff should:
+1. Run an interactive hunt scene via @tel or +summon
+2. Use the hunting difficulty for this location
+3. Consider the character's Predator Type for roleplay
+4. Use 'feed' command to finalize the feeding result
+
+To view character sheet: +sheet {caller.name}"""
+
+            # Create the job
+            job = Job.objects.create(
+                title=f"Hunt Scene: {caller.name} at {location.title()}",
+                description=description,
+                creator=caller.account,
+                bucket=hunt_bucket,
+                priority='NORMAL'
+            )
+
+            job.players.add(caller.account)
+            job.save()
+
+            # Notify player
+            output = []
+            output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
+            output.append(f"{BOX_V} {BLOOD_RED}{CIRCLE_FILLED}{RESET} {PALE_IVORY}HUNT SCENE REQUESTED{RESET}{' ' * 51}{BOX_V}")
+            output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
+            output.append("")
+            output.append(f"{PALE_IVORY}Your hunt request has been submitted to staff.{RESET}")
+            output.append(f"{PALE_IVORY}Job #{job.sequence_number}:{RESET} Hunt Scene at {GOLD}{location.title()}{RESET}")
+            output.append("")
+            output.append(f"{SHADOW_GREY}Staff will contact you when they're ready to run the scene.{RESET}")
+            output.append(f"{SHADOW_GREY}You can check the status with: |w+job {job.sequence_number}|x{RESET}")
+
+            caller.msg("\n".join(output))
+
+        except Exception as e:
+            caller.msg(f"|rError creating hunt scene job: {e}|n")
+            caller.msg("|yPlease contact staff directly for hunt scenes.|n")
 
     def _display_hunting_scene(self, opportunity):
         """Display the hunting opportunity scene."""
@@ -251,92 +288,3 @@ class CmdHuntingInfo(Command):
         caller.msg("\n".join(output))
 
 
-class CmdHuntAction(Command):
-    """
-    Perform an action during an AI Storyteller hunt.
-
-    Usage:
-        +huntaction <your action>
-
-    Examples:
-        +huntaction I approach them casually, striking up a conversation
-        +huntaction I stalk them from the shadows, waiting for the right moment
-        +huntaction I use Dominate to mesmerize them
-    """
-
-    key = "+huntaction"
-    aliases = ["huntaction"]
-    locks = "cmd:all()"
-    help_category = "V5"
-
-    def func(self):
-        """Execute hunt action."""
-        from .utils.ai_storyteller import get_storyteller
-
-        caller = self.caller
-
-        if not self.args:
-            caller.msg("Usage: +huntaction <your action>")
-            return
-
-        storyteller = get_storyteller()
-        session = storyteller.get_active_session(caller)
-
-        if not session:
-            caller.msg("|rYou don't have an active hunt. Use |w+hunt/ai <location>|r to start.|n")
-            return
-
-        # Process player's action
-        response = storyteller.process_player_input(caller, self.args.strip())
-
-        if response.get("error"):
-            caller.msg(f"|r{response['error']}|n")
-            return
-
-        # Display storyteller response
-        output = []
-        output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {BLOOD_RED}{CIRCLE_FILLED}{RESET} {PALE_IVORY}THE HUNT{RESET}{' ' * 65}{BOX_V}")
-        output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
-        output.append("")
-        output.append(response["narrative"])
-        output.append("")
-
-        if response.get("prompt"):
-            output.append(f"{GOLD}>{RESET} {response['prompt']}")
-
-        if response.get("requires_roll"):
-            output.append(f"\n{SHADOW_GREY}(You would roll {response['roll_type']} here - dice integration pending){RESET}")
-
-        if response.get("session_complete"):
-            output.append(f"\n{GOLD}[Hunt Complete]{RESET}")
-
-        caller.msg("\n".join(output))
-
-
-class CmdHuntCancel(Command):
-    """
-    Cancel an active AI Storyteller hunt.
-
-    Usage:
-        +huntcancel
-
-    Abandons your current hunt and removes you from the AI Storyteller session.
-    """
-
-    key = "+huntcancel"
-    aliases = ["huntcancel"]
-    locks = "cmd:all()"
-    help_category = "V5"
-
-    def func(self):
-        """Cancel active hunt."""
-        from .utils.ai_storyteller import get_storyteller
-
-        caller = self.caller
-        storyteller = get_storyteller()
-
-        if storyteller.cancel_hunt(caller):
-            caller.msg(f"{GOLD}You abandon the hunt and fade back into the shadows.{RESET}")
-        else:
-            caller.msg("|rYou don't have an active hunt to cancel.|n")

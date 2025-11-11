@@ -115,6 +115,25 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         from beckonmu.jobs.cmdset import JobsCmdSet
         self.add(JobsCmdSet)
 
+        # Add V5 dice system (new comprehensive implementation)
+        from beckonmu.dice.cmdset import DiceCmdSet
+        self.add(DiceCmdSet)
+
+        # Add V5 blood system (feeding, Blood Surge, Hunger tracking)
+        from beckonmu.commands.v5.blood_cmdset import BloodCmdSet
+        self.add(BloodCmdSet)
+
+        # Old V5 dice commands (can be removed once new system is fully tested)
+        # from commands.v5.dice import CmdRoll, CmdRollStat, CmdRouseCheck
+        # self.add(CmdRoll)
+        # self.add(CmdRollStat)
+        # self.add(CmdRouseCheck)
+
+        # Add V5 sheet commands
+        from commands.v5.sheet import CmdSheet, CmdSheetShort
+        self.add(CmdSheet)
+        self.add(CmdSheetShort)
+
 
 class AccountCmdSet(default_cmds.AccountCmdSet):
     """

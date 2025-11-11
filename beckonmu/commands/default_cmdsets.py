@@ -45,9 +45,8 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdChargen)
 
         # Add V5 hunting commands
-        from commands.v5.hunt import CmdHunt, CmdFeed, CmdHuntingInfo, CmdHuntAction, CmdHuntCancel
+        from commands.v5.hunt import CmdHunt, CmdHuntingInfo, CmdHuntAction, CmdHuntCancel
         self.add(CmdHunt)
-        self.add(CmdFeed)
         self.add(CmdHuntingInfo)
         self.add(CmdHuntAction)
         self.add(CmdHuntCancel)

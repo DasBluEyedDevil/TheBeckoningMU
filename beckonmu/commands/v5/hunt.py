@@ -194,56 +194,6 @@ class CmdHunt(Command):
         caller.msg("\n".join(output))
 
 
-class CmdFeed(Command):
-    """
-    Feed from a vessel.
-
-    Usage:
-        +feed <target>
-        +feed/kill <target>
-
-    This command is used when you have a specific vessel in mind (NPC or PC).
-    For hunting to find prey, use +hunt instead.
-
-    Switches:
-        /kill - Drain the vessel completely (grants more blood, may affect Humanity)
-
-    Examples:
-        +feed John
-        +feed/kill the homeless man
-    """
-
-    key = "+feed"
-    aliases = ["feed"]
-    locks = "cmd:all()"
-    help_category = "V5"
-
-    def func(self):
-        """Execute feed command."""
-        caller = self.caller
-
-        if not self.args:
-            caller.msg("Usage: +feed <target>")
-            return
-
-        # Check if character has vampire data
-        if not hasattr(caller.db, 'vampire') or not caller.db.vampire:
-            caller.msg("|rYou are not a vampire!|n")
-            return
-
-        # This is a placeholder for feeding from specific targets
-        # In a full implementation, this would handle:
-        # 1. Finding the target in the room
-        # 2. Checking if feeding is appropriate (consent, NPC vs PC)
-        # 3. Rolling for feeding success
-        # 4. Applying results
-
-        caller.msg(
-            f"|yFeeding from specific targets requires AI Storyteller or staff approval.|n\n"
-            f"For automated hunting, use |w+hunt|n instead."
-        )
-
-
 class CmdHuntingInfo(Command):
     """
     Display information about hunting and feeding.

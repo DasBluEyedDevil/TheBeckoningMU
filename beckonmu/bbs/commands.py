@@ -105,18 +105,24 @@ class CmdBBSRead(Command):
 class CmdBBSPost(Command):
     """
     Create a new post on a board.
-    
+
     Usage:
         +bbpost <board>=<title>/<body>
-    
+        +bbpost/anon <board>=<title>/<body>
+
     Examples:
         +bbpost general=Hello/This is my first post!
         +bbpost admin=Meeting Notes/We discussed...
-    
+        +bbpost/anon rumors=Heard something/I heard a rumor...
+
     Creates a new post on the specified board. The title and body
     are separated by a forward slash (/).
+
+    The /anon switch creates an anonymous post. Anonymous posts show
+    as "Anonymous" to regular users, but staff can still see the true
+    author. Not all boards allow anonymous posting.
     """
-    
+
     key = "+bbpost"
     aliases = ["bbpost"]
     locks = "cmd:all()"
@@ -127,14 +133,17 @@ class CmdBBSPost(Command):
         if not self.args or '=' not in self.args:
             self.caller.msg("Usage: +bbpost <board>=<title>/<body>")
             return
-        
+
+        # Check for /anon switch
+        is_anonymous = "anon" in self.switches
+
         # Parse arguments
         board_name = self.lhs.strip() if self.lhs else ""
-        
+
         if not self.rhs or '/' not in self.rhs:
             self.caller.msg("Usage: +bbpost <board>=<title>/<body>")
             return
-        
+
         try:
             title, body = self.rhs.split('/', 1)
             title = title.strip()
@@ -142,24 +151,29 @@ class CmdBBSPost(Command):
         except ValueError:
             self.caller.msg("Usage: +bbpost <board>=<title>/<body>")
             return
-        
+
         if not board_name or not title or not body:
             self.caller.msg("Board name, title, and body are all required.")
             return
-        
+
         # Get board
         board = get_board(self.caller, board_name, check_perm=False)
         if not board:
             self.caller.msg(f"Board '{board_name}' not found.")
             return
-        
+
+        # Check if anonymous posting is allowed on this board
+        if is_anonymous and not board.allow_anonymous:
+            self.caller.msg(f"Board '{board_name}' does not allow anonymous posting.")
+            return
+
         # Check write permissions
         if board.write_perm:
             account = self.caller.account if hasattr(self.caller, 'account') else self.caller
             if not account.check_permstring(board.write_perm):
                 self.caller.msg(f"You don't have permission to post to '{board_name}'.")
                 return
-        
+
         # Check required flags
         required_flags = board.get_required_flags_list()
         if required_flags:
@@ -173,10 +187,10 @@ class CmdBBSPost(Command):
             else:
                 self.caller.msg(f"You don't have the required flags to post to '{board_name}'.")
                 return
-        
+
         # Get account
         account = self.caller.account if hasattr(self.caller, 'account') else self.caller
-        
+
         # Create post
         try:
             post = Post.objects.create(
@@ -184,9 +198,13 @@ class CmdBBSPost(Command):
                 board=board,
                 title=title,
                 body=body,
-                is_anonymous=False  # TODO: Add /anon switch support
+                is_anonymous=is_anonymous
             )
-            self.caller.msg(f"Posted to '{board.name}' as post #{post.sequence_number}.")
+
+            if is_anonymous:
+                self.caller.msg(f"Posted anonymously to '{board.name}' as post #{post.sequence_number}.")
+            else:
+                self.caller.msg(f"Posted to '{board.name}' as post #{post.sequence_number}.")
         except Exception as e:
             self.caller.msg(f"Error creating post: {e}")
 

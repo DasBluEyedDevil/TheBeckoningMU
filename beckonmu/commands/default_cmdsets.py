@@ -36,56 +36,56 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         #
 
         # Add V5 Character Sheet commands
-        from commands.v5.sheet import CmdSheet, CmdSheetShort
+        from beckonmu.commands.v5.sheet import CmdSheet, CmdSheetShort
         self.add(CmdSheet)
         self.add(CmdSheetShort)
 
         # Add V5 Character Generation commands
-        from commands.v5.chargen import CmdChargen
+        from beckonmu.commands.v5.chargen import CmdChargen
         self.add(CmdChargen)
 
         # Add V5 hunting commands
-        from commands.v5.hunt import CmdHunt, CmdHuntingInfo
+        from beckonmu.commands.v5.hunt import CmdHunt, CmdHuntingInfo
         self.add(CmdHunt)
         self.add(CmdHuntingInfo)
 
         # Add V5 XP commands
-        from commands.v5.xp import CmdXP, CmdSpend, CmdXPAward
+        from beckonmu.commands.v5.xp import CmdXP, CmdSpend, CmdXPAward
         self.add(CmdXP)
         self.add(CmdSpend)
         self.add(CmdXPAward)
 
         # Add V5 Discipline commands
-        from commands.v5.disciplines import CmdDisciplines, CmdActivatePower, CmdDisciplineInfo
+        from beckonmu.commands.v5.disciplines import CmdDisciplines, CmdActivatePower, CmdDisciplineInfo
         self.add(CmdDisciplines)
         self.add(CmdActivatePower)
         self.add(CmdDisciplineInfo)
 
         # Add V5 Effects command
-        from commands.v5.effects import CmdEffects
+        from beckonmu.commands.v5.effects import CmdEffects
         self.add(CmdEffects)
 
         # Add V5 Humanity commands
-        from commands.v5.humanity import CmdHumanity, CmdStain, CmdRemorse, CmdFrenzy
+        from beckonmu.commands.v5.humanity import CmdHumanity, CmdStain, CmdRemorse, CmdFrenzy
         self.add(CmdHumanity)
         self.add(CmdStain)
         self.add(CmdRemorse)
         self.add(CmdFrenzy)
 
         # Add V5 Combat commands
-        from commands.v5.combat import CmdAttack, CmdDamage, CmdHeal, CmdHealth
+        from beckonmu.commands.v5.combat import CmdAttack, CmdDamage, CmdHeal, CmdHealth
         self.add(CmdAttack)
         self.add(CmdDamage)
         self.add(CmdHeal)
         self.add(CmdHealth)
 
         # Add V5 Thin-Blood commands
-        from commands.v5.thinblood import CmdAlchemy, CmdDaylight
+        from beckonmu.commands.v5.thinblood import CmdAlchemy, CmdDaylight
         self.add(CmdAlchemy)
         self.add(CmdDaylight)
 
         # Add V5 Background commands
-        from commands.v5.backgrounds import CmdBackground
+        from beckonmu.commands.v5.backgrounds import CmdBackground
         self.add(CmdBackground)
 
         # Add V5 dice system
@@ -113,7 +113,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdBoonAdmin)
 
         # Add V5 Social commands (Coteries)
-        from commands.v5.social import CmdCoterie, CmdSocial
+        from beckonmu.commands.v5.social import CmdCoterie, CmdSocial
         self.add(CmdCoterie)
         self.add(CmdSocial)
 
@@ -130,7 +130,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(BloodCmdSet)
 
         # Add News command
-        from commands.news import CmdNews
+        from beckonmu.commands.news import CmdNews
         self.add(CmdNews)
 
 

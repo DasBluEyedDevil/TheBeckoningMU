@@ -207,3 +207,208 @@ DICE_CRITICAL_NORMAL = f"{GOLD}{DIAMOND}{RESET}"
 DICE_SUCCESS_HUNGER = f"{BLOOD_RED}{CIRCLE_FILLED}{RESET}"
 DICE_CRITICAL_HUNGER = f"{MESSY}{DIAMOND}{RESET}"
 DICE_FAILURE = f"{SHADOW_GREY}{CIRCLE_EMPTY}{RESET}"
+
+# ============================================================================
+# ADDITIONAL THEMATIC SYMBOLS (Phase 3 Expansion)
+# ============================================================================
+
+# Death and occult
+ANKH = "☥"              # Eternal life
+SKULL = "☠"             # Death
+PENTAGRAM = "⛤"         # Occult
+CRESCENT_MOON = "☾"     # Night
+DAGGER = "†"            # Violence/sacrifice
+
+# Status symbols for different contexts
+CHECK_MARK = "✓"        # Success
+X_MARK = "✗"            # Failure  
+HOURGLASS = "⏳"        # Pending/waiting
+PROHIBITED = "⛔"        # Blocked/forbidden
+GEAR = "⚙"              # In progress/working
+ARROW_RIGHT = "→"       # Navigation/forward
+ARROW_LEFT = "←"        # Back
+ARROW_UP = "↑"          # Increase
+ARROW_DOWN = "↓"        # Decrease
+
+# ============================================================================
+# ASCII ART ELEMENTS (Phase 3 Expansion)
+# ============================================================================
+
+# Vampire fangs (small decorative element)
+VAMPIRE_FANGS = """
+        __   __
+     .-'  "."  '-.
+   .'   ___,___   '.
+  ;__.-; | | | ;-.__;
+  | \\  | | | | |  / |
+   \\ \\/`""`""`"` \\/ /
+    \\_.,-,-,-,-,._ /
+     \\`-:_|_|_:-'/
+"""
+
+# Gothic border elements
+GOTHIC_BORDER_LIGHT = "─" * 80
+GOTHIC_BORDER_HEAVY = "━" * 80
+
+# Decorative vampire section divider
+VAMPIRE_DIVIDER = f"{BLOOD_RED}◤──•~❉᯽❉~•──◥{RESET}"
+
+# Gothic corner decorations
+CORNER_ORNAMENT_TL = "◤"
+CORNER_ORNAMENT_TR = "◥"
+CORNER_ORNAMENT_BL = "◣"
+CORNER_ORNAMENT_BR = "◢"
+
+# ============================================================================
+# HELPER FUNCTION ENHANCEMENTS (Phase 3 Expansion)
+# ============================================================================
+
+def format_vampire_header(title, subtitle=None, width=80):
+    """
+    Create a themed vampire header with double-line box.
+
+    Args:
+        title (str): Main title text
+        subtitle (str, optional): Subtitle text
+        width (int): Total width of header
+
+    Returns:
+        str: Formatted header with ANSI colors
+    """
+    output = []
+    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * (width - 2)}{DBOX_TR}")
+
+    # Title line with fleur-de-lis symbols
+    title_padding = (width - len(title) - 8) // 2
+    output.append(f"{DBOX_V} {BLOOD_RED}{FLEUR_DE_LIS}{RESET}  "
+                 f"{BONE_WHITE}{title}{RESET}"
+                 f"{' ' * (width - len(title) - 8)}"
+                 f"{BLOOD_RED}{FLEUR_DE_LIS}{RESET}  "
+                 f"{DARK_RED}{DBOX_V}")
+
+    # Subtitle line (if provided)
+    if subtitle:
+        subtitle_padding = (width - len(subtitle) - 4) // 2
+        output.append(f"{DBOX_V} {' ' * subtitle_padding}"
+                     f"{SHADOW_GREY}{subtitle}{RESET}"
+                     f"{' ' * (width - len(subtitle) - subtitle_padding - 4)}"
+                     f"{DARK_RED}{DBOX_V}")
+
+    output.append(f"{DBOX_BL}{DBOX_H * (width - 2)}{DBOX_BR}{RESET}")
+
+    return "\n".join(output)
+
+
+def format_info_box(title, content, width=80):
+    """
+    Create a themed info box with title and content.
+
+    Args:
+        title (str): Box title
+        content (str): Box content (can be multi-line)
+        width (int): Box width
+
+    Returns:
+        str: Formatted box with ANSI colors
+    """
+    output = []
+    output.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * (width - 2)}{BOX_TR}")
+    output.append(f"{BOX_V} {BONE_WHITE}{title}{RESET}"
+                 f"{' ' * (width - len(title) - 4)}"
+                 f"{SHADOW_GREY}{BOX_V}")
+    output.append(f"{BOX_BL}{BOX_H * (width - 2)}{BOX_BR}{RESET}")
+
+    # Content (word wrap if needed)
+    for line in content.split('\n'):
+        output.append(f"{PALE_IVORY}{line}{RESET}")
+
+    return "\n".join(output)
+
+
+def format_status_indicator(status, text=""):
+    """
+    Create a colored status indicator with optional text.
+
+    Args:
+        status (str): Status type (success, failure, warning, info, pending, blocked)
+        text (str): Optional text to display after indicator
+
+    Returns:
+        str: Formatted status indicator with color
+    """
+    indicators = {
+        "success": (SUCCESS, CHECK_MARK),
+        "failure": (FAILURE, X_MARK),
+        "warning": (GOLD, WARNING),
+        "info": ("|b", "ℹ"),
+        "pending": (GOLD, HOURGLASS),
+        "blocked": (FAILURE, PROHIBITED),
+    }
+
+    color, symbol = indicators.get(status.lower(), (PALE_IVORY, "●"))
+
+    if text:
+        return f"{color}{symbol}{RESET} {text}"
+    return f"{color}{symbol}{RESET}"
+
+
+def trait_dots_colored(current, maximum=5, filled_color=None, empty_color=None):
+    """
+    Create a colored dot representation of a trait.
+
+    Args:
+        current (int): Current trait value
+        maximum (int): Maximum trait value
+        filled_color (str): Color for filled dots (default: GOLD)
+        empty_color (str): Color for empty dots (default: SHADOW_GREY)
+
+    Returns:
+        str: Colored dot string (e.g., "●●●○○")
+    """
+    if filled_color is None:
+        filled_color = GOLD
+    if empty_color is None:
+        empty_color = SHADOW_GREY
+
+    filled = f"{filled_color}{CIRCLE_FILLED * current}{RESET}"
+    empty = f"{empty_color}{CIRCLE_EMPTY * (maximum - current)}{RESET}"
+    return filled + empty
+
+
+def format_progress_bar(current, maximum, width=40, show_numbers=True):
+    """
+    Create a visual progress bar.
+
+    Args:
+        current (int): Current progress value
+        maximum (int): Maximum value
+        width (int): Width of progress bar in characters
+        show_numbers (bool): Whether to show numerical progress
+
+    Returns:
+        str: Formatted progress bar
+    """
+    if maximum == 0:
+        percentage = 0
+    else:
+        percentage = min(100, int((current / maximum) * 100))
+
+    filled_width = int((percentage / 100) * width)
+    empty_width = width - filled_width
+
+    # Color gradient based on completion
+    if percentage >= 75:
+        bar_color = SUCCESS
+    elif percentage >= 50:
+        bar_color = GOLD
+    elif percentage >= 25:
+        bar_color = "|y"
+    else:
+        bar_color = BLOOD_RED
+
+    bar = f"{bar_color}{'█' * filled_width}{SHADOW_GREY}{'░' * empty_width}{RESET}"
+
+    if show_numbers:
+        return f"{bar} {PALE_IVORY}{current}/{maximum}{RESET} ({percentage}%)"
+    return bar
+

@@ -5,6 +5,13 @@ Helper functions for managing Status, calculating bonuses, and handling position
 """
 
 from .models import CharacterStatus, CamarillaPosition, StatusRequest
+from world.ansi_theme import (
+    BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
+    BONE_WHITE, MIDNIGHT_BLUE, GOLD, RESET,
+    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR,
+    BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR,
+    FLEUR_DE_LIS, CROWN, CIRCLE_FILLED, CIRCLE_EMPTY
+)
 
 
 def get_or_create_character_status(character):
@@ -315,7 +322,7 @@ def get_character_status_requests(character, status=None):
 
 def format_status_display(character):
     """
-    Format character's Status for display.
+    Format character's Status for display with colors and symbols.
 
     Args:
         character: Character object
@@ -326,39 +333,73 @@ def format_status_display(character):
     char_status = get_character_status(character)
 
     if not char_status:
-        return "No Status record"
+        return f"{SHADOW_GREY}No Status record{RESET}"
 
-    lines = []
+    # Colored header
+    output = []
+    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 78}{DBOX_TR}")
+    output.append(f"{DBOX_V} {FLEUR_DE_LIS} {BONE_WHITE}Status and Standing{RESET}{' ' * 54}{DARK_RED}{DBOX_V}")
+    output.append(f"{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}")
+    output.append("")
 
-    # Total Status
+    # Total Status with color gradient
     total = char_status.total_status
-    lines.append(f"Total Status: {'●' * total}{'○' * (5 - total)} ({total})")
+
+    # Color gradient based on status level
+    if total >= 4:
+        status_color = GOLD
+    elif total >= 2:
+        status_color = MIDNIGHT_BLUE
+    else:
+        status_color = SHADOW_GREY
+
+    # Dot representation with colors
+    dots_filled = f"{status_color}{CIRCLE_FILLED * total}{RESET}"
+    dots_empty = f"{SHADOW_GREY}{CIRCLE_EMPTY * (5 - total)}{RESET}"
+
+    output.append(f"  {GOLD}Total Status:{RESET} {dots_filled}{dots_empty} {status_color}({total}/5){RESET}")
 
     # Breakdown
-    if char_status.earned_status > 0:
-        lines.append(f"  Earned: {char_status.earned_status}")
+    if char_status.earned_status > 0 or char_status.position_status > 0 or char_status.temporary_status != 0:
+        output.append(f"  {SHADOW_GREY}└─ Breakdown:{RESET}")
 
-    if char_status.position_status > 0:
-        lines.append(f"  Position: {char_status.position_status}")
+        if char_status.earned_status > 0:
+            output.append(f"     {PALE_IVORY}Earned:{RESET} {GOLD}{char_status.earned_status}{RESET}")
 
-    if char_status.temporary_status != 0:
-        lines.append(f"  Temporary: {char_status.temporary_status:+d}")
+        if char_status.position_status > 0:
+            output.append(f"     {PALE_IVORY}Position:{RESET} {MIDNIGHT_BLUE}{char_status.position_status}{RESET}")
+
+        if char_status.temporary_status != 0:
+            temp_color = GOLD if char_status.temporary_status > 0 else BLOOD_RED
+            output.append(f"     {PALE_IVORY}Temporary:{RESET} {temp_color}{char_status.temporary_status:+d}{RESET}")
 
     # Position
     if char_status.position:
-        lines.append(f"\nPosition: {char_status.position.name}")
+        output.append("")
+        output.append(f"  {GOLD}Position:{RESET} {CROWN} {BONE_WHITE}{char_status.position.name}{RESET}")
         if char_status.position.title:
-            lines.append(f"  Title: {char_status.position.title}")
+            output.append(f"  {SHADOW_GREY}└─ Title:{RESET} {PALE_IVORY}{char_status.position.title}{RESET}")
+        output.append(f"  {SHADOW_GREY}└─ Status Granted:{RESET} {MIDNIGHT_BLUE}{char_status.position.status_granted}{RESET}")
 
     # Sect
-    lines.append(f"\nSect: {char_status.sect}")
+    output.append("")
+    output.append(f"  {GOLD}Sect:{RESET} {FLEUR_DE_LIS} {PALE_IVORY}{char_status.sect}{RESET}")
 
     # Mechanical bonus
     bonus = char_status.get_status_bonus()
     if bonus > 0:
-        lines.append(f"\nSocial Roll Bonus: +{bonus} dice")
+        output.append("")
+        output.append(f"  {GOLD}Social Roll Bonus:{RESET} {MIDNIGHT_BLUE}+{bonus} dice{RESET}")
 
-    return "\n".join(lines)
+    # Reputation (if set)
+    if char_status.reputation:
+        output.append("")
+        output.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}")
+        output.append(f"{BOX_V} {BONE_WHITE}Reputation{RESET}{' ' * 67}{SHADOW_GREY}{BOX_V}")
+        output.append(f"{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
+        output.append(f"{PALE_IVORY}{char_status.reputation}{RESET}")
+
+    return "\n".join(output)
 
 
 def initialize_default_positions():

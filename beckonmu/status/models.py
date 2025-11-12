@@ -120,6 +120,7 @@ class CharacterStatus(SharedMemoryModel):
     modified_date = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = 'status'
         verbose_name = "Character Status"
         verbose_name_plural = "Character Status Records"
 
@@ -238,6 +239,7 @@ class StatusRequest(SharedMemoryModel):
     resolved_date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
+        app_label = 'status'
         verbose_name = "Status Request"
         verbose_name_plural = "Status Requests"
         ordering = ['-created_date']

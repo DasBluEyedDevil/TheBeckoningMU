@@ -123,6 +123,7 @@ class Boon(SharedMemoryModel):
     modified_date = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = 'boons'
         verbose_name = "Boon"
         verbose_name_plural = "Boons"
         ordering = ['-created_date']
@@ -265,6 +266,7 @@ class BoonLedger(SharedMemoryModel):
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = 'boons'
         verbose_name = "Boon Ledger"
         verbose_name_plural = "Boon Ledgers"
 

@@ -140,7 +140,7 @@ CLANS = {
     "Salubri": {
         "disciplines": ["Auspex", "Dominate", "Fortitude"],
         "bane": "Third Eye: Visible third eye reveals vampire nature",
-        "compulsion": "Affective Empathy: Must help person in distress or lose 3 dice"
+        "compulsion": "Affective Empathy: Must help person in distress or lose 3 dice",
     },
 }
 
@@ -236,7 +236,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Auspex": {
@@ -325,7 +325,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Blood Sorcery": {
@@ -411,7 +411,6 @@ DISCIPLINES = {
                 }
             ]
         },
-        "rituals": []
         "powers": {},  # Populated in Phase 5
         "rituals": []  # Populated in Phase 5
     },
@@ -493,7 +492,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Dominate": {
@@ -582,7 +581,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Fortitude": {
@@ -663,7 +662,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Obfuscate": {
@@ -744,7 +743,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Oblivion": {
@@ -851,7 +850,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Potence": {
@@ -924,7 +923,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Presence": {
@@ -1013,7 +1012,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Protean": {
@@ -1207,7 +1206,7 @@ DISCIPLINES = {
                     "craft_difficulty": 6
                 }
             ]
-        }
+        },
         "powers": {}  # Populated in Phase 5
     },
     "Thin-Blood Alchemy": {
@@ -1660,6 +1659,20 @@ def get_trait_category(trait_name):
     # Check disciplines
     if trait_name in DISCIPLINES:
         return "disciplines"
-    
+
     # Check if it's a background (anything else is assumed to be background/advantage)
     return "backgrounds"
+
+
+# ============================================================================
+# FRENZY TRIGGERS (Phase 11: Humanity/Touchstones)
+# ============================================================================
+
+FRENZY_TRIGGERS = {
+    "hunger": {"difficulty": 3, "compulsion": "Feed"},
+    "humiliation": {"difficulty": 2, "compulsion": "Fight"},
+    "rage": {"difficulty": 3, "compulsion": "Fight"},
+    "fear": {"difficulty": 3, "compulsion": "Flight"},
+    "fire": {"difficulty": 4, "compulsion": "Flight"},
+    "sunlight": {"difficulty": 5, "compulsion": "Flight"},
+}

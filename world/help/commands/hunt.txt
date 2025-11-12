@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                      HUNTING COMMANDS                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                      HUNTING COMMANDS                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Hunt for mortal prey to slake your Hunger.
 
@@ -97,6 +97,6 @@ Your Predator Type grants bonuses to specific hunting methods:
   - Use your Herd background for easy, safe feeding
   - Resonance choices affect your character's traits
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help feed, help hunger, help predator, help backgrounds

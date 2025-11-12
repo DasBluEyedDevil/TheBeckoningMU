@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                         HEAL COMMAND                              |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                         HEAL COMMAND                              |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Heal damage on yourself or a target.
 
@@ -92,6 +92,6 @@ Heal damage on yourself or a target.
   - Aggravated damage tells a story - don't rush healing it
   - Staff may adjudicate special healing circumstances
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help damage, help health, help blood surge, help torpor

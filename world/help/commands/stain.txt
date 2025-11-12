@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                    HUMANITY & STAIN COMMANDS                      |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                    HUMANITY & STAIN COMMANDS                      |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Manage your character's Humanity, Convictions, and Stains.
 
@@ -114,6 +114,6 @@ For solo RP or automated events:
   - Low Humanity makes you more monstrous
   - Staff arbitrates edge cases and major violations
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help frenzy, help beast, help convictions, help torpor

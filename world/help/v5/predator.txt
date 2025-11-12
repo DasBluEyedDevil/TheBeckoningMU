@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                        PREDATOR TYPES                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                        PREDATOR TYPES                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Your Predator Type defines how you hunt and feed. It reflects your
 relationship with predation and the mortal world, granting specific
@@ -219,6 +219,6 @@ Your Predator Type should influence:
   - Choose one that matches your concept and playstyle
   - Staff may require you to roleplay your chosen type
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help chargen, help hunt, help hunger, help backgrounds

@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                       CHARACTER SHEET                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                       CHARACTER SHEET                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 View your complete character sheet or another character's public information.
 
@@ -39,6 +39,6 @@ View your complete character sheet or another character's public information.
   - Other characters' sheets show only public info
   - Use |y+st|n for a quick at-a-glance summary
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help chargen, help xp, help status, help disciplines

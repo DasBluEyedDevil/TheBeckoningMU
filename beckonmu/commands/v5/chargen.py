@@ -8,6 +8,12 @@ from evennia.commands.command import Command
 from evennia.utils.utils import inherits_from
 from .utils import chargen_utils, clan_utils, trait_utils, blood_utils
 from world.v5_data import PREDATOR_TYPES
+from world.ansi_theme import (
+    BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
+    BONE_WHITE, GOLD, SUCCESS, RESET,
+    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR,
+    CIRCLE_FILLED, CIRCLE_EMPTY
+)
 
 
 class CmdChargen(Command):
@@ -69,21 +75,21 @@ class CmdChargen(Command):
         # Warn if character has data
         clan = clan_utils.get_clan(self.caller)
         if clan:
-            self.caller.msg("|yWarning:|n This will reset your character to a blank slate!")
+            self.caller.msg(f"{GOLD}Warning:{RESET} This will reset your character to a blank slate!")
             self.caller.msg("If you're sure, use '+chargen/reset' to confirm.")
             return
 
         result = chargen_utils.start_chargen(self.caller)
         self.caller.msg(result["message"])
         self.caller.msg("\n" + chargen_utils.format_chargen_progress(self.caller))
-        self.caller.msg(f"\n|yNext step:|n {chargen_utils.get_recommended_next_step(self.caller)}")
+        self.caller.msg(f"\n{GOLD}Next step:{RESET} {chargen_utils.get_recommended_next_step(self.caller)}")
 
     def select_clan(self):
         """Select character's clan."""
         if not self.args:
             # Show available clans
             self.caller.msg(clan_utils.list_all_clans())
-            self.caller.msg("\n|yUsage:|n +chargen/clan <name>")
+            self.caller.msg(f"\n{GOLD}Usage:{RESET} +chargen/clan <name>")
             return
 
         clan_name = self.args.strip()
@@ -103,7 +109,7 @@ class CmdChargen(Command):
             self.caller.msg("  - Sunlight: Takes bashing damage (not aggravated)")
             self.caller.msg("  - Disciplines: Choose 1 Discipline with flaw OR Thin-Blood Alchemy")
             self.caller.msg("  - Blush of Life: Easier to maintain mortal appearance")
-            self.caller.msg("\n|yNext:|n Use '+setdisc thin-blood alchemy = 1' to learn Alchemy")
+            self.caller.msg(f"\n{GOLD}Next:{RESET} Use '+setdisc thin-blood alchemy = 1' to learn Alchemy")
             self.caller.msg("       OR choose a standard discipline with a Thin-Blood flaw")
 
             chargen_utils.set_chargen_step(self.caller, "disciplines")
@@ -121,7 +127,7 @@ class CmdChargen(Command):
             if success:
                 self.caller.msg(f"\n|gClan set to {clan_name}!|n\n")
                 self.caller.msg(clan_utils.format_clan_display(self.caller))
-                self.caller.msg(f"\n|yNext step:|n {chargen_utils.get_recommended_next_step(self.caller)}")
+                self.caller.msg(f"\n{GOLD}Next step:{RESET} {chargen_utils.get_recommended_next_step(self.caller)}")
                 chargen_utils.set_chargen_step(self.caller, "predator")
             else:
                 self.caller.msg(f"|rFailed to set clan.|n")
@@ -131,20 +137,20 @@ class CmdChargen(Command):
     def select_predator(self):
         """Select character's predator type."""
         if not self.args:
-            # Show available predator types
+            # Show available predator types with colored header
             lines = []
-            lines.append("|c" + "="*70 + "|n")
-            lines.append("|c" + " "*25 + "PREDATOR TYPES" + " "*25 + "|n")
-            lines.append("|c" + "="*70 + "|n")
+            lines.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 70}{DBOX_TR}")
+            lines.append(f"{DBOX_V} {BONE_WHITE}PREDATOR TYPES{RESET}{' ' * 54}{DARK_RED}{DBOX_V}")
+            lines.append(f"{DBOX_BL}{DBOX_H * 70}{DBOX_BR}{RESET}")
             lines.append("")
 
             for predator_name, predator_data in sorted(PREDATOR_TYPES.items()):
-                lines.append(f"|w{predator_name}|n")
-                lines.append(f"  {predator_data['description']}")
-                lines.append(f"  Specialty: {predator_data['specialty']}")
+                lines.append(f"{BONE_WHITE}{predator_name}{RESET}")
+                lines.append(f"  {PALE_IVORY}{predator_data['description']}{RESET}")
+                lines.append(f"  {SHADOW_GREY}Specialty:{RESET} {GOLD}{predator_data['specialty']}{RESET}")
                 lines.append("")
 
-            lines.append("|yUsage:|n +chargen/predator <type>")
+            lines.append(f"{GOLD}Usage:{RESET} +chargen/predator <type>")
             self.caller.msg("\n".join(lines))
             return
 
@@ -163,7 +169,7 @@ class CmdChargen(Command):
         self.caller.msg(f"\n|gPredator Type set to {predator_name}!|n")
         self.caller.msg(f"Description: {predator_data['description']}")
         self.caller.msg(f"Specialty: {predator_data['specialty']}")
-        self.caller.msg(f"\n|yNext step:|n {chargen_utils.get_recommended_next_step(self.caller)}")
+        self.caller.msg(f"\n{GOLD}Next step:{RESET} {chargen_utils.get_recommended_next_step(self.caller)}")
         chargen_utils.set_chargen_step(self.caller, "attributes")
 
     def finalize_chargen(self):
@@ -177,7 +183,7 @@ class CmdChargen(Command):
             return
 
         self.caller.msg(f"|g{message}|n")
-        self.caller.msg("\n|yYour character has been submitted for staff approval.|n")
+        self.caller.msg(f"\n{GOLD}Your character has been submitted for staff approval.|n")
         self.caller.msg("Staff will review your character and approve or provide feedback.")
         self.caller.msg("\nYou can view your character with '+sheet'.")
 
@@ -222,12 +228,12 @@ To reject: +reject {self.caller.name} <reason>"""
             job.save()
 
             self.caller.msg(f"\n|gApproval request created as Job #{job.sequence_number} in {approval_bucket.name} bucket.|n")
-            self.caller.msg("|yStaff have been notified and will review your character.|n")
+            self.caller.msg(f"{GOLD}Staff have been notified and will review your character.|n")
 
         except Exception as e:
             # If job creation fails, don't block character creation
-            self.caller.msg(f"\n|yWarning:|n Could not create approval job: {e}")
-            self.caller.msg("|yPlease notify staff that your character is ready for approval.|n")
+            self.caller.msg(f"\n{GOLD}Warning:{RESET} Could not create approval job: {e}")
+            self.caller.msg(f"{GOLD}Please notify staff that your character is ready for approval.|n")
 
     def reset_chargen(self):
         """Reset character creation (WARNING: deletes all data)."""
@@ -245,7 +251,7 @@ To reject: +reject {self.caller.name} <reason>"""
     def show_progress(self):
         """Show character creation progress."""
         self.caller.msg(chargen_utils.format_chargen_progress(self.caller))
-        self.caller.msg(f"\n|yRecommendation:|n {chargen_utils.get_recommended_next_step(self.caller)}")
+        self.caller.msg(f"\n{GOLD}Recommendation:{RESET} {chargen_utils.get_recommended_next_step(self.caller)}")
 
 
 class CmdSetStat(Command):
@@ -376,7 +382,7 @@ class CmdSetDiscipline(Command):
                 self.caller.msg(f"|wYour in-clan disciplines:|n {', '.join(inclan)}")
             else:
                 self.caller.msg("Select a clan first with '+chargen/clan <name>'")
-            self.caller.msg("\n|yUsage:|n +setdisc <discipline> = <level>")
+            self.caller.msg(f"\n{GOLD}Usage:{RESET} +setdisc <discipline> = <level>")
             return
 
         discipline_name, value_str = self.args.split("=", 1)
@@ -398,7 +404,7 @@ class CmdSetDiscipline(Command):
         # Check if in-clan
         inclan = clan_utils.is_discipline_inclan(self.caller, discipline_name)
         if not inclan:
-            self.caller.msg(f"|yWarning:|n {discipline_name} is not in-clan for you.")
+            self.caller.msg(f"{GOLD}Warning:{RESET} {discipline_name} is not in-clan for you.")
             self.caller.msg("Starting with out-of-clan disciplines requires staff approval.")
 
         # Set discipline

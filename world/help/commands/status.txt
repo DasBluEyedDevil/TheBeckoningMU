@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                       STATUS COMMANDS                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                       STATUS COMMANDS                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 View and manage Camarilla social status and positions.
 
@@ -110,6 +110,6 @@ Status can be lost through:
   - The Prince can grant or strip status at will
   - Staff oversees position appointments
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help traditions, help boons, help prince, help camarilla

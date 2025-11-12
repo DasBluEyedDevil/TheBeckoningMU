@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                        BOON COMMANDS                              |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                        BOON COMMANDS                              |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Manage the intricate web of favors and debts in Camarilla society.
 
@@ -94,6 +94,6 @@ Multiple smaller boons can equal one larger boon.
   - Boon disputes can be brought before the Prince
   - Staff can adjudicate complex boon situations
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help prestation, help status, help politics, help harpy

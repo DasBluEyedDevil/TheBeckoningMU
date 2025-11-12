@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                        ATTACK COMMAND                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                        ATTACK COMMAND                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Perform an attack roll against a target in combat.
 
@@ -74,6 +74,6 @@ Modifiers to defense:
   - Storytellers may apply situational modifiers
   - Combat should enhance narrative, not replace it
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help combat, help damage, help health, help disciplines

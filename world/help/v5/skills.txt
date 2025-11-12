@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                            SKILLS                                 |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                            SKILLS                                 |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Skills represent learned abilities and training. Characters have 27 skills
 rated from 0 (untrained) to 5 (master).
@@ -221,6 +221,6 @@ At Skill 2+, you can purchase |ySpecialties|n (3 XP each):
   - Specialties add flavor and mechanical benefit
   - Some tasks may require minimum skill rating
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help attributes, help chargen, help dice, help xp

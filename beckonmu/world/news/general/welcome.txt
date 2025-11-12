@@ -1,49 +1,56 @@
-╔══════════════════════════════════════════════════════════════════╗
-║                 |rWELCOME TO THEBEKCONINGMU|n                        ║
-║          A Vampire: The Masquerade 5th Edition MUSH              ║
-╚══════════════════════════════════════════════════════════════════╝
+|[R╔════════════════════════════════════════════════════════════════════════════╗
+|[R║                                                                            ║
+|[R║                   |WWELCOME TO THE BECKONING MUD|[R                            ║
+|[R║                                                                            ║
+|[R║           |xA Vampire: The Masquerade 5th Edition MUSH|[R                    ║
+|[R║                                                                            ║
+|[R╚════════════════════════════════════════════════════════════════════════════╝|n
 
-|yTheBeckoningMU|n is a text-based roleplaying game set in the World of
+|wTheBeckoningMU|n is a text-based roleplaying game set in the World of
 Darkness, using the Vampire: The Masquerade 5th Edition rules. This
 game focuses on the eternal struggle between vampires and their Beast,
 the political machinations of the Camarilla, and the personal horror
 of unlife in the modern nights.
 
-|w═══════════════════════════════════════════════════════════════════|n
+|x════════════════════════════════════════════════════════════════════════════════|n
 
-|cGETTING STARTED|n
+|W▸ GETTING STARTED|n
 
 If you're new to the game, try these commands:
 
-  |w+help|n           - Access the help system
-  |w+news updates|n   - Read about recent changes
-  |w+news policy|n    - Read game policies
-  |w+bbs|n            - Read the bulletin boards
-  |w+who|n            - See who's online
+  |y→|n |Whelp|n                - Access the help system
+  |y→|n |W+news updates|n        - Read about recent changes
+  |y→|n |W+news policy|n         - Read game policies
+  |y→|n |W+bbs|n                 - Read the bulletin boards
+  |y→|n |W+who|n                 - See who's online
 
-For character creation, visit the web interface at:
+For character creation, use the in-game chargen system:
+  |y→|n |W+chargen/start|n       - Begin character creation
+
+Or visit the web interface at:
   |yhttp://localhost:4001/character-creation/|n
 
-Or use the in-game chargen system:
-  |w+chargen/start|n
+|x════════════════════════════════════════════════════════════════════════════════|n
 
-|w═══════════════════════════════════════════════════════════════════|n
+|W▸ THE BECKONING|n
 
-|cTHE BECKONING|n
-
-The Second Inquisition hunts. The Blood Hunt is called. The Beckoning
-pulls ancient Kindred eastward. In these Final Nights, you must choose
-your path carefully...
+  |x"The Second Inquisition hunts. The Blood Hunt is called.|n
+   |xThe Beckoning pulls ancient Kindred eastward.|n
+   |xIn these Final Nights, you must choose your path carefully..."|n
 
 Will you embrace the Beast, or fight to maintain your Humanity?
 
-|w═══════════════════════════════════════════════════════════════════|n
+|x════════════════════════════════════════════════════════════════════════════════|n
 
-|cNEED HELP?|n
+|W▸ NEED HELP?|n
 
-- Read |w+help getting_started|n for a full new player guide
-- Ask questions on |w+bbs general|n
-- Use |w+job/create|n to request staff assistance
-- Contact staff with |wpage <staffname>=<message>|n
+  |y●|n Read |W+help getting_started|n for a full new player guide
+  |y●|n Ask questions on |W+bbs general|n
+  |y●|n Use |W+job/create|n to request staff assistance
+  |y●|n Contact staff with |Wpage <staffname>=<message>|n
 
-|rThe Beast is always watching. Welcome to the Masquerade.|n
+|x════════════════════════════════════════════════════════════════════════════════|n
+
+  |r⚜|n |xThe Beast is always watching. Welcome to the Masquerade.|n |r⚜|n
+
+|x════════════════════════════════════════════════════════════════════════════════|n

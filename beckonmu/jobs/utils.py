@@ -7,6 +7,12 @@ Provides service layer functions to keep commands clean and focused.
 from .models import Job, Bucket
 from evennia.accounts.models import AccountDB
 from django.core.exceptions import ObjectDoesNotExist
+from world.ansi_theme import (
+    BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
+    BONE_WHITE, GOLD, SUCCESS, FAILURE, RESET,
+    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR,
+    BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR
+)
 
 
 def get_job(caller, job_id, bucket=None):
@@ -98,83 +104,120 @@ def check_job_permission(caller, job):
 
 def format_job_view(job):
     """
-    Returns a formatted string for detailed job view.
-    
+    Returns a formatted string for detailed job view with colors and symbols.
+
     Args:
         job: Job object
-    
+
     Returns:
         Formatted string for display
     """
-    # Header
-    status_color = "|g" if job.status == "OPEN" else "|r" if job.completed else "|y"
-    output = f"|wJob #{job.sequence_number}: {job.title}|n\n"
-    output += f"|wBucket:|n {job.bucket.name}\n"
-    output += f"|wStatus:|n {status_color}{job.status}|n\n"
-    output += f"|wCreated by:|n {job.creator.username}\n"
-    output += f"|wCreated:|n {job.created_at.strftime('%B %d, %Y at %I:%M %p')}\n"
-    
+    # Status colors and symbols
+    if job.completed:
+        status_color = SHADOW_GREY
+        status_symbol = "✓"
+    elif job.status == "OPEN":
+        status_color = GOLD
+        status_symbol = "⏳"
+    elif job.status == "BLOCKED":
+        status_color = FAILURE
+        status_symbol = "⛔"
+    else:
+        status_color = "|b"
+        status_symbol = "⚙"
+
+    # Header with colored box
+    output = []
+    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 78}{DBOX_TR}")
+
+    # Title line
+    title_text = f"Job #{job.sequence_number}: {job.title}"
+    padding = 76 - len(title_text)
+    output.append(f"{DBOX_V} {GOLD}{title_text}{RESET}{' ' * padding}{DARK_RED}{DBOX_V}")
+
+    output.append(f"{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}")
+    output.append("")
+
+    # Details section
+    output.append(f"  {GOLD}Bucket:{RESET} {PALE_IVORY}{job.bucket.name}{RESET}")
+    output.append(f"  {GOLD}Status:{RESET} {status_color}{status_symbol} {job.status}{RESET}")
+    output.append(f"  {GOLD}Created by:{RESET} {PALE_IVORY}{job.creator.username}{RESET}")
+    output.append(f"  {GOLD}Created:{RESET} {SHADOW_GREY}{job.created_at.strftime('%B %d, %Y at %I:%M %p')}{RESET}")
+
     # Assigned players
     players = job.players.all()
     if players:
         player_names = [p.username for p in players]
-        output += f"|wAssigned to:|n {', '.join(player_names)}\n"
+        output.append(f"  {GOLD}Assigned:{RESET} {PALE_IVORY}{', '.join(player_names)}{RESET}")
     else:
-        output += f"|wAssigned to:|n None\n"
-    
+        output.append(f"  {GOLD}Assigned:{RESET} {SHADOW_GREY}None{RESET}")
+
     # Completion status
     if job.completed:
-        output += f"|wCompleted:|n Yes\n"
+        output.append(f"  {GOLD}Completed:{RESET} {SUCCESS}✓ Yes{RESET}")
     else:
-        output += f"|wCompleted:|n No\n"
-    
-    output += "\n|wDescription:|n\n"
-    output += f"{job.description}\n"
-    
-    # Comments
+        output.append(f"  {GOLD}Completed:{RESET} {SHADOW_GREY}○ No{RESET}")
+
+    # Description box
+    output.append("")
+    output.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}")
+    output.append(f"{BOX_V} {BONE_WHITE}Description{RESET}{' ' * 66}{SHADOW_GREY}{BOX_V}")
+    output.append(f"{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
+    output.append(f"{PALE_IVORY}{job.description}{RESET}")
+
+    # Comments section
     comments = job.comments.all()
     if comments:
-        output += "\n|wComments:|n\n"
-        output += "-" * 60 + "\n"
-        
+        output.append("")
+        output.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}")
+        output.append(f"{BOX_V} {BONE_WHITE}Comments{RESET}{' ' * 69}{SHADOW_GREY}{BOX_V}")
+        output.append(f"{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
+        output.append("")
+
         for comment in comments:
             author_name = comment.author.username if comment.author else "System"
             date_str = comment.created_at.strftime("%m/%d/%y %I:%M %p")
-            visibility = " (Public)" if comment.public else " (Private)"
-            
-            output += f"|w{author_name}|n{visibility} ({date_str}):\n"
-            output += f"{comment.content}\n\n"
-    
-    return output
+            visibility = f"{GOLD}(Public){RESET}" if comment.public else f"{SHADOW_GREY}(Private){RESET}"
+
+            output.append(f"  {GOLD}[{date_str}]{RESET} {PALE_IVORY}{author_name}{RESET} {visibility}:")
+            output.append(f"    {SHADOW_GREY}{comment.content}{RESET}")
+            output.append("")
+
+    return "\n".join(output)
 
 
 def format_job_list(jobs, title="Jobs"):
     """
-    Returns a formatted string for a list of jobs.
-    
+    Returns a formatted string for a list of jobs with colors and symbols.
+
     Args:
         jobs: QuerySet or list of Job objects
         title: Title for the list
-    
+
     Returns:
         Formatted string for display
     """
+    # Colored header
+    output = []
+    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 78}{DBOX_TR}")
+    output.append(f"{DBOX_V} {GOLD}{title}{RESET}{' ' * (76 - len(title))}{DARK_RED}{DBOX_V}")
+    output.append(f"{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}")
+    output.append("")
+
     if not jobs:
         # Handle specific messaging for different contexts
         if title == "All Open Jobs":
-            return "There are no jobs."
+            output.append(f"{SHADOW_GREY}  There are no jobs.{RESET}")
         elif title == "My Jobs":
-            return "You have no jobs submitted."
+            output.append(f"{SHADOW_GREY}  You have no jobs submitted.{RESET}")
         else:
-            return f"No {title.lower()} found."
-    
-    # Header
-    output = f"|w{title}:|n\n"
-    output += "|w{:<5} {:<25} {:<15} {:<10} {:<15}|n\n".format(
-        "ID", "Title", "Bucket", "Status", "Assigned"
-    )
-    output += "-" * 70 + "\n"
-    
+            output.append(f"{SHADOW_GREY}  No {title.lower()} found.{RESET}")
+        return "\n".join(output)
+
+    # Table header
+    output.append(f"{BONE_WHITE}  {'ID':<5} {'Title':<25} {'Bucket':<15} {'Status':<12} {'Assigned':<15}{RESET}")
+    output.append(f"{SHADOW_GREY}  {BOX_H * 76}{RESET}")
+
     # Jobs
     for job in jobs:
         # Get assigned players
@@ -184,54 +227,63 @@ def format_job_list(jobs, title="Jobs"):
             if len(players) > 1:
                 assigned += " (+)"
         else:
-            assigned = "None"
-        
-        # Status formatting
-        status = job.status
+            assigned = f"{SHADOW_GREY}None{RESET}"
+
+        # Status formatting with colors and symbols
         if job.completed:
-            status = "CLOSED"
-        
-        output += "{:<5} {:<25} {:<15} {:<10} {:<15}\n".format(
-            job.sequence_number,
-            job.title[:24],
-            job.bucket.name[:14],
-            status[:9],
-            assigned
-        )
-    
-    return output
+            status_display = f"{SHADOW_GREY}✓ CLOSED{RESET}"
+        elif job.status == "OPEN":
+            status_display = f"{GOLD}⏳ OPEN{RESET}"
+        elif job.status == "BLOCKED":
+            status_display = f"{FAILURE}⛔ BLOCKED{RESET}"
+        else:
+            status_display = f"{PALE_IVORY}⚙ {job.status}{RESET}"
+
+        # Job row
+        output.append(f"  {GOLD}{job.sequence_number:<5}{RESET} "
+                     f"{PALE_IVORY}{job.title[:24]:<25}{RESET} "
+                     f"{SHADOW_GREY}{job.bucket.name[:14]:<15}{RESET} "
+                     f"{status_display:<22} "  # Extra padding for ANSI codes
+                     f"{PALE_IVORY if isinstance(assigned, str) and 'None' not in assigned else ''}{assigned}{RESET}")
+
+    return "\n".join(output)
 
 
 def format_bucket_list(buckets):
     """
-    Returns a formatted string for a list of buckets.
-    
+    Returns a formatted string for a list of buckets with colors.
+
     Args:
         buckets: QuerySet or list of Bucket objects
-    
+
     Returns:
         Formatted string for display
     """
+    # Colored header
+    output = []
+    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 78}{DBOX_TR}")
+    output.append(f"{DBOX_V} {GOLD}Job Buckets{RESET}{' ' * 65}{DARK_RED}{DBOX_V}")
+    output.append(f"{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}")
+    output.append("")
+
     if not buckets:
-        return "No buckets found."
-    
-    # Header
-    output = "|wJob Buckets:|n\n"
-    output += "|w{:<20} {:<10} {:<40}|n\n".format("Name", "Jobs", "Description")
-    output += "-" * 70 + "\n"
-    
+        output.append(f"{SHADOW_GREY}  No buckets found.{RESET}")
+        return "\n".join(output)
+
+    # Table header
+    output.append(f"{BONE_WHITE}  {'Name':<20} {'Jobs':<10} {'Description':<40}{RESET}")
+    output.append(f"{SHADOW_GREY}  {BOX_H * 76}{RESET}")
+
     # Buckets
     for bucket in buckets:
         job_count = bucket.jobs.count()
-        description = bucket.description[:39] if bucket.description else "No description"
-        
-        output += "{:<20} {:<10} {:<40}\n".format(
-            bucket.name[:19],
-            job_count,
-            description
-        )
-    
-    return output
+        description = bucket.description[:39] if bucket.description else f"{SHADOW_GREY}No description{RESET}"
+
+        output.append(f"  {PALE_IVORY}{bucket.name[:19]:<20}{RESET} "
+                     f"{GOLD}{job_count:<10}{RESET} "
+                     f"{SHADOW_GREY}{description if 'No description' not in description else description}{RESET}")
+
+    return "\n".join(output)
 
 
 def can_view_job(caller, job):

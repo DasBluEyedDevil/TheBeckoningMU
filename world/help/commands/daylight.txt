@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                  THIN-BLOOD DAYLIGHT POWER                        |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                  THIN-BLOOD DAYLIGHT POWER                        |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Thin-Blood merit allowing limited daytime activity.
 
@@ -109,6 +109,6 @@ vampire nature - a blessing and a curse.
   - May have plot implications - use wisely
   - Staff approval required for exceptional circumstances
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help thinblood, help alchemy, help merits, help sunlight

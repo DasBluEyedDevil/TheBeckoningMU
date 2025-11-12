@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                        DAMAGE COMMAND                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                        DAMAGE COMMAND                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Apply damage to a target after a successful attack.
 
@@ -92,6 +92,6 @@ Mortals die when all Health boxes filled with Lethal or Aggravated damage.
   - Combat damage should have lasting consequences
   - Consider surrender before reaching Torpor/Death
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help attack, help heal, help health, help combat, help torpor

@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                     EXPERIENCE POINTS                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                     EXPERIENCE POINTS                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 View and manage your character's experience points.
 
@@ -62,6 +62,6 @@ View and manage your character's experience points.
   - Discipline increases may require training time
   - Staff may approve exceptions to costs
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help attributes, help skills, help disciplines, help chargen

@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                    STAFF APPROVAL COMMANDS                        |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                    STAFF APPROVAL COMMANDS                        |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Staff commands for character application review and approval.
 
@@ -140,6 +140,6 @@ When rejecting, provide:
   - Remember we're building a collaborative story
   - Document significant character histories
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help chargen, help staff policy, help character creation

@@ -7,7 +7,7 @@ the character trait system to track and update Hunger levels.
 
 from typing import Dict, Any, Optional
 from .dice_roller import roll_rouse_check as base_rouse_check
-from traits.utils import get_character_trait_value
+from beckonmu.traits.utils import get_character_trait_value
 
 
 def perform_rouse_check(character, reason: str = '', power_level: int = 1) -> Dict[str, Any]:

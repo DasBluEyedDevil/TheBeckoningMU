@@ -14,7 +14,7 @@ Usage:
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from traits.models import TraitCategory, Trait, DisciplinePower
+from beckonmu.traits.models import TraitCategory, Trait, DisciplinePower
 
 
 class Command(BaseCommand):

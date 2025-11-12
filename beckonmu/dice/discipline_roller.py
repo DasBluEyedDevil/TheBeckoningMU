@@ -9,8 +9,8 @@ and performing Rouse checks.
 from typing import Dict, Any, List, Optional, Tuple
 from .dice_roller import roll_v5_pool
 from .rouse_checker import perform_rouse_check, get_hunger_level
-from traits.models import DisciplinePower
-from traits.utils import get_character_trait_value
+from beckonmu.traits.models import DisciplinePower
+from beckonmu.traits.utils import get_character_trait_value
 
 
 def roll_discipline_power(

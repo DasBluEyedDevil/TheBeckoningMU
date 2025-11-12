@@ -45,6 +45,7 @@ class CamarillaPosition(SharedMemoryModel):
     is_active = models.BooleanField(default=True, help_text="Whether this position is currently in use")
 
     class Meta:
+        app_label = 'status'
         verbose_name = "Camarilla Position"
         verbose_name_plural = "Camarilla Positions"
         ordering = ['-hierarchy_level', 'name']

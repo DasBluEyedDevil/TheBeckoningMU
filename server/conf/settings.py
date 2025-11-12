@@ -30,8 +30,8 @@ from evennia.settings_default import *
 # Add beckonmu directory to Python path so apps can be imported
 import sys
 from pathlib import Path
-# This file is in beckonmu/server/conf/, so parent.parent gets us to beckonmu/
-BECKONMU_DIR = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+BECKONMU_DIR = PROJECT_ROOT / "beckonmu"
 if str(BECKONMU_DIR) not in sys.path:
     sys.path.insert(0, str(BECKONMU_DIR))
 

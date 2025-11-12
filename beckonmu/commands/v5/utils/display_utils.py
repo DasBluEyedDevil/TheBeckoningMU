@@ -26,6 +26,7 @@ from world.ansi_theme import (
 )
 
 from .clan_utils import get_clan, get_clan_info
+from .blood_utils import get_hunger, get_blood_potency
 from . import social_utils
 
 

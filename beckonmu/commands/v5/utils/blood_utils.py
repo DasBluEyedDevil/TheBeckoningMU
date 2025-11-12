@@ -56,6 +56,19 @@ def get_hunger_level(character) -> int:
     return max(0, min(5, hunger))
 
 
+def get_hunger(character) -> int:
+    """
+    Alias for get_hunger_level() for backward compatibility.
+
+    Args:
+        character: Character object
+
+    Returns:
+        int: Hunger level (0-5)
+    """
+    return get_hunger_level(character)
+
+
 def set_hunger_level(character, hunger: int) -> int:
     """
     Set character's Hunger level.
@@ -392,6 +405,20 @@ def format_resonance_display(character) -> Optional[str]:
 
 # Blood Surge Management
 
+def get_blood_potency(character) -> int:
+    """
+    Get character's Blood Potency rating.
+
+    Args:
+        character: Character object
+
+    Returns:
+        int: Blood Potency level (0-10)
+    """
+    from traits.utils import get_character_trait_value
+    return get_character_trait_value(character, 'Blood Potency')
+
+
 def get_blood_potency_bonus(character) -> int:
     """
     Get character's Blood Potency bonus for Blood Surge.
@@ -402,9 +429,7 @@ def get_blood_potency_bonus(character) -> int:
     Returns:
         int: Bonus dice (equal to Blood Potency)
     """
-    from traits.utils import get_character_trait_value
-    blood_potency = get_character_trait_value(character, 'Blood Potency')
-    return blood_potency
+    return get_blood_potency(character)
 
 
 def activate_blood_surge(character, trait_type: str, trait_name: str) -> Dict[str, Any]:

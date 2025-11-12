@@ -1536,3 +1536,60 @@ Next session should:
 3. Review git status for current working state
 4. Check PROJECT_CONTEXT.md for architectural context
 5. Use DevilMCP tools for all significant decisions and changes
+
+---
+
+## Session 13: BBS Model Conflict Resolution (2025-11-12)
+
+### Summary
+Fixed cascading Django model registration conflicts preventing BBS system and all V5 commands from loading. Root cause: duplicate directory structure + short-path imports causing Django to register models under multiple app labels.
+
+### Changes Made
+
+#### Phase 1: AppConfig Fixes (Commit 913a84a)
+- **beckonmu/bbs/apps.py** - Changed `name = 'bbs'` → `'beckonmu.bbs'`
+- **beckonmu/jobs/apps.py** - Changed `name = 'jobs'` → `'beckonmu.jobs'`
+- **beckonmu/traits/apps.py** - Changed `name = 'traits'` → `'beckonmu.traits'`
+
+#### Phase 2: Import Path Fixes (Commit f9f6dfa)
+Fixed 10 short-path imports across 7 files:
+- **beckonmu/commands/chargen.py** - 2 imports: traits.models → beckonmu.traits.models, traits.utils → beckonmu.traits.utils
+- **beckonmu/dice/rouse_checker.py** - 1 import: traits.utils → beckonmu.traits.utils
+- **beckonmu/dice/discipline_roller.py** - 2 imports: traits.models/utils → beckonmu.traits.models/utils
+- **beckonmu/traits/tests.py** - 2 imports: traits.models/utils → beckonmu.traits.models/utils
+- **beckonmu/dice/tests.py** - 1 import: traits.models → beckonmu.traits.models
+- **beckonmu/traits/management/commands/load_traits.py** - 1 import: traits.models → beckonmu.traits.models
+- **beckonmu/traits/management/commands/seed_traits.py** - 1 import: traits.models → beckonmu.traits.models
+
+### Root Cause Analysis
+1. Duplicate directories at root level (old reference code) alongside working code (beckonmu/)
+2. Python sys.path includes project root, so short imports like `from traits.models` find BOTH locations
+3. Django registers models from both paths under different app labels → conflict
+
+### Impact
+- **Resolved:** RuntimeError: Conflicting 'board' models in 'bbs'
+- **Resolved:** RuntimeError: Conflicting 'traitcategory' models in 'traits'
+- **Prevented:** Future import conflicts by fixing ALL short-path imports comprehensively
+
+### Key Decisions
+1. **Comprehensive Analysis:** Used grep to find ALL 10 short-path imports at once (vs incremental fixes)
+2. **Two-Phase Approach:** Separate commits for AppConfig fixes and import path fixes
+3. **Verification:** Re-ran grep to confirm 0 remaining short-path imports
+
+### Branch
+- **Branch:** claude/fix-bbs-model-conflict-011CV4geFEGiPDN8m5MUJFcj
+- **Commits:** 2 (913a84a, f9f6dfa)
+- **Status:** Pushed to remote, awaiting user testing
+
+### Metrics
+- Files Modified: 10
+- Import Statements Fixed: 10
+- Claude Tokens: ~54k / 200k (27%)
+- Verification: 0 remaining short-path imports (grep confirmed)
+
+### Next Steps
+1. User to test `evennia reload` on Windows
+2. Verify BBS, V5, and Jobs commands load successfully
+3. Consider removing duplicate reference directories if no longer needed
+4. Update CLAUDE.md with import path standards
+

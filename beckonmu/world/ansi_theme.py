@@ -140,6 +140,145 @@ def colorize(text, account=None):
         return re.sub(r'\|[xrRgGbBmMcCyYwW\[\]]|\|h|\|n', '', text)
     return text
 
+
+# ============================================================================
+# ASCII FALLBACK SYSTEM (for clients without Unicode support)
+# ============================================================================
+
+# ASCII fallback mappings for all Unicode symbols
+ASCII_FALLBACKS = {
+    # Box drawing - double line
+    "╔": "+", "╗": "+", "╚": "+", "╝": "+",
+    "║": "|", "═": "=",
+    "╦": "+", "╩": "+", "╠": "+", "╣": "+", "╬": "+",
+
+    # Box drawing - single line
+    "┌": "+", "┐": "+", "└": "+", "┘": "+",
+    "│": "|", "─": "-",
+    "┬": "+", "┴": "+", "├": "+", "┤": "+", "┼": "+",
+
+    # Thematic symbols
+    "⚜": "*",      # FLEUR_DE_LIS -> asterisk
+    "♛": "^",      # CROWN -> caret
+    "♕": "^",      # QUEEN -> caret
+    "❦": "@",      # ROSE -> at sign
+    "⚰": "#",      # COFFIN -> hash
+    "†": "+",      # CROSS -> plus
+    "✝": "+",      # CROSS_ALT -> plus
+    "◆": "*",      # DIAMOND -> asterisk
+    "●": "O",      # CIRCLE_FILLED -> uppercase O
+    "○": "o",      # CIRCLE_EMPTY -> lowercase o
+    "◇": "*",      # DIAMOND_EMPTY -> asterisk
+    "⚠": "!",      # WARNING -> exclamation
+    "⛔": "X",      # NO_ENTRY -> X
+    "⚡": "*",      # LIGHTNING -> asterisk
+
+    # Additional symbols (Phase 3)
+    "☥": "+",      # ANKH -> plus
+    "☠": "X",      # SKULL -> X
+    "⛤": "*",      # PENTAGRAM -> asterisk
+    "☾": ")",      # CRESCENT_MOON -> parenthesis
+    "✓": "v",      # CHECK_MARK -> v
+    "✗": "x",      # X_MARK -> x
+    "⏳": "~",      # HOURGLASS -> tilde
+    "⚙": "@",      # GEAR -> at sign
+    "→": ">",      # ARROW_RIGHT -> greater than
+    "←": "<",      # ARROW_LEFT -> less than
+    "↑": "^",      # ARROW_UP -> caret
+    "↓": "v",      # ARROW_DOWN -> v
+
+    # Progress bar characters
+    "█": "#",      # Full block -> hash
+    "░": ".",      # Light shade -> dot
+}
+
+
+def supports_unicode(session=None, account=None):
+    """
+    Detect if client supports Unicode characters.
+
+    Checks for:
+    1. Explicit user preference (account.db.use_unicode)
+    2. Web client (always supports Unicode)
+    3. Client protocol hints
+    4. Default to True (assume modern client)
+
+    Args:
+        session: Evennia session object
+        account: Evennia account object
+
+    Returns:
+        bool: True if Unicode supported, False for ASCII-only
+    """
+    # Check explicit user preference first
+    if account and hasattr(account.db, 'use_unicode'):
+        return account.db.use_unicode
+
+    # Web clients always support Unicode
+    if session and hasattr(session, 'protocol_key'):
+        if 'webclient' in session.protocol_key.lower():
+            return True
+
+    # Check client MTTS or GMCP capabilities (if available)
+    if session and hasattr(session, 'protocol_flags'):
+        flags = session.protocol_flags
+        if 'UTF-8' in flags or 'UNICODE' in flags:
+            return True
+        if 'ANSI' in flags and 'XTERM' in flags:
+            return True  # Most xterm supports UTF-8
+
+    # Default to True for modern clients (post-2015)
+    # Users can disable via: @set me/use_unicode = False
+    return True
+
+
+def get_symbol(unicode_char, session=None, account=None):
+    """
+    Get appropriate symbol based on client capabilities.
+
+    Returns Unicode symbol for modern clients, ASCII fallback for older clients.
+
+    Args:
+        unicode_char (str): Unicode character to display
+        session: Evennia session object (optional)
+        account: Evennia account object (optional)
+
+    Returns:
+        str: Unicode character or ASCII fallback
+
+    Examples:
+        >>> get_symbol("⚜")  # Modern client
+        "⚜"
+        >>> get_symbol("⚜")  # ASCII-only client
+        "*"
+    """
+    if supports_unicode(session, account):
+        return unicode_char
+
+    return ASCII_FALLBACKS.get(unicode_char, unicode_char)
+
+
+def convert_to_ascii(text):
+    """
+    Convert all Unicode symbols in text to ASCII fallbacks.
+
+    Useful for compatibility mode or when client doesn't support Unicode.
+
+    Args:
+        text (str): Text with Unicode symbols
+
+    Returns:
+        str: Text with ASCII fallbacks
+
+    Example:
+        >>> convert_to_ascii("Status: ●●●○○ ⚜")
+        "Status: OOOoo *"
+    """
+    for unicode_char, ascii_char in ASCII_FALLBACKS.items():
+        text = text.replace(unicode_char, ascii_char)
+    return text
+
+
 def make_header(title, width=65, style="double"):
     """
     Create a themed header box.

@@ -7,8 +7,8 @@ from django.apps import AppConfig
 
 class BbsConfig(AppConfig):
     """Django app configuration for the BBS system."""
-    
+
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'bbs'
+    name = 'beckonmu.bbs'
     label = 'bbs'
     verbose_name = 'Bulletin Board System'

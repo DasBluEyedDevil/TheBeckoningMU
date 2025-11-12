@@ -26,8 +26,8 @@ urlpatterns = [
     path("webclient/", include("web.webclient.urls")),
     # web admin
     path("admin/", include("web.admin.urls")),
-    # traits API
-    path("", include("beckonmu.traits.urls")),
+    # API routing
+    path("api/", include("beckonmu.web.api.urls")),
     # add any extra urls here:
     # path("mypath/", include("path.to.my.urls.file")),
 ]

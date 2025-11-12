@@ -20,6 +20,7 @@ MIDNIGHT_BLUE = "|b"       # Night, status, nobility
 BONE_WHITE = "|W"          # Headers, emphasis
 DECAY_GREEN = "|g"         # Necromancy, decay (Oblivion)
 GOLD = "|y"                # Status, boons, highlights
+VAMPIRE_GOLD = "|y"        # Alias for GOLD (used in humanity commands)
 
 # ============================================================================
 # SEMANTIC COLORS (Context-Specific)

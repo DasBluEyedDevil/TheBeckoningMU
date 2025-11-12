@@ -164,14 +164,37 @@ class CmdBloodSurge(Command):
             self.caller.msg("Usage: bloodsurge <attribute or skill>")
             return
 
-        # 3. Validate trait type
-        # TODO: Check if it's an Attribute or Physical Skill
-        # For now, accept any trait
+        # 3. Validate trait type - Blood Surge only works on Attributes or Physical Skills
+        VALID_ATTRIBUTES = [
+            'Strength', 'Dexterity', 'Stamina',  # Physical
+            'Charisma', 'Manipulation', 'Composure',  # Social
+            'Intelligence', 'Wits', 'Resolve'  # Mental
+        ]
+
+        VALID_PHYSICAL_SKILLS = [
+            'Athletics', 'Brawl', 'Craft', 'Drive', 'Firearms',
+            'Larceny', 'Melee', 'Stealth', 'Survival'
+        ]
+
+        trait_type = None
+        if trait_name in VALID_ATTRIBUTES:
+            trait_type = 'attribute'
+        elif trait_name in VALID_PHYSICAL_SKILLS:
+            trait_type = 'physical_skill'
+        else:
+            self.caller.msg(
+                f"|rBlood Surge can only be used on Attributes or Physical Skills.|n\n"
+                f"|wValid Attributes:|n Strength, Dexterity, Stamina, Charisma, "
+                f"Manipulation, Composure, Intelligence, Wits, Resolve\n"
+                f"|wValid Physical Skills:|n Athletics, Brawl, Craft, Drive, Firearms, "
+                f"Larceny, Melee, Stealth, Survival"
+            )
+            return
 
         # 4. Activate Blood Surge
         from beckonmu.commands.v5.utils import blood_utils
 
-        result = blood_utils.activate_blood_surge(self.caller, 'attribute', trait_name)
+        result = blood_utils.activate_blood_surge(self.caller, trait_type, trait_name)
 
         if result['success']:
             message = f"|yBlood Surge activated!|n\n\n"

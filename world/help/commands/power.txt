@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                     DISCIPLINE POWERS                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                     DISCIPLINE POWERS                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Activate and manage your vampire's supernatural discipline powers.
 
@@ -76,6 +76,6 @@ Some powers require multiple disciplines:
   - Dominate typically requires eye contact with mortals
   - Failed Rouse checks increase Hunger - manage carefully
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help disciplines, help rouse, help hunger, help effects

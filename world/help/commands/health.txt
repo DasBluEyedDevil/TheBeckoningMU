@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                        HEALTH COMMAND                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                        HEALTH COMMAND                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 View current health status for yourself or another character.
 
@@ -92,6 +92,6 @@ When all Health boxes are filled with damage:
   - Health affects all dice pools when Impaired
   - Tracking health is crucial in combat
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help combat, help damage, help heal, help torpor

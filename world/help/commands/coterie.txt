@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                      COTERIE COMMANDS                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                      COTERIE COMMANDS                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Create and manage vampire coteries (groups and alliances).
 
@@ -130,6 +130,6 @@ Common coterie concepts:
   - Coteries can be dissolved if all members leave
   - Staff mediates serious coterie disputes
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help backgrounds, help domain, help camarilla, help politics

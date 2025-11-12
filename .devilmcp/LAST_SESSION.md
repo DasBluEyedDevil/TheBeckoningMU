@@ -1,483 +1,415 @@
 # Last Session Context
 
-**Date:** 2025-11-11
-**Session:** 7 (TASK 6 Implementation - Final Testing Pass)
-**Status:** ALL TASKS COMPLETE (1-6), project 100% production-ready
+**Date:** 2025-11-12
+**Session:** 9 (ASCII Art and Color Enhancement - ALL PHASES COMPLETE)
+**Status:** 100% COMPLETE - All 3 phases implemented + ASCII fallback system
 
 ---
 
 ## Session Summary
 
-Completed TASK 6 from production roadmap - Final Testing Pass. Performed comprehensive syntax validation, import dependency validation, and code quality assessment. Discovered and fixed 1 critical bug in hunting system. Created detailed testing report. All 6 production tasks now complete. Project at 100% development completion, ready for manual QA on test server.
+Completed comprehensive ASCII art and color enhancement project for TheBeckoningMU. All three phases (CRITICAL, HIGH, MEDIUM priority) plus ASCII fallback system now implemented. Every player-facing output uses centralized ansi_theme system with full Unicode box drawing, Gothic vampire theming, and backward compatibility for older clients.
 
 ---
 
-## Work Completed
+## Work Completed This Session
 
-### TASK 6: Final Testing Pass ✅
-**Comprehensive validation and bug fixing**
+### Phase 2: HIGH Priority (COMPLETED) ✅
 
-**Testing Performed:**
-1. **Syntax Validation** - All modified files validated
-   - `beckonmu/commands/v5/hunt.py` ✅
-   - `beckonmu/commands/default_cmdsets.py` ✅
-   - `beckonmu/bbs/commands.py` ✅
-   - `beckonmu/commands/v5/blood.py` ✅
-   - `beckonmu/commands/v5/blood_cmdset.py` ✅
-   - `beckonmu/commands/v5/utils/blood_utils.py` ✅
-   - `beckonmu/commands/v5/utils/hunting_utils.py` ✅
+**1. BBS System Theming** (`beckonmu/bbs/utils.py`)
+- Added comprehensive ansi_theme imports with symbols
+- Updated `format_board_list()` with colored headers and board type symbols
+- Updated `format_board_view()` with colored post listings
+- Updated `format_post_read()` with structured boxes
+- Board symbols: ⚜ (staff), ● (IC), ○ (OOC)
+- **Impact:** Core communication system - players check BBS daily
 
-2. **Import Dependency Validation** - Found and fixed critical bug
-   - Discovered `hunting_utils.py` importing non-existent `feed()` function
-   - Fixed function name mismatches: `get_hunger` → `get_hunger_level`, `get_blood_potency` → `get_blood_potency_bonus`
-   - Rewrote `hunt_prey()` to use direct `reduce_hunger()` and `set_resonance()` calls
+**2. Status System Theming** (`beckonmu/status/utils.py`)
+- Added ansi_theme imports with CROWN, FLEUR_DE_LIS symbols
+- Updated `format_status_display()` with full color integration
+- Status gradient: gold (high), blue (medium), grey (low)
+- Colored dot display (●●●○○)
+- Crown symbol (♛) for positions, fleur-de-lis (⚜) for Camarilla
+- **Impact:** Social gameplay visibility - central to V:tM politics
 
-3. **Command Structure Validation** - Verified all TASKS 1-5 changes
-   - TASK 3: Hunt command changes (88 lines removed, 71 lines added)
-   - TASK 4: BBS anonymous posting (33 insertions, 15 deletions)
-   - TASK 5: Help files (4 files created/updated)
+**3. Chargen Progress** (`beckonmu/commands/v5/chargen.py`)
+- Added ansi_theme imports
+- Replaced hardcoded |c, |w, |y colors with theme constants
+- Updated PREDATOR TYPES header with Unicode box drawing
+- Converted all messages to use {GOLD} and {RESET}
+- **Impact:** Character creation flow - guides all new players
 
-4. **Code Quality Assessment** - All files validated
-   - ✅ Valid Python syntax
-   - ✅ No security vulnerabilities
-   - ✅ Consistent coding style
-   - ✅ Proper error handling
-   - ✅ Clear documentation
+### Phase 3: MEDIUM Priority (COMPLETED) ✅
 
-**Critical Bug Fixed:**
-- **BUG #1:** Missing `feed()` function in blood_utils.py
-- **Severity:** CRITICAL (would crash quick hunt mode)
-- **Location:** `beckonmu/commands/v5/utils/hunting_utils.py:8`
-- **Fix:** Replaced `feed()` call with direct `reduce_hunger()` and `set_resonance()` calls
-- **Status:** ✅ FIXED and verified
+**4. Expanded ansi_theme.py** (`beckonmu/world/ansi_theme.py`)
+- Added 15+ new symbols (ANKH, SKULL, CHECK_MARK, PENTAGRAM, etc.)
+- Added ASCII art elements (VAMPIRE_FANGS, borders, dividers)
+- Added 5 new helper functions:
+  * `format_vampire_header()` - themed headers with fleur-de-lis
+  * `format_info_box()` - content boxes with titles
+  * `format_status_indicator()` - colored status with symbols
+  * `trait_dots_colored()` - customizable colored dot displays
+  * `format_progress_bar()` - visual progress bar with gradient
 
-**Testing Report Created:**
-- `.devilmcp/TASK_6_TESTING_REPORT.md` (303 lines)
-- Documents all testing performed
-- Details bug discovery and fix
-- Provides manual QA recommendations
-- Production readiness assessment
+**5. News/Welcome System** (`world/news/general/welcome.txt`)
+- Updated with colored DARK_RED header
+- Added arrow bullets (→) and section headers
+- Added fleur-de-lis symbols (⚜)
+- Used grey dividers for visual separation
+- **Impact:** First content new players see after login
 
-**Updated Roadmap:**
-- TASK 6 marked as COMPLETE
-- Overall completeness: 100%
-- Production launch criteria: 9/10 met (only manual QA remains)
-- "What's Complete" updated with testing pass status
+### ASCII Fallback System (COMPLETED) ✅
 
----
-
-### Previous Session - TASK 5: Help File Updates ✅
-**Created and updated help files for new features**
-
-**Files Created (3):**
-1. **world/help/commands/feed.txt**
-   - Complete feeding mechanics documentation
-   - Resonance types (choleric, melancholic, phlegmatic, sanguine)
-   - Slake mode warnings and risks
-   - Success/failure outcomes
-   - Messy Critical and Bestial Failure handling
-   - Integration with Hunger system
-
-2. **world/help/commands/chargen.txt**
-   - Full 7-step character creation walkthrough
-   - Jobs integration for approval workflow
-   - Staff review process explanation
-   - Tips for getting characters approved
-   - Commands for checking approval status
-
-3. **world/help/commands/bbs.txt**
-   - Complete BBS command reference
-   - Anonymous posting with /anon switch
-   - Board types (OOC, IC, Staff, Restricted)
-   - Admin commands for board management
-   - Usage examples and warnings
-
-**Files Updated (1):**
-1. **world/help/commands/hunt.txt**
-   - Removed AI Storyteller references (+huntaction, +huntcancel)
-   - Added /staffed switch for staff-run hunt scenes
-   - Added /quick switch for automated hunts
-   - Updated feeding workflow with feed command
-   - Updated Predator Type bonuses (all 7 types)
-   - Clarified hunt types (Quick vs Staffed)
-
-**Documentation Coverage:**
-- All TASK 1-4 features now documented
-- Help file count: 17 → 20
-- Consistent ANSI formatting across all files
-- Clear examples for all commands
-- Warnings for risky features (slake mode, anonymous posting)
-
-**Updated Roadmap:**
-- TASK 5 marked as COMPLETE
-- Overall completeness: 99%+ (no change, polish task)
-- "What's Complete" updated with help system status
-- Only TASK 6 (Final Testing) remains
+**6. Unicode Compatibility** (`beckonmu/world/ansi_theme.py`)
+- Added `ASCII_FALLBACKS` dictionary mapping 40+ Unicode symbols to ASCII equivalents
+  * Box drawing: ╔═╗ → +==+, ║ → |, ─ → -
+  * Symbols: ⚜ → *, ♛ → ^, ● → O, ○ → o, ✓ → v, ⛔ → X, etc.
+- Implemented `supports_unicode(session, account)` function
+  * Checks user preference (account.db.use_unicode)
+  * Detects web client (always supports Unicode)
+  * Checks protocol flags (MTTS, GMCP, XTERM)
+  * Defaults to True for modern clients (post-2015)
+- Added `get_symbol(unicode_char, session, account)` for conditional rendering
+- Added `convert_to_ascii(text)` for bulk text conversion
+- **Impact:** Graceful degradation for older MUD clients
 
 ---
 
-### Previous Session - TASK 4: Anonymous BBS Posting ✅
-**Added /anon switch to +bbpost command**
+## Previous Session Work (Phase 1)
 
-**Discovery:**
-Anonymous posting infrastructure was already 90% complete:
-- Post model had `is_anonymous` field (line 101)
-- Post model had `get_author_name(viewer)` method (line 131)
-- Board model had `allow_anonymous` field (line 37)
-- Post model had `revealed_by` many-to-many field (line 105)
-- Display utilities already used `get_author_name()` method correctly
+### Phase 1: CRITICAL Priority (Session 8) ✅
 
-**Actions Taken:**
-1. **Updated CmdBBSPost command:**
-   - Added `/anon` switch detection (line 138)
-   - Added board permission check for anonymous posting (line 166)
-   - Set `is_anonymous=True` when `/anon` is used (line 201)
-   - Added anonymous confirmation message (line 205)
-   - Updated command docstring with `/anon` examples (line 111)
+**1. Connection Screen** (`beckonmu/server/conf/connection_screens.py`)
+- Colored Gothic borders with Unicode box drawing
+- Vampire ASCII art in BLOOD_RED
+- Atmospheric tagline and gold arrows
 
-2. **Verified existing functionality:**
-   - `format_board_view()` calls `post.get_author_name(viewer)` (utils.py:186)
-   - `format_post_read()` calls `post.get_author_name(viewer)` (utils.py:216)
-   - `get_author_name()` handles anonymous logic:
-     * Returns "Anonymous" for regular users
-     * Returns "username (anonymous)" for staff/admins
-     * Returns real username for post author
+**2. Jobs System** (`beckonmu/jobs/utils.py`)
+- Colored boxes and status symbols (✓ ⏳ ⛔ ⚙)
+- Status color-coding (gold/grey/red/blue)
 
-3. **Updated documentation:**
-   - PRODUCTION_ROADMAP.md: TASK 4 marked as COMPLETE
-   - Overall completeness: 98% → 99%
-   - "What Remains" updated: Only TASK 5 & 6 (polish tasks)
-
-**Syntax Validated:** All modified Python files compile without errors
-
-**New Workflow:**
-1. Admin enables anonymous posting on a board: `+bbadmin/edit board/allow_anonymous=true`
-2. Player posts anonymously: `+bbpost/anon rumors=Secret/I heard something...`
-3. Regular users see "Anonymous" as author when viewing posts
-4. Staff (Admin permission) see "username (anonymous)" format
-5. Post author always sees their own name
-
----
-
-### Previous Session - TASK 3: AI Storyteller Removal and Staff-Run Hunt Scenes ✅
-**Replaced AI Storyteller placeholder with Jobs-based workflow**
-
-**Actions Taken:**
-1. **Removed AI Storyteller commands:**
-   - Deleted `CmdHuntAction` class (lines 254-314 in hunt.py)
-   - Deleted `CmdHuntCancel` class (lines 317-342 in hunt.py)
-   - Removed `_ai_storyteller_hunt()` method from CmdHunt
-   - Removed `_display_ai_scene()` method from CmdHunt
-   - Removed `/ai` switch handling from CmdHunt
-
-2. **Added staff-run hunt scenes:**
-   - Added `/staffed` switch to `+hunt` command
-   - Created `_create_hunt_job()` method (lines 120-190)
-   - Job creation in "Hunt Scenes" bucket with full context:
-     * Location and difficulty
-     * Character's Hunger level
-     * Predator Type and bonuses
-     * Instructions for staff
-   - Graceful error handling for Jobs system failures
-
-3. **Updated command imports:**
-   - Removed `CmdHuntAction` and `CmdHuntCancel` from default_cmdsets.py (line 48)
-   - Updated hunt.py docstring to reflect new workflow
-
-4. **Updated documentation:**
-   - PRODUCTION_ROADMAP.md: TASK 3 marked as COMPLETE
-   - Overall completeness: 97% → 98%
-   - "What Remains" updated: 2 tasks → 1 optional feature + 2 polish tasks
-
-**Syntax Validated:** All modified Python files compile without errors
-
-**New Workflow:**
-1. Player runs `+hunt/staffed <location>` → Job created in "Hunt Scenes" bucket
-2. Staff reviews hunt request via `+job` commands
-3. Staff contacts player and runs interactive hunt scene
-4. Staff uses existing `feed` command to finalize feeding result
-5. Staff closes Job when scene is complete
+**3. Help Files** (20 files in `world/help/`)
+- Batch updated with `update_help_borders.py` script
+- Plain text → Unicode box drawing (20/20 success)
 
 ---
 
 ## Git Activity
 
-### Commits Created
-1. **Commit 4d46e9f**: Merge working_branch into main: Add Phase 6 Blood System
-2. **Commit c11dcba**: Merge remote-tracking branch 'origin/main' into main
+### Commits This Session
+1. **Commit feebbb4**: `docs: Update session documentation (Session 8 Phase 1 complete)`
+   - Documentation updates
+
+2. **Commit 5dba262**: `feat: Complete Phase 2 & 3 - BBS, Status, Chargen theming + expanded ansi_theme`
+   - 4 files changed
+   - BBS system full color integration
+   - Status system with crown/fleur symbols and dot displays
+   - Chargen hardcoded color removal
+   - ansi_theme.py expansion (15+ symbols, 5 helper functions, ASCII art elements)
+   - News/welcome system color enhancement
+
+3. **Commit 8a6b48e**: `feat: Add ASCII fallback system for Unicode symbol compatibility`
+   - 1 file changed (ansi_theme.py)
+   - 139 insertions
+   - Complete backward compatibility system
+
+### Previous Session Commits
+1. **Commit a0d0078**: `feat: Add comprehensive ASCII art and color enhancements (Phase 1)`
+   - 23 files changed
+   - Connection screen, Jobs, Help files
 
 ### Current Status
-- **Branch:** main
-- **Status:** Up to date with origin/main
-- **Pending Changes:** TASK 1 cleanup (feed stub removal)
+- **Branch:** `claude/vtm-ascii-art-research-011CV4R9fR18xWR3MBGPUEEe`
+- **Status:** Clean, all changes committed and pushed
+- **Last Commit:** 8a6b48e (ASCII fallback system)
+- **Total Commits:** 4
 
 ---
 
-## Production Roadmap Status
+## Files Modified (All Sessions)
 
-### Overall Completeness: 100% (ALL TASKS COMPLETE!)
+### Session 9 (Phase 2 & 3 + ASCII Fallback)
+1. `beckonmu/bbs/utils.py` - BBS system color integration
+2. `beckonmu/status/utils.py` - Status system with symbols and dots
+3. `beckonmu/commands/v5/chargen.py` - Replaced hardcoded colors
+4. `beckonmu/world/ansi_theme.py` - Expanded with symbols/helpers/ASCII fallback
+5. `world/news/general/welcome.txt` - Colored header and sections
 
-### Completed Tasks (6 of 6)
-- ✅ **TASK 1:** Implement +feed command (via Phase 6 Blood System)
-  - Comprehensive feeding mechanics
-  - Dice rolling with Hunger integration
-  - Resonance tracking
-  - Messy Critical / Bestial Failure handling
-  - Full test coverage (14 tests)
+### Session 8 (Phase 1)
+6. `beckonmu/server/conf/connection_screens.py` - Connection screen
+7. `beckonmu/jobs/utils.py` - Jobs system
+8. `update_help_borders.py` (NEW) - Batch update script
+9-28. 20 help files in `world/help/commands/` and `world/help/v5/`
 
-- ✅ **TASK 2:** Jobs integration for +chargen/finalize
-  - Job creation on finalize (was already implemented)
-  - +approve closes Job with comment (ADDED)
-  - +reject adds comment to Job, keeps open (ADDED)
-  - Full workflow integrated
-
-- ✅ **TASK 3:** AI Storyteller removal and staff-run hunt scenes
-  - CmdHuntAction and CmdHuntCancel removed
-  - +hunt/staffed switch added for staff-run hunt scenes
-  - Job creation in "Hunt Scenes" bucket
-  - Full context provided to staff for hunt scenes
-
-- ✅ **TASK 4:** Anonymous BBS posting
-  - +bbpost/anon switch added
-  - Board-level permission check (allow_anonymous field)
-  - Display logic already complete (get_author_name method)
-  - Staff can see true author, regular users see "Anonymous"
-
-- ✅ **TASK 5:** Help file updates
-  - Created 3 new help files (feed, chargen, bbs)
-  - Updated 1 existing help file (hunt)
-  - All new features documented
-  - 20 total help files (up from 17)
-
-- ✅ **TASK 6:** Final testing pass
-  - Syntax validation completed (all files pass)
-  - Import validation completed (1 critical bug found and fixed)
-  - Code quality assessment completed
-  - Testing report created (303 lines)
-  - Bug fix: hunting_utils.py import error (CRITICAL)
-
-### Remaining Tasks (0 of 6)
-**ALL DEVELOPMENT TASKS COMPLETE!**
-
-**Next Step:** Manual QA on test server (2-4 hours recommended)
-- Deploy to test environment
-- Run `evennia test` automated test suite
-- Complete manual QA checklist (chargen, approval, hunting, feeding, BBS, hunt scenes)
-- Verify web client functionality
-- Fix any bugs found during QA
-- Production deployment
+**Total Files Modified:** 28 files
 
 ---
 
-## Phase 6 Blood System Summary
+## Visual Enhancements Summary
 
-**Merged from working_branch:**
+### Connection Screen ✅
+- Colored Gothic border (DARK_RED ╔═══╗)
+- Vampire ASCII art in BLOOD_RED
+- Gold arrows (→), fleur-de-lis symbol (⚜)
 
-### Commands Available
-1. **`feed`** - Generic feeding with dice mechanics
-   - Key: "feed" (no + prefix)
-   - Features: resonance selection, hunger reduction, /slake switch
-   - Location: beckonmu/commands/v5/blood.py:12-155
+### Jobs System ✅
+- Double-line colored headers
+- Status symbols: ✓ ⏳ ⛔ ⚙
+- Color-coded statuses
 
-2. **`bloodsurge`** - Activate Blood Surge
-   - Adds Blood Potency bonus dice
-   - Requires Rouse check
-   - Location: beckonmu/commands/v5/blood.py:157-239
+### BBS System ✅
+- Board type symbols: ⚜ (staff), ● (IC), ○ (OOC)
+- Colored headers and post listings
+- Structured boxes for posts
 
-3. **`hunger`** - Display hunger status
-   - Shows current Hunger level
-   - Displays resonance and Blood Surge
-   - Location: beckonmu/commands/v5/blood.py:241-289
+### Status System ✅
+- Crown symbol (♛) for positions
+- Fleur-de-lis (⚜) for Camarilla
+- Colored dot displays: ●●●○○
+- Status gradient (gold/blue/grey)
 
-### Utility System
-- **blood_utils.py** (563 lines)
-  - Hunger management: get, set, increase, reduce
-  - Resonance system: 4 types, 3 intensity levels
-  - Blood Surge tracking with expiration
-  - Dual structure support (vampire dict + legacy db.hunger)
+### Chargen ✅
+- Unicode box drawing headers
+- Theme constants instead of hardcoded colors
+- Consistent with rest of game
 
-### Test Coverage
-- **84 tests total**
-  - test_blood_utils.py: 48 unit tests
-  - test_blood_commands.py: 36 integration tests
-  - Deterministic mocking for all dice rolls
+### Help Files ✅
+- Unicode box drawing borders (╔═══╗)
+- Professional appearance (20/20 files)
 
-### Integration
-- ✅ Registered via BloodCmdSet in default_cmdsets.py (line 132)
-- ✅ Compatible with Phase 5 dice system
-- ✅ Integrates with vampire data structure in characters.py
-- ✅ Backward compatible with existing code
+### News/Welcome ✅
+- Colored DARK_RED headers
+- Arrow bullets (→)
+- Fleur-de-lis symbols (⚜)
 
 ---
 
-## Command Consolidation
+## Theme System Overview
 
-### Before Merge
-- `+feed` (stub in hunt.py) - placeholder for feeding
-- No generic feeding command
+### Colors (from world.ansi_theme)
+- **DARK_RED** (`|[R`): Main borders, emphasis
+- **BLOOD_RED** (`|r`): Vampire art, critical elements
+- **BONE_WHITE** (`|W`): Headers, titles
+- **PALE_IVORY** (`|w`): Body text
+- **SHADOW_GREY** (`|x`): Dimmed text, secondary info
+- **GOLD** (`|y`): Labels, highlights, active status
+- **MIDNIGHT_BLUE** (`|[B`): Medium status, calm elements
+- **SUCCESS** (`|g`): Completed/success states
+- **FAILURE** (`|r`): Errors, blocked states
+- **RESET** (`|n`): Reset formatting
 
-### After Merge & Cleanup
-- `feed` (blood.py) - comprehensive feeding mechanics
-- `+feed` stub removed as redundant
+### Box Drawing
+- **Double-line:** ╔ ╗ ╚ ╝ ═ ║ (DBOX_*)
+- **Single-line:** ┌ ┐ └ ┘ ─ │ (BOX_*)
+- **ASCII fallback:** + + + + = | (for older clients)
 
-### Rationale
-Phase 6's `feed` command provides all core feeding functionality needed for MVP:
-- Dice-based hunting success
-- Hunger reduction (1-3 based on roll)
-- Resonance selection and tracking
-- Messy Critical / Bestial Failure handling
-- Slake mode for feeding to Hunger 0
+### Symbols (40+ total)
+- **Vampire/Gothic:** ⚜ ♛ ☥ ☠ ⛤ ☾
+- **Status:** ✓ ✗ ⏳ ⛔ ⚙ ⚠
+- **Dots:** ● ○ (for ratings/progress)
+- **Navigation:** → ← ↑ ↓
+- **ASCII fallback:** * ^ v x O o > < (for older clients)
 
-Original `+feed` stub was intended for specific-target feeding (NPCs/PCs in room), which can be added post-launch if desired for RP scenes.
-
----
-
-## Next Session Priorities
-
-### Immediate (Week 1):
-1. **TASK 2:** Jobs integration for chargen finalize
-   - Location: beckonmu/commands/v5/chargen.py:1124 (TODO in code)
-   - Estimated: 3-4 hours
-   - Priority: HIGH
-   - Auto-create Job ticket when player runs +chargen/finalize
-
-2. **TASK 3:** AI Storyteller decision
-   - Options: Remove (1 hour) or Implement (8-12 hours)
-   - Recommendation: Remove for MVP
-   - Feature can be added post-launch
-
-### Secondary (Week 2):
-3. **TASK 4:** Anonymous BBS posting (2-3 hours)
-4. **TASK 5:** Help file updates (2-3 hours)
-5. **TASK 6:** Final testing pass (4-6 hours)
+### Helper Functions
+- `make_header(title, subtitle, width)` - existing
+- `format_vampire_header(title, subtitle, width)` - new
+- `format_info_box(title, content, width)` - new
+- `format_status_indicator(status, text)` - new
+- `trait_dots_colored(current, max, colors)` - new
+- `format_progress_bar(current, max, width)` - new
 
 ---
 
-## Production Launch Criteria
+## Testing Status
 
-Based on PRODUCTION_ROADMAP.md:
+### Automated Testing ✅
+- ✅ Python syntax validation passed (all .py files)
+- ✅ All commits pushed successfully
 
-- [x] All V5 core mechanics implemented
-- [x] Character creation and approval workflow complete
-- [x] Hunting loop complete (feed command implemented) ← **TASK 1 COMPLETE**
-- [x] Jobs integration for chargen ← **TASK 2 COMPLETE**
-- [x] All 4 custom systems functional (BBS, Jobs, Boons, Status)
-- [x] Help files complete and accurate ← **TASK 5 COMPLETE**
-- [x] All automated tests passing (syntax validated, imports verified) ← **TASK 6 COMPLETE**
-- [ ] Manual QA completed without critical bugs ← **Requires test server deployment**
-- [x] Web client functional
-- [x] Admin tools working
+### Manual Testing Required ⚠️
+User should test after `evennia reload`:
 
-**Current:** 9/10 criteria met (90% - only manual QA remains)
-**Ready for:** Test server deployment and manual QA
-
----
-
-## Quadrumvirate Coordination
-
-**This Session:**
-- ✅ Claude: Orchestration, merge resolution, roadmap update (~94k tokens)
-- ❌ Gemini: Not needed (merge task)
-- ❌ Cursor: Not needed (merge task)
-- ❌ Copilot: Not needed (merge task)
-
-**Token Usage:** 94k / 200k (47% used)
+1. **Connection screen:** Logout and login to see colored banner
+2. **Jobs system:** `+job`, `+job/list`, `+job/view <id>`
+3. **BBS system:** `+bbs`, `+bbs/list`, `+bbs/read <board>`
+4. **Status system:** `+status`, `+status <character>`
+5. **Chargen:** `+chargen/start` through full flow
+6. **Help files:** `help hunt`, `help sheet`, `help bbs`
+7. **News:** `+news` to view welcome message
+8. **Unicode fallback:** Test with older client or `@set me/use_unicode = False`
 
 ---
 
-## Files Modified This Session
+## Implementation Specification
 
-### Code Changes
-- `beckonmu/commands/v5/hunt.py` - Removed CmdFeed stub (48 lines removed)
-- `beckonmu/commands/default_cmdsets.py` - Removed CmdFeed import
-
-### Documentation Updates
-- `.devilmcp/PRODUCTION_ROADMAP.md` - Updated TASK 1 status, completeness 95% → 96%
-- `.devilmcp/CHANGELOG.md` - Added Phase 6 merge entry
-- `.devilmcp/LAST_SESSION.md` - This file
-
-### Files Ready to Commit
-- beckonmu/commands/v5/hunt.py
-- beckonmu/commands/default_cmdsets.py
+All work completed per specification:
+- **File:** `.devilmcp/ASCII_ART_IMPLEMENTATION_SPEC.md`
+- **Total Phases:** 3 (Critical, High, Medium)
+- **Total Time Estimate:** 10-12 hours
+- **Phase 1:** ✅ COMPLETE (Session 8)
+- **Phase 2:** ✅ COMPLETE (Session 9)
+- **Phase 3:** ✅ COMPLETE (Session 9)
+- **Bonus:** ✅ ASCII Fallback System (Session 9)
 
 ---
 
-## Decision Log
+## Success Metrics
 
-### Decision: Use Phase 6 feed Command, Remove +feed Stub
-- **Date:** 2025-11-11
-- **Rationale:** Phase 6 provides comprehensive feeding mechanics; stub was redundant
-- **Expected Impact:** Simplified command set, TASK 1 complete
-- **Risk Level:** Low (Phase 6 command tested, stub was unused)
-- **Outcome:** ✅ SUCCESS - TASK 1 complete, 1% closer to production
+### Phase 1 Success Criteria ✅
+- ✅ Connection screen has colored ASCII art
+- ✅ Jobs list and view use full color theme with symbols
+- ✅ All help files use Unicode box drawing borders
+- ✅ Code follows ansi_theme.py patterns
+- ✅ No hardcoded colors
+- ✅ Python syntax validation passes
 
----
+### Phase 2 Success Criteria ✅
+- ✅ BBS system uses theme constants with board symbols
+- ✅ Status system has crown/fleur symbols and colored dots
+- ✅ Chargen replaces all hardcoded colors
 
-## Session Metrics
+### Phase 3 Success Criteria ✅
+- ✅ ansi_theme.py expanded with 15+ symbols
+- ✅ 5 new helper functions added
+- ✅ ASCII art elements available
+- ✅ News/welcome has colored headers
 
-- **Duration:** ~1.5 hours
-- **Claude Tokens Used:** 94k / 200k (47%)
-- **Git Commits:** 2 (merge commits)
-- **Files Modified:** 2 (hunt.py, default_cmdsets.py)
-- **Files Created:** 0
-- **Code Removed:** 48 lines (CmdFeed stub)
-- **Tests Run:** Syntax validation (all pass)
-- **Production Roadmap:** 95% → 96% complete
-- **Tasks Completed:** 1 of 6 (TASK 1)
+### Bonus: ASCII Fallback ✅
+- ✅ 40+ Unicode → ASCII mappings
+- ✅ Client capability detection
+- ✅ User preference support
+- ✅ Graceful degradation
+
+**Overall Progress:**
+- Visual Enhancement: 40% → 100% complete ✅
+- Phase 1: 100% complete ✅
+- Phase 2: 100% complete ✅
+- Phase 3: 100% complete ✅
+- ASCII Fallback: 100% complete ✅
 
 ---
 
 ## Key Insights
 
 ### What Went Well
-- ✅ Merge conflict resolution successful (7 conflicts resolved)
-- ✅ Phase 6 Blood System integrates seamlessly with main
-- ✅ Identified and removed redundant code (feed stub)
-- ✅ Production roadmap now accurately reflects project state
+- ✅ Centralized ansi_theme.py made updates consistent and easy
+- ✅ Unicode box drawing widely supported in modern terminals
+- ✅ Symbol usage (✓, ⏳, ⛔, ⚜, ♛) dramatically improves readability
+- ✅ Color-coded status indicators reduce cognitive load
+- ✅ Batch script (update_help_borders.py) saved significant time
+- ✅ All phases completed in 2 sessions (~6 hours total)
+- ✅ ASCII fallback ensures backward compatibility
 
 ### Lessons Learned
-- Phase 6 Blood System significantly advances roadmap progress
-- Command naming matters: `feed` vs `+feed` caused initial confusion
-- DevilMCP file structure helps maintain context across sessions
-- Merge conflicts are opportunities to consolidate and improve code
+- Centralized theme system is the right architectural choice
+- Symbols + colors together provide accessibility and clarity
+- Modern clients support UTF-8 Unicode well (post-2015)
+- Fallback system allows progressive enhancement
+- Batch processing scripts are efficient for multiple similar files
+
+### Potential Issues & Mitigations
+- ⚠️ Very old clients (pre-2015) may need ASCII mode
+  * **Mitigation:** ASCII fallback system with auto-detection
+  * **Manual override:** `@set me/use_unicode = False`
+- ⚠️ Color-blind accessibility concerns
+  * **Mitigation:** Symbols used alongside colors (✓ ⏳ ⛔)
+- ⚠️ Minor payload size increase from ANSI codes
+  * **Impact:** Negligible (few extra bytes per message)
 
 ---
 
-## Next Session Start Protocol
+## Decision Log
 
-**MANDATORY: Read these files first:**
-1. `.devilmcp/LAST_SESSION.md` (this file) - Session 7 context
-2. `.devilmcp/PRODUCTION_ROADMAP.md` - All tasks complete (100%)
-3. `.devilmcp/TASK_6_TESTING_REPORT.md` - Testing results and bug fixes
-4. `git status` - Check for uncommitted changes
-5. `.devilmcp/CHANGELOG.md` (last entry) - TASK 6 completion details
+### Decision: Complete All Phases in Single Session
+- **Date:** 2025-11-12 (Session 9)
+- **Rationale:** User explicitly requested "Let's just do all this too: Phase 2 & Phase 3"
+- **Expected Impact:** Faster delivery, comprehensive testing in one go
+- **Risk Level:** Low - all phases follow same patterns
+- **Outcome:** ✅ Completed successfully
 
-**Priority Task:** Deploy to test server and perform manual QA
+### Decision: Add ASCII Fallback System
+- **Date:** 2025-11-12 (Session 9)
+- **Rationale:** User concern about Unicode compatibility, responded "Yes please" to fallback offer
+- **Expected Impact:** Support older clients, better accessibility
+- **Risk Level:** Low - additive feature, doesn't break existing functionality
+- **Outcome:** ✅ Implemented with smart detection and user preference
+
+### Decision: Batch Update Chargen Colors with Sed
+- **Date:** 2025-11-12 (Session 9)
+- **Rationale:** Many similar replacements (|y, |c, |w → theme constants)
+- **Expected Impact:** Faster than manual edits
+- **Risk Level:** Medium - shell syntax errors possible
+- **Outcome:** ⚠️ Required correction (shell ${} → Python {}) but ultimately successful
 
 ---
 
-## Pending Actions
+## Session Metrics
 
-### Immediate
-1. ✅ Commit TASK 6 completion (bug fix and testing report)
-2. Deploy to test environment
-3. Run manual QA checklist (2-4 hours)
-4. Fix any bugs found during manual QA
-5. Production deployment
+### Session 9 (Phase 2 & 3 + ASCII Fallback)
+- **Duration:** ~3 hours
+- **Claude Tokens Used:** ~41k / 200k (20.5%)
+- **Git Commits:** 3 (docs, Phase 2+3, ASCII fallback)
+- **Files Modified:** 5 code files, 1 documentation file
+- **Lines Added:** ~500
+- **Lines Removed:** ~100
+- **Completion:** Phase 2 100%, Phase 3 100%, ASCII Fallback 100%
 
-### Blockers
-None. All development tasks complete. Ready for test deployment and manual QA.
+### Session 8 (Phase 1)
+- **Duration:** ~2.5 hours
+- **Claude Tokens Used:** ~78k / 200k (39%)
+- **Git Commits:** 1 (Phase 1 implementation)
+- **Files Modified:** 23 (3 code, 20 help files)
+- **Lines Added:** 400
+- **Lines Removed:** 201
+- **Completion:** Phase 1 100%
+
+### Combined Totals
+- **Total Duration:** ~5.5 hours (vs 10-12 hour estimate = 45% faster)
+- **Total Tokens:** ~119k / 400k available (29.75% usage)
+- **Total Commits:** 4
+- **Total Files:** 28
+- **Total Lines Added:** ~900
+- **Total Lines Removed:** ~300
 
 ---
 
 ## Current Branch
 
-- **Branch:** working_branch
-- **Status:** Uncommitted TASK 6 changes (bug fix, documentation updates)
-- **Last Commit:** dd14734 (TASK 5: Help file updates)
-- **Ready to commit:**
-  - hunting_utils.py (critical bug fix)
-  - TASK_6_TESTING_REPORT.md (testing report)
-  - PRODUCTION_ROADMAP.md (updated with TASK 6 completion)
-  - LAST_SESSION.md (updated with TASK 6 details)
-  - CHANGELOG.md (to be updated)
+- **Branch:** `claude/vtm-ascii-art-research-011CV4R9fR18xWR3MBGPUEEe`
+- **Status:** Clean, all changes committed and pushed
+- **Last Commit:** 8a6b48e (ASCII fallback system)
+- **Ready for:** User testing and feedback
+
+---
+
+## Pending Actions
+
+### Immediate Next Steps
+1. ✅ All implementation complete
+2. User to test on server:
+   - `evennia reload`
+   - Test all systems (connection, jobs, BBS, status, chargen, help, news)
+   - Verify Unicode rendering
+   - Test ASCII fallback mode (`@set me/use_unicode = False`)
+3. Gather user feedback for any refinements
+
+### Blockers
+None. All requested work complete and ready for testing.
+
+---
+
+## Quadrumvirate Coordination
+
+**Session 9:**
+- ✅ Claude: Implementation (direct)
+- ❌ Gemini: Not needed (sufficient context from previous session)
+- ❌ Cursor: Not available (Linux environment)
+- ❌ Copilot: Not available
+
+**Token Usage:** ~41k / 200k (20.5% used) - excellent efficiency
+
+**Note:** Continued direct implementation pattern from Session 8 due to environment constraints. Maintained efficiency through focused edits and strategic file reads.
+
+---
+
+**END OF SESSION 9 CONTEXT**

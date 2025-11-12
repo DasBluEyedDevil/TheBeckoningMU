@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                  CHARACTER GENERATION SYSTEM                      |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                  CHARACTER GENERATION SYSTEM                      |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Create your Vampire: The Masquerade 5th Edition character.
 
@@ -110,6 +110,6 @@ If you want to start over completely:
   - Homebrew content requires staff approval
   - Once approved, use |y+spend|n to advance your character
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help sheet, help xp, help spend, help jobs, help clans

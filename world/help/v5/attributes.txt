@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                         ATTRIBUTES                                |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                         ATTRIBUTES                                |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Attributes represent your character's innate capabilities. All characters
 have 9 attributes rated from 1 (poor) to 5 (exceptional).
@@ -129,6 +129,6 @@ Consider your character concept:
   - Zero is |yimpossible|n - minimum is 1
   - Some supernatural powers may boost attributes temporarily
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help skills, help chargen, help dice, help xp

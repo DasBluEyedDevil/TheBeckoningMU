@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                   BULLETIN BOARD SYSTEM (BBS)                     |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                   BULLETIN BOARD SYSTEM (BBS)                     |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Read and post to game bulletin boards.
 
@@ -123,6 +123,6 @@ Comments are always attributed (no anonymous comments).
   - Check |yhelp rules|n for posting guidelines
   - Anonymous posts are logged and monitored
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help jobs, help news, help rules

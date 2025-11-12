@@ -1,6 +1,6 @@
-|[R+===================================================================+
-|W|                       FEEDING COMMAND                             |
-|[R+===================================================================+|n
+|[R╔═══════════════════════════════════════════════════════════════════╗
+|W║                       FEEDING COMMAND                             |
+|[R╔═══════════════════════════════════════════════════════════════════╗|n
 
 Feed on mortal prey to reduce your Hunger.
 
@@ -91,6 +91,6 @@ Only use in emergencies or when safely isolated!
   - Resonance persists and affects future rolls
   - Use |yhunger|n command to check current Hunger level
 
-|[r+===================================================================+|n
+|[r╔═══════════════════════════════════════════════════════════════════╗|n
 
 |ySee also:|n help hunt, help hunger, help bloodsurge, help resonance

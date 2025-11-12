@@ -64,7 +64,7 @@ class CmdFeed(Command):
         # 5. Perform feeding roll
         # Get pool based on Predator Type
         from beckonmu.dice import dice_roller
-        from traits.utils import get_character_trait_value
+        from beckonmu.commands.v5.utils.trait_utils import get_trait_value
         from beckonmu.commands.v5.utils import blood_utils
         from beckonmu.commands.v5.utils.predator_utils import get_feeding_pool
 
@@ -72,7 +72,7 @@ class CmdFeed(Command):
         pool_parts = pool_str.split('+')
         pool = 0
         for part in pool_parts:
-            trait_value = get_character_trait_value(self.caller, part.capitalize())
+            trait_value = get_trait_value(self.caller, part.capitalize())
             pool += trait_value
         pool += bonus_dice  # Add predator type bonus
 

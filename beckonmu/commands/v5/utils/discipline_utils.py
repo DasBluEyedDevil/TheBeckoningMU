@@ -5,7 +5,7 @@ Helper functions for managing and using discipline powers.
 """
 
 from world.v5_data import DISCIPLINES
-from world.v5_dice import rouse_check
+from beckonmu.dice.dice_roller import roll_rouse_check
 from .blood_utils import get_blood_potency, increase_hunger
 from .discipline_effects import (
     apply_effect,
@@ -175,9 +175,10 @@ def activate_discipline_power(character, discipline_name, power_name):
     rouse_success = True
     rouse_die = None
     if power["rouse"]:
-        # Get character's Blood Potency for the Rouse check
-        bp = get_blood_potency(character)
-        rouse_success, rouse_die = rouse_check(bp)
+        # Perform Rouse check
+        rouse_result = roll_rouse_check(character, reason=f"Activating {power['name']}")
+        rouse_success = not rouse_result.get('hunger_increased', False)
+        rouse_die = rouse_result.get('die', None)
 
         # If Rouse check fails, Hunger increases
         if not rouse_success:

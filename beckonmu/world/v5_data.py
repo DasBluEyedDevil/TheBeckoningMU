@@ -236,8 +236,7 @@ DISCIPLINES = {
                     "amalgam": None
                 }
             ]
-        },
-        "powers": {}  # Populated in Phase 5
+        }
     },
     "Auspex": {
         "type": "standard",

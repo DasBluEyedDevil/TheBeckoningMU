@@ -415,8 +415,8 @@ def get_blood_potency(character) -> int:
     Returns:
         int: Blood Potency level (0-10)
     """
-    from traits.utils import get_character_trait_value
-    return get_character_trait_value(character, 'Blood Potency')
+    from .trait_utils import get_trait_value
+    return get_trait_value(character, 'Blood Potency')
 
 
 def get_blood_potency_bonus(character) -> int:
@@ -453,10 +453,10 @@ def activate_blood_surge(character, trait_type: str, trait_name: str) -> Dict[st
             'rouse_result': dict
         }
     """
-    from beckonmu.dice.rouse_checker import perform_rouse_check
+    from beckonmu.dice.dice_roller import roll_rouse_check
 
-    # Perform Rouse check
-    rouse_result = perform_rouse_check(character, reason=f"Blood Surge ({trait_name})", power_level=1)
+    # Perform Rouse check (using roll_rouse_check with character and reason)
+    rouse_result = roll_rouse_check(character, reason=f"Blood Surge ({trait_name})")
 
     # Get Blood Potency bonus
     bonus = get_blood_potency_bonus(character)
@@ -586,3 +586,81 @@ def format_blood_surge_display(character) -> Optional[str]:
         time_str = "less than 1 minute"
 
     return f"|wBlood Surge:|n |g+{bonus}|n to |y{trait}|n (expires in {time_str})"
+
+
+def mend_damage(character, damage_type: str = 'superficial', amount: int = 1) -> Dict[str, Any]:
+    """
+    Mend damage by spending blood (vampire healing).
+
+    Vampires can mend damage by spending blood. Superficial damage heals automatically,
+    but Aggravated damage requires a Rouse check per point healed.
+
+    Args:
+        character: Character object
+        damage_type: Type of damage ('superficial' or 'aggravated')
+        amount: Amount of damage to heal
+
+    Returns:
+        dict: {
+            'success': bool,
+            'healed': int (amount actually healed),
+            'damage_type': str,
+            'hunger_increased': bool,
+            'rouse_checks': int (number of Rouse checks made),
+            'message': str
+        }
+
+    Examples:
+        >>> mend_damage(character, 'superficial', 2)
+        {'success': True, 'healed': 2, 'hunger_increased': False, ...}
+    """
+    from beckonmu.dice.dice_roller import roll_rouse_check
+
+    # Get current damage
+    current_superficial = getattr(character.db, 'superficial_damage', 0)
+    current_aggravated = getattr(character.db, 'aggravated_damage', 0)
+
+    healed = 0
+    hunger_increased = False
+    rouse_checks = 0
+
+    if damage_type.lower() == 'superficial':
+        # Superficial damage heals automatically (no Rouse check needed per V5)
+        healed = min(amount, current_superficial)
+        character.db.superficial_damage = current_superficial - healed
+        message = f"Healed {healed} superficial damage."
+
+    elif damage_type.lower() == 'aggravated':
+        # Aggravated damage requires Rouse check per point
+        for i in range(min(amount, current_aggravated)):
+            rouse_result = roll_rouse_check(character, reason=f"Mending aggravated damage")
+            rouse_checks += 1
+
+            if rouse_result.get('hunger_increased', False):
+                hunger_increased = True
+
+            healed += 1
+
+        character.db.aggravated_damage = current_aggravated - healed
+        message = f"Healed {healed} aggravated damage with {rouse_checks} Rouse check(s)."
+        if hunger_increased:
+            message += " Hunger increased from failed Rouse check(s)."
+
+    else:
+        return {
+            'success': False,
+            'healed': 0,
+            'damage_type': damage_type,
+            'hunger_increased': False,
+            'rouse_checks': 0,
+            'message': f"Invalid damage type: {damage_type}. Use 'superficial' or 'aggravated'."
+        }
+
+    return {
+        'success': True,
+        'healed': healed,
+        'damage_type': damage_type,
+        'hunger_increased': hunger_increased,
+        'rouse_checks': rouse_checks,
+        'message': message
+    }

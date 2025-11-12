@@ -243,12 +243,19 @@
                     <label class="form-label">Clan</label>
                     <select class="form-select" id="clan" required>
                         <option value="">Select a clan...</option>
+                        <option value="Banu Haqim">Banu Haqim</option>
                         <option value="Brujah">Brujah</option>
                         <option value="Gangrel">Gangrel</option>
+                        <option value="Hecata">Hecata</option>
+                        <option value="Lasombra">Lasombra</option>
                         <option value="Malkavian">Malkavian</option>
+                        <option value="Ministry">Ministry</option>
                         <option value="Nosferatu">Nosferatu</option>
+                        <option value="Ravnos">Ravnos</option>
+                        <option value="Salubri">Salubri</option>
                         <option value="Toreador">Toreador</option>
                         <option value="Tremere">Tremere</option>
+                        <option value="Tzimisce">Tzimisce</option>
                         <option value="Ventrue">Ventrue</option>
                         <option value="Caitiff">Caitiff</option>
                     </select>
@@ -627,6 +634,10 @@
 
         // Clan data
         const CLANS = {
+            "Banu Haqim": {
+                disciplines: ["Blood Sorcery", "Celerity", "Obfuscate"],
+                bane: "Judgment: Lose Humanity for witnessing corruption without acting"
+            },
             "Brujah": {
                 disciplines: ["Celerity", "Potence", "Presence"],
                 bane: "Violent Temper: Difficulty +2 to resist fury frenzy"
@@ -635,13 +646,33 @@
                 disciplines: ["Animalism", "Fortitude", "Protean"],
                 bane: "Bestial Features: Animal features emerge when Hunger 4+"
             },
+            "Hecata": {
+                disciplines: ["Auspex", "Fortitude", "Oblivion"],
+                bane: "Painful Kiss: Feeding causes intense pain to victim"
+            },
+            "Lasombra": {
+                disciplines: ["Dominate", "Oblivion", "Potence"],
+                bane: "Callous: Cannot gain Humanity from Remorse"
+            },
             "Malkavian": {
                 disciplines: ["Auspex", "Dominate", "Obfuscate"],
                 bane: "Fractured Perspective: Must have at least one mental derangement"
             },
+            "Ministry": {
+                disciplines: ["Obfuscate", "Presence", "Protean"],
+                bane: "Abhors the Light: Additional damage from sunlight"
+            },
             "Nosferatu": {
                 disciplines: ["Animalism", "Obfuscate", "Potence"],
                 bane: "Repulsive: Appearance 0, automatic fail on Persuasion/Performance vs mortals"
+            },
+            "Ravnos": {
+                disciplines: ["Animalism", "Obfuscate", "Presence"],
+                bane: "Doomed: Cannot rest in same place twice in 7 nights"
+            },
+            "Salubri": {
+                disciplines: ["Auspex", "Dominate", "Fortitude"],
+                bane: "Third Eye: Visible third eye when using Disciplines"
             },
             "Toreador": {
                 disciplines: ["Auspex", "Celerity", "Presence"],
@@ -650,6 +681,10 @@
             "Tremere": {
                 disciplines: ["Auspex", "Blood Sorcery", "Dominate"],
                 bane: "Deficient Blood: Blood bonds form one step stronger"
+            },
+            "Tzimisce": {
+                disciplines: ["Animalism", "Dominate", "Protean"],
+                bane: "Grounded: Must rest with homeland soil"
             },
             "Ventrue": {
                 disciplines: ["Dominate", "Fortitude", "Presence"],

@@ -62,14 +62,19 @@ class CmdFeed(Command):
         slake_mode = 'slake' in self.switches
 
         # 5. Perform feeding roll
-        # For now, use simple roll: Strength + Brawl (TODO: base on Predator Type)
+        # Get pool based on Predator Type
         from beckonmu.dice import dice_roller
         from traits.utils import get_character_trait_value
         from beckonmu.commands.v5.utils import blood_utils
+        from beckonmu.commands.v5.utils.predator_utils import get_feeding_pool
 
-        strength = get_character_trait_value(self.caller, 'Strength')
-        brawl = get_character_trait_value(self.caller, 'Brawl')
-        pool = strength + brawl
+        pool_str, bonus_dice = get_feeding_pool(self.caller)
+        pool_parts = pool_str.split('+')
+        pool = 0
+        for part in pool_parts:
+            trait_value = get_character_trait_value(self.caller, part.capitalize())
+            pool += trait_value
+        pool += bonus_dice  # Add predator type bonus
 
         hunger = blood_utils.get_hunger_level(self.caller)
 

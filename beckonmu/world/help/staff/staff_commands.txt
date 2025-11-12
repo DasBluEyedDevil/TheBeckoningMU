@@ -1,0 +1,154 @@
+|[R+===================================================================+
+|W|                    STAFF COMMANDS REFERENCE                       |
+|[R+===================================================================+|n
+
+This help file documents staff-only commands for character approval, Jobs
+management, player administration, and game moderation.
+
+|WCHARACTER APPROVAL WORKFLOW:|n
+
+|y+pending|n
+  - List all characters awaiting approval
+  - Shows character name, player account, creation date
+  - Quick access to unapproved characters
+
+|y+review <character>|n
+  - Review a character's sheet and background
+  - Displays full character sheet with all traits
+  - Shows background story and concept
+
+|y+charedit <character>/<stat>=<value>|n
+  - Edit character traits during approval process
+  - Example: +charedit Marcus/Strength=3
+  - Example: +charedit Sarah/Background=Fixed timeline issues
+
+|y+approve <character>=<reason>|n
+  - Approve a character for play
+  - Character becomes playable immediately
+  - Automatically closes associated approval job
+  - Reason is logged in character notes
+
+|y+reject <character>=<reason>|n
+  - Reject a character with feedback
+  - Character returns to creation/editing state
+  - Player is notified via Job comment
+  - Reason should explain what needs fixing
+
+|WEXPERIENCE POINT MANAGEMENT:|n
+
+|y+xpaward <player>=<amount>/<reason>|n
+  - Award XP to a player
+  - Example: +xpaward Marcus=3/Excellent roleplay this week
+  - Reason is logged in player's XP history
+  - Player is notified of the award
+
+|WJOBS SYSTEM (STAFF):|n
+
+|yjobs|n
+  - View all jobs in the system (staff see all jobs)
+  - Shows job number, bucket, status, assigned staffer
+
+|yjob/claim <number>|n
+  - Claim a job to work on it
+  - Sets you as the assigned staffer
+  - Updates job status to show ownership
+
+|yjob/assign <number>=<staffer>|n
+  - Assign a job to another staff member
+  - Example: job/assign 42=StaffName
+
+|yjob/comment <number>=<text>|n
+  - Add staff comment to a job
+  - Player is notified of your comment
+  - Use this to request clarifications or updates
+
+|yjob/done <number>=<resolution>|n
+  - Close a job with resolution notes
+  - Example: job/done 42=Character approved, welcome to the game!
+  - Player can still read closed jobs
+
+|yjob/reopen <number>|n
+  - Reopen a previously closed job
+  - Use if issue recurs or needs follow-up
+
+|WBBS MODERATION:|n
+
+|y+bbpost/sticky <board>/<subject>=<message>|n
+  - Create a sticky post (stays at top of board)
+  - Use for important announcements
+
+|y+bbpost/lock <board>/<post>|n
+  - Lock a post (no more replies allowed)
+  - Use to close contentious discussions
+
+|y+bbpost/unlock <board>/<post>|n
+  - Unlock a previously locked post
+
+|y+bbremove <board>/<post>|n
+  - Remove any post (staff can remove all posts)
+  - Use for inappropriate content
+
+|WPLAYER MANAGEMENT:|n
+
+|y+boot <player>=<reason>|n
+  - Disconnect a player from the game
+  - Example: +boot Spammer=Harassment in channels
+  - Reason is logged
+
+|y+ban <player>=<reason>|n
+  - Ban a player account
+  - Prevents reconnection
+  - Use only for serious violations
+
+|y+unban <player>|n
+  - Remove a ban from a player account
+
+|WTIPS FOR STAFF:|n
+
+- Check +jobs regularly to stay on top of player requests
+- Use +pending to track unapproved characters
+- Always provide clear reasons when rejecting characters
+- Award XP weekly for active players (2-3 XP typical)
+- Document significant interactions in job comments
+- Close jobs promptly to keep queue manageable
+
+|WCHARACTER APPROVAL GUIDELINES:|n
+
+When reviewing characters, verify:
+  - |wBackground|n - Fits game setting and theme
+  - |wStats|n - Match approved creation rules
+  - |wClan/Predator Type|n - Appropriate combination
+  - |wConcept|n - Clear and interesting character concept
+  - |wMasquerade|n - Character respects Masquerade traditions
+
+Common approval issues:
+  - Stats too high for starting character
+  - Background contradicts established lore
+  - Anachronistic elements (modern tech in 1800s, etc.)
+  - Overpowered concepts ("strongest vampire ever")
+  - Missing required background sections
+
+|WEXAMPLES:|n
+
+|yReview pending character:|n
+  +pending
+  +review Marcus
+
+|yRequest background fixes:|n
+  job/comment 42=Please clarify your character's sire and how they survived the embrace. See help embrace for details.
+
+|yApprove character:|n
+  +approve Marcus=Excellent background, well-balanced stats. Welcome to The Beckoning!
+
+|yReject character with feedback:|n
+  +reject Sarah=Strength 5 is too high for starting character. Max is 4. Also please review Tremere lore - your background has some timeline issues.
+
+|yAward weekly XP:|n
+  +xpaward Marcus=3/Great roleplay this week, participated in three scenes
+
+|yClose hunt request:|n
+  job/done 27=Hunt scene completed on Tuesday night. You successfully fed on a Choleric vessel. Hunger reduced to 1.
+
+|[r+===================================================================+|n
+
+|ySee also:|n help jobs, help bbs, help xp, help +sheet

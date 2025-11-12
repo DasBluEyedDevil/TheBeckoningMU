@@ -1,0 +1,125 @@
+|[R+===================================================================+
+|W|                  BULLETIN BOARD SYSTEM (BBS)                      |
+|[R+===================================================================+|n
+
+The BBS provides organized boards for announcements, discussions, roleplay
+coordination, and community communication.
+
+|WBASIC COMMANDS:|n
+
+|y+bbs|n
+  - List all available bulletin boards with unread counts
+
+|y+bbread <board>|n
+  - Read all posts on a board
+  - Example: +bbread news
+
+|y+bbread <board>/<post>|n
+  - Read a specific post
+  - Example: +bbread news/5
+
+|y+bbpost <board>/<subject>=<message>|n
+  - Create a new post on a board
+  - Example: +bbpost ic/Hunt tonight at the docks=Looking for 2-3 kindred...
+
+|y+bbreply <board>/<post>=<message>|n
+  - Reply to an existing post
+  - Creates a threaded conversation
+
+|y+bbpost/anon <board>/<subject>=<message>|n
+  - Post anonymously (if board allows)
+  - Your name will show as "Anonymous"
+
+|WAVAILABLE BOARDS:|n
+
+|yAnnouncements|n (Staff only can post)
+  - Official game announcements
+  - Rule changes and updates
+  - Scheduled events
+
+|yNews|n (Public)
+  - General game news
+  - Player achievements
+  - IC rumors and developments
+
+|yIC (In-Character)|n (Public)
+  - Roleplay coordination
+  - Scene planning
+  - IC notices and advertisements
+
+|yOOC (Out-of-Character)|n (Public)
+  - General OOC discussion
+  - Questions and answers
+  - Community chat
+
+|yBuilding|n (Public)
+  - Room descriptions
+  - Building suggestions
+  - Grid development discussions
+
+|yCode|n (Public)
+  - Feature requests
+  - Bug reports
+  - System feedback
+
+|WPOST MANAGEMENT:|n
+
+|y+bbedit <board>/<post>=<new text>|n
+  - Edit your own post (within 15 minutes of posting)
+
+|y+bbremove <board>/<post>|n
+  - Remove your own post
+
+|y+bbcatchup <board>|n
+  - Mark all posts on a board as read
+
+|y+bbcatchup/all|n
+  - Mark all posts on all boards as read
+
+|WSTAFF COMMANDS:|n (Staff only)
+
+|y+bbpost/sticky <board>/<subject>=<message>|n
+  - Create a sticky post (stays at top)
+
+|y+bbpost/lock <board>/<post>|n
+  - Lock a post (no more replies allowed)
+
+|y+bbpost/unlock <board>/<post>|n
+  - Unlock a previously locked post
+
+|y+bbremove <board>/<post>|n
+  - Remove any post (staff can remove any post)
+
+|WBOARD CREATION:|n (Admin only)
+
+|y+bbcreate <name>=<description>|n
+  - Create a new board
+
+|y+bbconfig <board>/<setting>=<value>|n
+  - Configure board settings (read_access, write_access, allow_anon)
+
+|WTIPS:|n
+
+- Check +bbs regularly for game announcements
+- Use descriptive subject lines for easier browsing
+- Keep IC and OOC discussions on appropriate boards
+- Reply to threads to keep conversations organized
+- Use +bbcatchup to mark old posts as read
+
+|WEXAMPLES:|n
+
+|yPost a hunt invitation:|n
+  +bbpost ic/Hunt at the warehouse=Meeting at the docks at midnight...
+
+|yReply to a post:|n
+  +bbreply ic/12=I'm interested! My character Marcus would join.
+
+|yPost anonymously:|n
+  +bbpost/anon ic/Warning about the Sheriff=Rumor has it...
+
+|yMark news board as read:|n
+  +bbcatchup news
+
+|[r+===================================================================+|n
+
+|ySee also:|n help jobs, help channels

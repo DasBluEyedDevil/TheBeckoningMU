@@ -104,10 +104,6 @@ def roll_pool(
 
     Returns:
         DiceResult: Object containing roll results and analysis
-
-    Implementation Note:
-        This is a SKELETON. Full implementation in Phase 5.
-        Currently returns random results for testing.
     """
     # Apply willpower bonus
     if willpower:
@@ -118,7 +114,7 @@ def roll_pool(
     num_hunger_dice = min(hunger, pool)
     num_normal_dice = pool - num_hunger_dice
 
-    # Roll dice (SKELETON: just random for now)
+    # Roll dice
     normal_dice = [random.randint(1, 10) for _ in range(num_normal_dice)]
     hunger_dice = [random.randint(1, 10) for _ in range(num_hunger_dice)]
 

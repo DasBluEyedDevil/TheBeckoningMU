@@ -5,7 +5,7 @@ Handles hunting mechanics, prey selection, resonance determination, and complica
 """
 
 import random
-from .blood_utils import feed, get_blood_potency, get_hunger
+from .blood_utils import get_blood_potency_bonus, get_hunger_level, reduce_hunger, set_resonance
 from .clan_utils import get_clan
 
 
@@ -142,7 +142,7 @@ def roll_hunting(character, location="street", skill_bonus=0, predator_bonus=0):
     pool = wits + skill_bonus + predator_bonus
 
     # Roll dice
-    hunger = get_hunger(character)
+    hunger = get_hunger_level(character)
     roller = V5DiceRoller(pool, hunger, difficulty)
     result = roller.roll()
 
@@ -209,22 +209,26 @@ def hunt_prey(character, location="street", skill_name=None, predator_type_bonus
     # Determine prey and resonance
     resonance_data = determine_resonance(location=location)
 
-    # Feed from the prey
-    slake_amount = 1 + (hunt_result["successes"] // 2)  # More successes = better feeding
+    # Reduce hunger based on hunting success
+    hunger_reduction = 1 + (hunt_result["successes"] // 2)  # More successes = better feeding
     if kill:
-        slake_amount += 1  # Killing allows more feeding
+        hunger_reduction += 1  # Killing allows more feeding
+    hunger_reduction = min(hunger_reduction, 3)  # Cap at 3
 
-    feeding_result = feed(
+    old_hunger = get_hunger_level(character)
+    new_hunger = reduce_hunger(character, hunger_reduction)
+
+    # Set resonance from the prey
+    set_resonance(
         character,
-        vessel_type="human",
-        slake=slake_amount,
-        resonance_type=resonance_data["type"],
-        resonance_intensity=resonance_data["intensity"]
+        resonance_data["type"],
+        resonance_data["intensity"]
     )
 
     # Build narrative message
     message = f"You hunt in the {location} and find: {resonance_data['description']}.\n"
-    message += feeding_result["message"]
+    message += f"|gSuccessful hunt!|n Hunger reduced from {old_hunger} to {new_hunger}.\n"
+    message += f"Resonance: |y{resonance_data['type']}|n (intensity {resonance_data['intensity']})"
 
     if hunt_result["complications"]:
         message += f"\n|rComplication:|n {hunt_result['complications'][0]['desc']}"
@@ -233,7 +237,9 @@ def hunt_prey(character, location="street", skill_name=None, predator_type_bonus
         "hunting_success": True,
         "prey": resonance_data,
         "resonance": resonance_data,
-        "feeding_result": feeding_result,
+        "hunger_reduction": hunger_reduction,
+        "old_hunger": old_hunger,
+        "new_hunger": new_hunger,
         "complications": hunt_result["complications"],
         "message": message,
         "hunt_roll": hunt_result

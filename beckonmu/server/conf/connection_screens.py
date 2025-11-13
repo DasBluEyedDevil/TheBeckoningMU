@@ -29,13 +29,13 @@ from world.ansi_theme import (
 )
 
 CONNECTION_SCREEN = f"""{DARK_RED}
-╔════════════════════════════════════════════════════════════════════════════╗
-║                                                                            ║
-║                        {BONE_WHITE}THE BECKONING MUD{DARK_RED}                                 ║
-║                                                                            ║
-║             {SHADOW_GREY}[Vampire: The Masquerade 5th Edition]{DARK_RED}                      ║
-║                                                                            ║
-╚════════════════════════════════════════════════════════════════════════════╝{RESET}
+{DBOX_TL}{DBOX_H * 78}{DBOX_TR}
+{DBOX_V}{' ' * 78}{DBOX_V}
+{DBOX_V}                        {BONE_WHITE}THE BECKONING MUD{DARK_RED}                                 {DBOX_V}
+{DBOX_V}{' ' * 78}{DBOX_V}
+{DBOX_V}             {SHADOW_GREY}[Vampire: The Masquerade 5th Edition]{DARK_RED}                      {DBOX_V}
+{DBOX_V}{' ' * 78}{DBOX_V}
+{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}
 
            {BLOOD_RED}
                    .d:....:h.
@@ -45,7 +45,7 @@ CONNECTION_SCREEN = f"""{DARK_RED}
 {RESET}
   {SHADOW_GREY}The night calls. The Beast stirs. The Camarilla gathers.{RESET}
 
-{SHADOW_GREY}════════════════════════════════════════════════════════════════════════════════{RESET}
+{SHADOW_GREY}{DBOX_H * 80}{RESET}
 
   {GOLD}→{RESET} To connect: {BONE_WHITE}connect <username> <password>{RESET}
   {GOLD}→{RESET} To create:  {BONE_WHITE}create <username> <password>{RESET}
@@ -53,12 +53,12 @@ CONNECTION_SCREEN = f"""{DARK_RED}
 
   {SHADOW_GREY}If you have spaces in your username, enclose it in quotes.{RESET}
 
-{SHADOW_GREY}════════════════════════════════════════════════════════════════════════════════{RESET}
+{SHADOW_GREY}{DBOX_H * 80}{RESET}
 
   {BLOOD_RED}{FLEUR_DE_LIS}{RESET} {PALE_IVORY}Original Work by lcanady (github/lcanady){RESET}
   {SHADOW_GREY}Modifications by Devil and erratic{RESET}
   {SHADOW_GREY}Powered By Evennia v{utils.get_evennia_version("short")}{RESET}
 
-{DARK_RED}╚════════════════════════════════════════════════════════════════════════════════╝{RESET}
+{DARK_RED}{DBOX_BL}{DBOX_H * 80}{DBOX_BR}{RESET}
 """
 

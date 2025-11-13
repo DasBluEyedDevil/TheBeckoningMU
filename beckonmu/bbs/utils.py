@@ -2,16 +2,9 @@
 BBS utility functions for permissions and formatting.
 """
 
-from evennia.utils import evtable, ansi
+from evennia.utils import evtable
 from evennia.utils.utils import crop
 from .models import Board, Post
-from world.ansi_theme import (
-    BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
-    BONE_WHITE, MIDNIGHT_BLUE, GOLD, RESET,
-    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR,
-    BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR,
-    FLEUR_DE_LIS, CIRCLE_FILLED
-)
 
 
 def get_board(caller, board_id, check_perm=True):
@@ -96,7 +89,7 @@ def get_post(caller, board, post_id, check_perm=True):
 
 def format_board_list(caller, boards):
     """
-    Format a list of boards as a pretty table with colors and symbols.
+    Format a list of boards as a pretty table.
 
     Args:
         caller: Character or Account object
@@ -105,68 +98,35 @@ def format_board_list(caller, boards):
     Returns:
         str: Formatted table
     """
-    # Filter boards by required flags
-    filtered_boards = []
-    character = caller if hasattr(caller, 'db') else None
-    char_flags = character.db.flags if character else {}
+    if not boards:
+        return "|wNo boards available.|n"
+
+    table = evtable.EvTable(
+        "|wBoard|n",
+        "|wDescription|n",
+        "|wPosts|n",
+        border="header",
+        width=78,
+    )
+    table.reformat_column(0, width=20)
+    table.reformat_column(1, width=45)
+    table.reformat_column(2, width=10, align="r")
 
     for board in boards:
-        required_flags = board.get_required_flags_list()
-        if required_flags:
-            # Check if character has all required flags
-            if not character:
-                continue
-            if not all(char_flags.get(flag) for flag in required_flags):
-                continue
-
-        # Check read permissions
-        if board.read_perm:
-            account = caller.account if hasattr(caller, 'account') else caller
-            if not account.check_permstring(board.read_perm):
-                continue
-
-        filtered_boards.append(board)
-
-    # Colored header
-    output = []
-    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 78}{DBOX_TR}")
-    output.append(f"{DBOX_V} {GOLD}Bulletin Boards{RESET}{' ' * 62}{DARK_RED}{DBOX_V}")
-    output.append(f"{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}")
-    output.append("")
-
-    if not filtered_boards:
-        output.append(f"{SHADOW_GREY}  No boards available.{RESET}")
-        return "\n".join(output)
-
-    # Table header
-    output.append(f"{BONE_WHITE}  {'Board':<20} {'Description':<40} {'Posts':<10}{RESET}")
-    output.append(f"{SHADOW_GREY}  {BOX_H * 76}{RESET}")
-
-    for board in filtered_boards:
         post_count = board.posts.count()
-        description = crop(board.description, width=39)
+        description = crop(board.description, width=44)
+        table.add_row(
+            f"|C{board.name}|n",
+            f"|w{description}|n",
+            f"|y{post_count}|n",
+        )
 
-        # Determine board symbol based on category or permissions
-        if board.read_perm and "Admin" in board.read_perm:
-            symbol = f"{FLEUR_DE_LIS}"  # Staff/admin boards
-        elif hasattr(board, 'category') and board.category == 'ic':
-            symbol = f"{CIRCLE_FILLED}"  # IC boards
-        else:
-            symbol = "○"  # OOC/general boards
-
-        # Color board name based on activity
-        name_color = MIDNIGHT_BLUE
-
-        output.append(f"  {symbol} {name_color}{board.name:<18}{RESET} "
-                     f"{PALE_IVORY}{description:<40}{RESET} "
-                     f"{GOLD}{post_count:<10}{RESET}")
-
-    return "\n".join(output)
+    return str(table)
 
 
 def format_board_view(caller, board):
     """
-    Format a board view showing all posts with colors and structure.
+    Format a board view showing all posts.
 
     Args:
         caller: Character or Account object
@@ -175,59 +135,40 @@ def format_board_view(caller, board):
     Returns:
         str: Formatted board view
     """
-    # Get all posts (we'll filter by permissions if needed)
     posts = board.posts.all()
-
-    # Colored header
-    output = []
-    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 78}{DBOX_TR}")
-
-    # Board name line
-    board_line = f"Board: {board.name}"
-    padding = 76 - len(board_line)
-    output.append(f"{DBOX_V} {GOLD}{board_line}{RESET}{' ' * padding}{DARK_RED}{DBOX_V}")
-
-    output.append(f"{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}")
-    output.append(f"  {SHADOW_GREY}{board.description}{RESET}")
-    output.append("")
-
     if not posts:
-        output.append(f"{SHADOW_GREY}  No posts yet.{RESET}")
-        return "\n".join(output)
+        return f"|wBoard:|n {board.name}\n|wNo posts yet.|n"
 
-    # Table header
-    output.append(f"{BONE_WHITE}  {'#':<5} {'Author':<20} {'Title':<35} {'Date':<10}{RESET}")
-    output.append(f"{SHADOW_GREY}  {BOX_H * 76}{RESET}")
-
-    account = caller.account if hasattr(caller, 'account') else caller
+    table = evtable.EvTable(
+        "|w#|n",
+        "|wAuthor|n",
+        "|wTitle|n",
+        "|wDate|n",
+        border="header",
+        width=78,
+    )
+    table.reformat_column(0, width=5, align="r")
+    table.reformat_column(1, width=20)
+    table.reformat_column(2, width=40)
+    table.reformat_column(3, width=10, align="r")
 
     for post in posts:
-        # Check read permissions
-        perm_to_check = post.read_perm or board.read_perm
-        if perm_to_check and not account.check_permstring(perm_to_check):
-            continue
-
-        author_name = post.get_author_name(viewer=account)
-        # Color anonymous posts differently
-        if "Anonymous" in author_name:
-            author_color = SHADOW_GREY
-        else:
-            author_color = PALE_IVORY
-
-        title = crop(post.title, width=34)
+        author_name = post.get_author_name(viewer=caller.account)
+        title = crop(post.title, width=39)
         date_str = post.created_at.strftime("%m/%d/%y")
+        table.add_row(
+            f"|w{post.sequence_number}|n",
+            f"|C{author_name}|n",
+            f"|w{title}|n",
+            f"|x{date_str}|n",
+        )
 
-        output.append(f"  {GOLD}{post.sequence_number:<5}{RESET} "
-                     f"{author_color}{author_name:<20}{RESET} "
-                     f"{PALE_IVORY}{title:<35}{RESET} "
-                     f"{SHADOW_GREY}{date_str:<10}{RESET}")
-
-    return "\n".join(output)
+    return f"|wBoard:|n {board.name}\n{table}"
 
 
 def format_post_read(post, viewer=None):
     """
-    Format a full post with comments using colors and structure.
+    Format a full post with comments.
 
     Args:
         post: Post object
@@ -239,43 +180,23 @@ def format_post_read(post, viewer=None):
     author_name = post.get_author_name(viewer=viewer)
     date_str = post.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
-    # Colored header
     output = []
-    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 78}{DBOX_TR}")
+    output.append(f"|wPost #{post.sequence_number}: {post.title}|n")
+    output.append(f"|wBoard:|n {post.board.name}")
+    output.append(f"|wAuthor:|n {author_name}")
+    output.append(f"|wDate:|n {date_str}")
+    output.append("-" * 78)
+    output.append(post.body)
+    output.append("-" * 78)
 
-    # Title line
-    title_text = f"Post #{post.sequence_number}: {post.title}"
-    padding = 76 - len(title_text)
-    output.append(f"{DBOX_V} {GOLD}{title_text}{RESET}{' ' * padding}{DARK_RED}{DBOX_V}")
-
-    output.append(f"{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}")
-    output.append("")
-
-    # Metadata
-    output.append(f"  {GOLD}Board:{RESET} {MIDNIGHT_BLUE}{post.board.name}{RESET}")
-    output.append(f"  {GOLD}Author:{RESET} {PALE_IVORY}{author_name}{RESET}")
-    output.append(f"  {GOLD}Date:{RESET} {SHADOW_GREY}{date_str}{RESET}")
-
-    # Content box
-    output.append("")
-    output.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}")
-    output.append(f"{BOX_V} {BONE_WHITE}Message{RESET}{' ' * 70}{SHADOW_GREY}{BOX_V}")
-    output.append(f"{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
-    output.append(f"{PALE_IVORY}{post.body}{RESET}")
-
-    # Comments section
     comments = post.comments.all()
     if comments:
-        output.append("")
-        output.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}")
-        output.append(f"{BOX_V} {BONE_WHITE}Comments ({len(comments)}){RESET}{' ' * (70 - len(str(len(comments))) - 11)}{SHADOW_GREY}{BOX_V}")
-        output.append(f"{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
-        output.append("")
-
+        output.append("|wComments:|n")
         for i, comment in enumerate(comments, 1):
             comment_date = comment.created_at.strftime("%Y-%m-%d %H:%M:%S")
-            output.append(f"  {GOLD}[{i}] {PALE_IVORY}{comment.author.username}{RESET} - {SHADOW_GREY}{comment_date}{RESET}")
-            output.append(f"    {PALE_IVORY}{comment.body}{RESET}")
-            output.append("")
+            output.append(
+                f"|w[{i}] {comment.author.username}|n - |x{comment_date}|n"
+            )
+            output.append(f"  {comment.body}")
 
     return "\n".join(output)

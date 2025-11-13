@@ -5,13 +5,6 @@ Helper functions for managing Status, calculating bonuses, and handling position
 """
 
 from .models import CharacterStatus, CamarillaPosition, StatusRequest
-from world.ansi_theme import (
-    BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
-    BONE_WHITE, MIDNIGHT_BLUE, GOLD, RESET,
-    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR,
-    BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR,
-    FLEUR_DE_LIS, CROWN, CIRCLE_FILLED, CIRCLE_EMPTY
-)
 
 
 def get_or_create_character_status(character):
@@ -333,71 +326,50 @@ def format_status_display(character):
     char_status = get_character_status(character)
 
     if not char_status:
-        return f"{SHADOW_GREY}No Status record{RESET}"
+        return f"|wNo Status record|n"
 
-    # Colored header
+    # Simple header
     output = []
-    output.append(f"{DARK_RED}{DBOX_TL}{DBOX_H * 78}{DBOX_TR}")
-    output.append(f"{DBOX_V} {FLEUR_DE_LIS} {BONE_WHITE}Status and Standing{RESET}{' ' * 54}{DARK_RED}{DBOX_V}")
-    output.append(f"{DBOX_BL}{DBOX_H * 78}{DBOX_BR}{RESET}")
-    output.append("")
+    output.append(f"|w=== Status Summary for {character.key} ===|n\n")
 
-    # Total Status with color gradient
+    # Total Status
     total = char_status.total_status
+    dots = "•" * total
+    empty_dots = "○" * (5 - total)
 
-    # Color gradient based on status level
-    if total >= 4:
-        status_color = GOLD
-    elif total >= 2:
-        status_color = MIDNIGHT_BLUE
-    else:
-        status_color = SHADOW_GREY
-
-    # Dot representation with colors
-    dots_filled = f"{status_color}{CIRCLE_FILLED * total}{RESET}"
-    dots_empty = f"{SHADOW_GREY}{CIRCLE_EMPTY * (5 - total)}{RESET}"
-
-    output.append(f"  {GOLD}Total Status:{RESET} {dots_filled}{dots_empty} {status_color}({total}/5){RESET}")
+    output.append(f"|wTotal Status:|n {dots}{empty_dots} ({total}/5)")
 
     # Breakdown
-    if char_status.earned_status > 0 or char_status.position_status > 0 or char_status.temporary_status != 0:
-        output.append(f"  {SHADOW_GREY}└─ Breakdown:{RESET}")
+    breakdown = []
+    if char_status.earned_status > 0:
+        breakdown.append(f"Earned: {char_status.earned_status}")
+    if char_status.position_status > 0:
+        breakdown.append(f"Position: {char_status.position_status}")
+    if char_status.temporary_status != 0:
+        breakdown.append(f"Temporary: {char_status.temporary_status:+d}")
 
-        if char_status.earned_status > 0:
-            output.append(f"     {PALE_IVORY}Earned:{RESET} {GOLD}{char_status.earned_status}{RESET}")
-
-        if char_status.position_status > 0:
-            output.append(f"     {PALE_IVORY}Position:{RESET} {MIDNIGHT_BLUE}{char_status.position_status}{RESET}")
-
-        if char_status.temporary_status != 0:
-            temp_color = GOLD if char_status.temporary_status > 0 else BLOOD_RED
-            output.append(f"     {PALE_IVORY}Temporary:{RESET} {temp_color}{char_status.temporary_status:+d}{RESET}")
+    if breakdown:
+        output.append(f"  ({', '.join(breakdown)})")
 
     # Position
     if char_status.position:
-        output.append("")
-        output.append(f"  {GOLD}Position:{RESET} {CROWN} {BONE_WHITE}{char_status.position.name}{RESET}")
+        output.append(f"\n|wPosition:|n {char_status.position.name}")
         if char_status.position.title:
-            output.append(f"  {SHADOW_GREY}└─ Title:{RESET} {PALE_IVORY}{char_status.position.title}{RESET}")
-        output.append(f"  {SHADOW_GREY}└─ Status Granted:{RESET} {MIDNIGHT_BLUE}{char_status.position.status_granted}{RESET}")
+            output.append(f"  \"{char_status.position.title}\"")
+        output.append(f"  Status Granted: {char_status.position.status_granted}")
 
     # Sect
-    output.append("")
-    output.append(f"  {GOLD}Sect:{RESET} {FLEUR_DE_LIS} {PALE_IVORY}{char_status.sect}{RESET}")
+    output.append(f"\n|wSect:|n {char_status.sect}")
 
     # Mechanical bonus
     bonus = char_status.get_status_bonus()
     if bonus > 0:
-        output.append("")
-        output.append(f"  {GOLD}Social Roll Bonus:{RESET} {MIDNIGHT_BLUE}+{bonus} dice{RESET}")
+        output.append(f"\n|wSocial Roll Bonus:|n +{bonus} dice")
 
     # Reputation (if set)
     if char_status.reputation:
-        output.append("")
-        output.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}")
-        output.append(f"{BOX_V} {BONE_WHITE}Reputation{RESET}{' ' * 67}{SHADOW_GREY}{BOX_V}")
-        output.append(f"{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
-        output.append(f"{PALE_IVORY}{char_status.reputation}{RESET}")
+        output.append(f"\n|wReputation:|n")
+        output.append(f"{char_status.reputation}")
 
     return "\n".join(output)
 
@@ -519,14 +491,13 @@ def format_character_status(character, char_status):
         str: Formatted character status display
     """
     output = []
-    output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-    output.append(f"{BOX_V} {GOLD}♛{RESET} {PALE_IVORY}STATUS: {character.key.upper()}{RESET}{' ' * (65 - len(character.key))}{BOX_V}")
-    output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
+    output.append(f"|w=== STATUS: {character.key.upper()} ===|n\n")
 
     # Total Status
     total = char_status.total_status
-    status_dots = f"{GOLD}{CIRCLE_FILLED * total}{SHADOW_GREY}{CIRCLE_EMPTY * (5 - total)}{RESET}"
-    output.append(f"\n{PALE_IVORY}Total Status:{RESET} {status_dots} ({total}/5)")
+    dots = "•" * total
+    empty_dots = "○" * (5 - total)
+    output.append(f"|wTotal Status:|n {dots}{empty_dots} ({total}/5)")
 
     # Breakdown
     breakdown = []
@@ -538,27 +509,27 @@ def format_character_status(character, char_status):
         breakdown.append(f"Temporary: {char_status.temporary_status:+d}")
 
     if breakdown:
-        output.append(f"{SHADOW_GREY}  ({', '.join(breakdown)}){RESET}")
+        output.append(f"  ({', '.join(breakdown)})")
 
     # Position
     if char_status.position:
-        output.append(f"\n{PALE_IVORY}Position:{RESET} {GOLD}{char_status.position.name}{RESET}")
+        output.append(f"\n|wPosition:|n {char_status.position.name}")
         if char_status.position.title:
-            output.append(f"{SHADOW_GREY}  \"{char_status.position.title}\"{RESET}")
-        output.append(f"{SHADOW_GREY}  {char_status.position.description}{RESET}")
+            output.append(f"  \"{char_status.position.title}\"")
+        output.append(f"  {char_status.position.description}")
 
     # Sect
-    output.append(f"\n{PALE_IVORY}Sect:{RESET} {char_status.sect}")
+    output.append(f"\n|wSect:|n {char_status.sect}")
 
     # Mechanical Bonus
     bonus = char_status.get_status_bonus()
     if bonus > 0:
-        output.append(f"\n{PALE_IVORY}Social Roll Bonus:{RESET} +{bonus} dice")
+        output.append(f"\n|wSocial Roll Bonus:|n +{bonus} dice")
 
     # Reputation
     if char_status.reputation:
-        output.append(f"\n{PALE_IVORY}Reputation:{RESET}")
-        output.append(f"{SHADOW_GREY}{char_status.reputation}{RESET}")
+        output.append(f"\n|wReputation:|n")
+        output.append(f"{char_status.reputation}")
 
     return "\n".join(output)
 
@@ -574,9 +545,7 @@ def format_status_history(char_status):
         str: Formatted status history display
     """
     output = []
-    output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-    output.append(f"{BOX_V} {PALE_IVORY}STATUS HISTORY{RESET}{' ' * 60}{BOX_V}")
-    output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}\n")
+    output.append(f"|w=== STATUS HISTORY ===|n\n")
 
     for entry in reversed(char_status.status_history[-10:]):  # Last 10 entries
         date = entry.get('date', 'Unknown')[:10]  # Just the date part
@@ -585,11 +554,11 @@ def format_status_history(char_status):
         changed_by = entry.get('changed_by', 'Unknown')
         new_total = entry.get('new_total', 0)
 
-        change_str = f"{GOLD}+{change}{RESET}" if change > 0 else f"{BLOOD_RED}{change}{RESET}" if change < 0 else f"{SHADOW_GREY}±0{RESET}"
+        change_str = f"|g+{change}|n" if change > 0 else f"|r{change}|n" if change < 0 else "±0"
 
-        output.append(f"{SHADOW_GREY}{date}{RESET} - {change_str} → {new_total}")
-        output.append(f"  {PALE_IVORY}{reason}{RESET}")
-        output.append(f"  {SHADOW_GREY}(by {changed_by}){RESET}")
+        output.append(f"{date} - {change_str} → {new_total}")
+        output.append(f"  {reason}")
+        output.append(f"  (by {changed_by})")
         output.append("")
 
     return "\n".join(output)
@@ -606,24 +575,24 @@ def format_positions_list(positions):
         str: Formatted positions list display
     """
     output = []
-    output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-    output.append(f"{BOX_V} {GOLD}♛{RESET} {PALE_IVORY}CAMARILLA POSITIONS{RESET}{' ' * 53}{BOX_V}")
-    output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}\n")
+    output.append(f"|w=== CAMARILLA POSITIONS ===|n\n")
+    output.append("|wPosition" + " " * 13 + "Status Bonus  Description|n")
+    output.append("-" * 70)
 
     for position in positions:
         holders = get_position_holders(position.name)
         holder_count = holders.count()
 
-        status_dots = f"{GOLD}{CIRCLE_FILLED * position.status_granted}{RESET}"
+        bonus_str = f"+{position.status_granted}" if position.status_granted > 0 else str(position.status_granted)
+        description = position.description[:40] + "..." if len(position.description) > 40 else position.description
 
-        output.append(f"{PALE_IVORY}{position.name}{RESET} {status_dots}")
-        output.append(f"  {SHADOW_GREY}{position.description}{RESET}")
+        output.append(f"{position.name:<20} {bonus_str:^12}  {description}")
 
         if holder_count > 0:
             holder_names = ", ".join([h.character.key for h in holders])
-            output.append(f"  {GOLD}Holder(s):{RESET} {holder_names}")
+            output.append(f"  |wHolder(s):|n {holder_names}")
         elif position.is_unique:
-            output.append(f"  {SHADOW_GREY}(Vacant){RESET}")
+            output.append(f"  (Vacant)")
 
         output.append("")
 
@@ -643,37 +612,36 @@ def format_position_detail(position):
     holders = get_position_holders(position.name)
 
     output = []
-    output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-    output.append(f"{BOX_V} {GOLD}♛{RESET} {PALE_IVORY}{position.name.upper()}{RESET}{' ' * (68 - len(position.name))}{BOX_V}")
-    output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
+    output.append(f"|w=== {position.name.upper()} ===|n\n")
 
     # Status granted
-    status_dots = f"{GOLD}{CIRCLE_FILLED * position.status_granted}{CIRCLE_EMPTY * (5 - position.status_granted)}{RESET}"
-    output.append(f"\n{PALE_IVORY}Status Granted:{RESET} {status_dots} ({position.status_granted})")
+    dots = "•" * position.status_granted
+    empty_dots = "○" * (5 - position.status_granted)
+    output.append(f"|wStatus Granted:|n {dots}{empty_dots} ({position.status_granted})")
 
     # Hierarchy level
-    output.append(f"{PALE_IVORY}Hierarchy Level:{RESET} {position.hierarchy_level}")
+    output.append(f"|wHierarchy Level:|n {position.hierarchy_level}")
 
     # Description
-    output.append(f"\n{PALE_IVORY}Description:{RESET}")
-    output.append(f"{SHADOW_GREY}{position.description}{RESET}")
+    output.append(f"\n|wDescription:|n")
+    output.append(f"{position.description}")
 
     # Requirements
     if position.requires_status > 0:
-        output.append(f"\n{PALE_IVORY}Requirements:{RESET} {position.requires_status} Status")
+        output.append(f"\n|wRequirements:|n {position.requires_status} Status")
 
     # Unique/Multiple
     if position.is_unique:
-        output.append(f"\n{PALE_IVORY}Type:{RESET} Unique position (only one holder)")
+        output.append(f"\n|wType:|n Unique position (only one holder)")
     else:
-        output.append(f"\n{PALE_IVORY}Type:{RESET} Multiple holders allowed")
+        output.append(f"\n|wType:|n Multiple holders allowed")
 
     # Current holders
     if holders.exists():
-        output.append(f"\n{PALE_IVORY}Current Holder(s):{RESET}")
+        output.append(f"\n|wCurrent Holder(s):|n")
         for holder in holders:
-            output.append(f"  {GOLD}{holder.character.key}{RESET}")
+            output.append(f"  {holder.character.key}")
     else:
-        output.append(f"\n{SHADOW_GREY}(Currently vacant){RESET}")
+        output.append(f"\n(Currently vacant)")
 
     return "\n".join(output)

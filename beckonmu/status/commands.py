@@ -22,11 +22,6 @@ from .utils import (
     modify_earned_status
 )
 from .models import CamarillaPosition, StatusRequest
-from world.ansi_theme import (
-    BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
-    GOLD, RESET, BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR,
-    CIRCLE_FILLED, CIRCLE_EMPTY
-)
 
 
 class CmdStatus(default_cmds.MuxCommand):
@@ -227,19 +222,17 @@ class CmdStatusRequest(default_cmds.MuxCommand):
             return
 
         output = []
-        output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {PALE_IVORY}YOUR STATUS REQUESTS{RESET}{' ' * 53}{BOX_V}")
-        output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}\n")
+        output.append(f"|w=== YOUR STATUS REQUESTS ===|n\n")
 
         for req in requests:
-            status_color = GOLD if req.status == "pending" else SHADOW_GREY if req.status == "approved" else BLOOD_RED
+            status_color = "|y" if req.status == "pending" else "|w" if req.status == "approved" else "|r"
 
-            output.append(f"#{req.id} - {status_color}{req.status.upper()}{RESET} - {req.get_request_type_display()}")
-            output.append(f"  {SHADOW_GREY}Submitted: {req.created_date.strftime('%Y-%m-%d')}{RESET}")
-            output.append(f"  {PALE_IVORY}Reason: {req.reason[:60]}{'...' if len(req.reason) > 60 else ''}{RESET}")
+            output.append(f"#{req.id} - {status_color}{req.status.upper()}|n - {req.get_request_type_display()}")
+            output.append(f"  Submitted: {req.created_date.strftime('%Y-%m-%d')}")
+            output.append(f"  Reason: {req.reason[:60]}{'...' if len(req.reason) > 60 else ''}")
 
             if req.status != "pending":
-                output.append(f"  {SHADOW_GREY}Resolved: {req.resolution_reason}{RESET}")
+                output.append(f"  Resolved: {req.resolution_reason}")
 
             output.append("")
 
@@ -407,26 +400,24 @@ class CmdStatusAdmin(default_cmds.MuxCommand):
             return
 
         output = []
-        output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {PALE_IVORY}PENDING STATUS REQUESTS{RESET}{' ' * 50}{BOX_V}")
-        output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}\n")
+        output.append(f"|w=== PENDING STATUS REQUESTS ===|n\n")
 
         for req in requests:
-            output.append(f"#{req.id} - {GOLD}{req.character.key}{RESET} - {req.get_request_type_display()}")
-            output.append(f"  {SHADOW_GREY}Submitted: {req.created_date.strftime('%Y-%m-%d %H:%M')}{RESET}")
-            output.append(f"  {PALE_IVORY}Reason: {req.reason}{RESET}")
+            output.append(f"#{req.id} - |w{req.character.key}|n - {req.get_request_type_display()}")
+            output.append(f"  Submitted: {req.created_date.strftime('%Y-%m-%d %H:%M')}")
+            output.append(f"  Reason: {req.reason}")
 
             if req.request_type == "earned_status":
-                output.append(f"  {GOLD}Requested Change: {req.requested_change:+d}{RESET}")
+                output.append(f"  Requested Change: {req.requested_change:+d}")
             elif req.request_type == "position":
-                output.append(f"  {GOLD}Requested Position: {req.requested_position.name}{RESET}")
+                output.append(f"  Requested Position: {req.requested_position.name}")
 
             if req.ooc_notes:
-                output.append(f"  {SHADOW_GREY}OOC Notes: {req.ooc_notes}{RESET}")
+                output.append(f"  OOC Notes: {req.ooc_notes}")
 
             output.append("")
 
-        output.append(f"{SHADOW_GREY}Use |w+statusadmin/approve <#>|x or |w+statusadmin/deny <#>|x{RESET}")
+        output.append(f"Use |w+statusadmin/approve <#>|n or |w+statusadmin/deny <#>|n")
 
         caller.msg("\n".join(output))
 

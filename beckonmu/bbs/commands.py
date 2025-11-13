@@ -5,7 +5,8 @@ BBS commands for bulletin board system.
 from evennia.commands.command import Command
 from evennia.commands.cmdset import CmdSet
 from .models import Board, Post, Comment
-from .utils import get_board, get_post, format_board_list, format_board_view, format_post_read
+from .utils import get_board, get_post
+from .utils.formatting import format_board_list, format_board_view, format_post_read
 
 
 class CmdBBS(Command):

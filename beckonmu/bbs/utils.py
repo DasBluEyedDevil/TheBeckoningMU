@@ -100,15 +100,27 @@ def format_board_list(caller, boards):
     if not boards:
         return "No boards available."
 
-    # Build elegant table with colors and proper formatting
-    table = "|c" + "=" * 78 + "|n\n"
-    table += "|c{:<30} {:<15} {:<22} {:<13}|n\n".format(
-        "  Board Name", "Group", "Last Post", "# of Messages"
+    # Build elegant table with box borders
+    # Border: * + 78 '=' + * = 80 chars total
+    # Content: | + space + 76 content + space + | = 80 chars
+    # Column widths: 28 + 11 + 24 + 10 = 73, + 3 spaces = 76 content
+    table = "|c*" + "=" * 78 + "*|n\n"
+
+    # Format header (all white text, cyan pipes)
+    header_content = "|w{:<28} {:<11} {:<24} {:<10}|n".format(
+        "Board Name", "Group", "Last Post", "#"
     )
-    table += "|c" + "=" * 78 + "|n\n"
+    table += f"|c|||n {header_content} |c|||n\n"
+    table += "|c*" + "=" * 78 + "*|n\n"
 
     # Add each board with proper formatting
+    first_board = True
     for board in boards:
+        # Add divider between boards (but not before first board)
+        if not first_board:
+            table += "|c|||n" + "-" * 78 + "|c|||n\n"
+        first_board = False
+
         # Count posts that the caller can read
         readable_posts = [p for p in board.posts.all()
                          if p.read_perm == 'all' or caller.check_permstring(p.read_perm)]
@@ -124,14 +136,16 @@ def format_board_list(caller, boards):
         # Determine group/category display
         group_display = "IC" if getattr(board, 'is_ic', True) else "OOC"
 
-        table += "|w{:<30}|n {:<15} {:<22} {:<13}\n".format(
-            f"  {board.name[:28]}",
+        # Format row (all white text, cyan pipes)
+        row_content = "|w{:<28} {:<11} {:<24} {:<10}|n".format(
+            board.name[:28],
             group_display,
-            last_post_info[:22],
+            last_post_info[:24],
             str(post_count)
         )
+        table += f"|c|||n {row_content} |c|||n\n"
 
-    table += "|c" + "=" * 78 + "|n\n"
+    table += "|c*" + "=" * 78 + "*|n\n"
     return table
 
 
@@ -155,23 +169,37 @@ def format_board_view(caller, board):
     if not readable_posts:
         return f"Board '{board.name}' has no posts or you don't have permission to read them."
 
-    # Build header
-    output = f"|wBoard: {board.name}|n\n"
-    output += "|w{:<5} {:<30} {:<15} {:<10}|n\n".format("#", "Title", "Author", "Date")
-    output += "-" * 60 + "\n"
+    # Build header with box borders (76 char content width)
+    output = "|c*" + "=" * 78 + "*|n\n"
+    board_header = f"|wBoard: {board.name:<68}|n"
+    output += f"|c|||n {board_header} |c|||n\n"
+    output += "|c*" + "=" * 78 + "*|n\n"
+
+    # Column header: 5 + 35 + 20 + 13 = 73, + 3 spaces = 76
+    col_header = "|w{:<5} {:<35} {:<20} {:<13}|n".format("#", "Title", "Author", "Date")
+    output += f"|c|||n {col_header} |c|||n\n"
+    output += "|c*" + "=" * 78 + "*|n\n"
 
     # Add each post
+    first_post = True
     for post in readable_posts:
+        # Add divider between posts (but not before first post)
+        if not first_post:
+            output += "|c|||n" + "-" * 78 + "|c|||n\n"
+        first_post = False
+
         author_name = post.author.username if post.author else "Unknown"
         date_str = post.created_at.strftime("%m/%d/%y")
 
-        output += "{:<5} {:<30} {:<15} {:<10}\n".format(
+        row_content = "|w{:<5} {:<35} {:<20} {:<13}|n".format(
             post.sequence_number,
-            post.title[:29],
-            author_name[:14],
+            post.title[:35],
+            author_name[:20],
             date_str
         )
+        output += f"|c|||n {row_content} |c|||n\n"
 
+    output += "|c*" + "=" * 78 + "*|n\n"
     return output
 
 
@@ -189,25 +217,51 @@ def format_post_read(post, viewer=None):
     author_name = post.author.username if post.author else "Unknown"
     date_str = post.created_at.strftime("%B %d, %Y at %I:%M %p")
 
-    # Post header
-    output = f"|wPost #{post.sequence_number}: {post.title}|n\n"
-    output += f"|wBy: {author_name} on {date_str}|n\n"
-    output += "-" * 60 + "\n"
+    # Post header with box borders (76 char content width)
+    output = "|c*" + "=" * 78 + "*|n\n"
+    post_title = f"|wPost #{post.sequence_number}: {post.title:<60}|n"
+    output += f"|c|||n {post_title} |c|||n\n"
+    post_author = f"|wBy: {author_name} on {date_str:<56}|n"
+    output += f"|c|||n {post_author} |c|||n\n"
+    output += "|c*" + "=" * 78 + "*|n\n"
 
-    # Post body
-    output += f"{post.body}\n"
+    # Post body - wrap lines and add borders (76 char content width)
+    body_lines = post.body.split('\n')
+    for line in body_lines:
+        # Handle long lines by wrapping at 76 characters
+        while len(line) > 76:
+            output += f"|c|||n |w{line[:76]:<76}|n |c|||n\n"
+            line = line[76:]
+        output += f"|c|||n |w{line:<76}|n |c|||n\n"
 
     # Comments
     comments = post.comments.all()
     if comments:
-        output += "\n|wComments:|n\n"
-        output += "-" * 60 + "\n"
+        output += "|c*" + "=" * 78 + "*|n\n"
+        comment_header = f"|wComments:{' ' * 64}|n"
+        output += f"|c|||n {comment_header} |c|||n\n"
+        output += "|c*" + "=" * 78 + "*|n\n"
 
+        first_comment = True
         for comment in comments:
+            # Add divider between comments (but not before first comment)
+            if not first_comment:
+                output += "|c|||n" + "-" * 78 + "|c|||n\n"
+            first_comment = False
+
             comment_author = comment.author.username if comment.author else "Unknown"
             comment_date = comment.created_at.strftime("%m/%d/%y %I:%M %p")
 
-            output += f"|w{comment_author}|n ({comment_date}):\n"
-            output += f"{comment.body}\n\n"
+            comment_header = f"|w{comment_author}|n ({comment_date}):{' ' * (52 - len(comment_author) - len(comment_date))}"
+            output += f"|c|||n {comment_header} |c|||n\n"
 
+            # Wrap comment body
+            comment_lines = comment.body.split('\n')
+            for line in comment_lines:
+                while len(line) > 76:
+                    output += f"|c|||n |w{line[:76]:<76}|n |c|||n\n"
+                    line = line[76:]
+                output += f"|c|||n |w{line:<76}|n |c|||n\n"
+
+    output += "|c*" + "=" * 78 + "*|n\n"
     return output

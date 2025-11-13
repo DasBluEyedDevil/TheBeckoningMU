@@ -35,6 +35,10 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         # any commands you add below will overload the default ones.
         #
 
+        # Add custom system commands (styled error messages)
+        from beckonmu.commands.system_commands import SystemNoMatch
+        self.add(SystemNoMatch)
+
         # Add V5 Character Sheet commands
         from beckonmu.commands.v5.sheet import CmdSheet, CmdSheetShort
         self.add(CmdSheet)

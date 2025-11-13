@@ -366,7 +366,7 @@ def _build_health_willpower(character):
     """Build Health and Willpower trackers."""
     lines = []
 
-    pools = character.db.pools if hasattr(character.db, 'pools') else {}
+    pools = character.db.pools or {}
 
     # Health
     health = pools.get('health', 0)
@@ -393,7 +393,7 @@ def _build_hunger_humanity_blood(character):
     """Build Hunger, Humanity, and Blood Potency section (right side)."""
     lines = []
 
-    vamp = character.db.vampire if hasattr(character.db, 'vampire') else {}
+    vamp = character.db.vampire or {}
 
     # Hunger
     hunger = vamp.get('hunger', 0)
@@ -409,7 +409,7 @@ def _build_hunger_humanity_blood(character):
     lines.append(f"  {_dots(humanity, 10)}")
 
     # Stains
-    hum_data = character.db.humanity_data if hasattr(character.db, 'humanity_data') else {}
+    hum_data = character.db.humanity_data or {}
     stains = hum_data.get('stains', 0)
     if stains > 0:
         lines.append(f"  {BLOOD_RED}Stains:{RESET} {_dots(stains, 10)}")
@@ -521,7 +521,7 @@ def _format_status_section(character):
 
 def _format_humanity_details(character):
     """Section 5: Convictions and Touchstones."""
-    hum_data = character.db.humanity_data if hasattr(character.db, 'humanity_data') else {}
+    hum_data = character.db.humanity_data or {}
     convictions = hum_data.get('convictions', [])
     touchstones = hum_data.get('touchstones', [])
 
@@ -557,7 +557,7 @@ def _format_humanity_details(character):
 
 def _format_advantages(character):
     """Section 6: Advantages (Backgrounds, Merits, Flaws)."""
-    advantages = character.db.advantages if hasattr(character.db, 'advantages') else {}
+    advantages = character.db.advantages or {}
     backgrounds = advantages.get('backgrounds', {})
     merits = advantages.get('merits', {})
     flaws = advantages.get('flaws', {})
@@ -713,7 +713,7 @@ def _format_coterie_section(character):
 
 def _format_experience(character):
     """Section 7: Experience."""
-    experience = character.db.experience if hasattr(character.db, 'experience') else {}
+    experience = character.db.experience or {}
     current_xp = experience.get('current', 0)
     total_xp = experience.get('total_earned', 0)
     spent_xp = experience.get('total_spent', 0)
@@ -787,14 +787,14 @@ def format_short_sheet(character):
     """Compact one-line status display."""
     name = character.key
     clan = get_clan(character) or "Unknown"
-    vamp = character.db.vampire if hasattr(character.db, 'vampire') else {}
+    vamp = character.db.vampire or {}
     generation = vamp.get('generation', 13)
     hunger = vamp.get('hunger', 0)
 
     hunger_color = get_hunger_color(hunger)
     hunger_dots = f"{hunger_color}{CIRCLE_FILLED * hunger}{SHADOW_GREY}{CIRCLE_EMPTY * (5 - hunger)}{RESET}"
 
-    pools = character.db.pools if hasattr(character.db, 'pools') else {}
+    pools = character.db.pools or {}
     health = pools.get('current_health', pools.get('health', 0))
     willpower = pools.get('current_willpower', pools.get('willpower', 0))
 

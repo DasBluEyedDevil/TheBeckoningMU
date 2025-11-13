@@ -2,7 +2,6 @@
 BBS utility functions for permissions and formatting.
 """
 
-from evennia.utils import evtable
 from evennia.utils.utils import crop
 from .models import Board, Post
 
@@ -89,39 +88,29 @@ def get_post(caller, board, post_id, check_perm=True):
 
 def format_board_list(caller, boards):
     """
-    Format a list of boards as a pretty table.
+    Format a list of boards as a simple list.
 
     Args:
         caller: Character or Account object
         boards: QuerySet or list of Board objects
 
     Returns:
-        str: Formatted table
+        str: Formatted list
     """
     if not boards:
         return "|wNo boards available.|n"
 
-    table = evtable.EvTable(
-        "|wBoard|n",
-        "|wDescription|n",
-        "|wPosts|n",
-        border="header",
-        width=78,
-    )
-    table.reformat_column(0, width=20)
-    table.reformat_column(1, width=45)
-    table.reformat_column(2, width=10, align="r")
+    output = []
+    output.append("|w=== BULLETIN BOARDS ===|n")
+    output.append("|wBoard" + " " * 16 + "Description" + " " * 34 + "Posts|n")
+    output.append("-" * 70)
 
     for board in boards:
         post_count = board.posts.count()
-        description = crop(board.description, width=44)
-        table.add_row(
-            f"|C{board.name}|n",
-            f"|w{description}|n",
-            f"|y{post_count}|n",
-        )
+        description = crop(board.description, width=40)
+        output.append(f"{board.name:<20} {description:<45} {post_count:>5}")
 
-    return str(table)
+    return "\n".join(output)
 
 
 def format_board_view(caller, board):
@@ -139,31 +128,18 @@ def format_board_view(caller, board):
     if not posts:
         return f"|wBoard:|n {board.name}\n|wNo posts yet.|n"
 
-    table = evtable.EvTable(
-        "|w#|n",
-        "|wAuthor|n",
-        "|wTitle|n",
-        "|wDate|n",
-        border="header",
-        width=78,
-    )
-    table.reformat_column(0, width=5, align="r")
-    table.reformat_column(1, width=20)
-    table.reformat_column(2, width=40)
-    table.reformat_column(3, width=10, align="r")
+    output = []
+    output.append(f"|w=== Board: {board.name} ===|n")
+    output.append("|w#    Author" + " " * 14 + "Title" + " " * 35 + "Date|n")
+    output.append("-" * 70)
 
     for post in posts:
         author_name = post.get_author_name(viewer=caller.account)
-        title = crop(post.title, width=39)
+        title = crop(post.title, width=36)
         date_str = post.created_at.strftime("%m/%d/%y")
-        table.add_row(
-            f"|w{post.sequence_number}|n",
-            f"|C{author_name}|n",
-            f"|w{title}|n",
-            f"|x{date_str}|n",
-        )
+        output.append(f"{post.sequence_number:<4} {author_name:<20} {title:<40} {date_str}")
 
-    return f"|wBoard:|n {board.name}\n{table}"
+    return "\n".join(output)
 
 
 def format_post_read(post, viewer=None):

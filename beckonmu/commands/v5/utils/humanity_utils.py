@@ -17,7 +17,10 @@ def get_humanity(character):
     Returns:
         int: Humanity level (0-10)
     """
-    return character.db.vampire.get("humanity", 7)
+    vampire = character.db.vampire
+    if not vampire:
+        return 7  # Default humanity for non-vampires
+    return vampire.get("humanity", 7)
 
 
 def set_humanity(character, value):

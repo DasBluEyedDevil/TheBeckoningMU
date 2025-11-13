@@ -172,9 +172,13 @@ def validate_complete_character(character):
         errors.append(f"Cannot have more than 3 discipline dots at creation (currently {total_disciplines})")
 
     # Check predator type selected
-    predator = character.db.vampire.get("predator_type", None)
-    if not predator:
-        errors.append("No predator type selected")
+    vampire = character.db.vampire
+    if not vampire:
+        errors.append("Character must be a vampire")
+    else:
+        predator = vampire.get("predator_type", None)
+        if not predator:
+            errors.append("No predator type selected")
 
     # Check specialties (should have at least 1)
     specialties = character.db.stats.get("specialties", {})
@@ -196,7 +200,8 @@ def get_chargen_progress(character):
     """
     # Check each requirement
     clan = clan_utils.get_clan(character)
-    predator = character.db.vampire.get("predator_type", None)
+    vampire = character.db.vampire
+    predator = vampire.get("predator_type", None) if vampire else None
 
     # Attribute allocation
     physical_attr = trait_utils.get_total_attribute_dots(character, 'physical')

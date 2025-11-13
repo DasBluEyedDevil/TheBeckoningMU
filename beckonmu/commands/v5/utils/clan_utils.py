@@ -53,7 +53,10 @@ def get_clan(character):
     Returns:
         str or None: Clan name
     """
-    return character.db.vampire.get("clan", None)
+    vampire = character.db.vampire
+    if not vampire:
+        return None
+    return vampire.get("clan", None)
 
 
 def set_clan(character, clan_name):
@@ -78,6 +81,10 @@ def set_clan(character, clan_name):
     """
     if not is_valid_clan(clan_name):
         return False
+
+    # Ensure vampire data exists
+    if not character.db.vampire:
+        raise ValueError("Character must be a vampire to have a clan.")
 
     # Check if clan already set (can't change clan mid-game without admin)
     if character.db.vampire.get("clan") is not None:
@@ -178,7 +185,10 @@ def get_bane(character):
     Returns:
         str or None: Bane description
     """
-    return character.db.vampire.get("bane", None)
+    vampire = character.db.vampire
+    if not vampire:
+        return None
+    return vampire.get("bane", None)
 
 
 def get_compulsion(character):
@@ -191,7 +201,10 @@ def get_compulsion(character):
     Returns:
         str or None: Compulsion description
     """
-    return character.db.vampire.get("compulsion", None)
+    vampire = character.db.vampire
+    if not vampire:
+        return None
+    return vampire.get("compulsion", None)
 
 
 def trigger_compulsion(character):

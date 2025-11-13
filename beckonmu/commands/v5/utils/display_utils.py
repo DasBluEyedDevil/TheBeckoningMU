@@ -104,7 +104,7 @@ def _format_header():
 def _format_character_info(character):
     """Section 1: Character information (matches official sheet top section)."""
     name = character.key
-    vamp = character.db.vampire if hasattr(character.db, 'vampire') else {}
+    vamp = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
 
     concept = vamp.get('concept', '—')
     chronicle = vamp.get('chronicle', 'The Beckoning - Athens')

@@ -7,8 +7,8 @@ applications using the traits system.
 
 from evennia.commands.command import Command
 from evennia.commands.cmdset import CmdSet
-from traits.models import CharacterTrait, CharacterPower, CharacterBio, Trait, TraitCategory
-from traits.utils import (
+from beckonmu.traits.models import CharacterTrait, CharacterPower, CharacterBio, Trait, TraitCategory
+from beckonmu.traits.utils import (
     get_character_trait_value,
     set_character_trait_value,
     validate_trait_for_character,

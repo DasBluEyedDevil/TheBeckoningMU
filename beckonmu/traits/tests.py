@@ -10,8 +10,8 @@ Tests the core trait manipulation API:
 
 from django.test import TestCase
 from evennia.objects.models import ObjectDB
-from traits.models import TraitCategory, Trait, CharacterTrait
-from traits.utils import (
+from beckonmu.traits.models import TraitCategory, Trait, CharacterTrait
+from beckonmu.traits.utils import (
     get_character_trait_value,
     set_character_trait_value,
     validate_trait_for_character,

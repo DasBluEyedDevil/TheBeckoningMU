@@ -24,7 +24,7 @@ from beckonmu.dice.rouse_checker import (
     perform_rouse_check, can_reroll_rouse, get_hunger_level,
     set_hunger_level, format_hunger_display
 )
-from traits.models import (
+from beckonmu.traits.models import (
     TraitCategory, Trait, DisciplinePower, CharacterTrait, CharacterPower
 )
 

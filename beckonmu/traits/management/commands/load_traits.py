@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from evennia.utils import logger
 import json
 from pathlib import Path
-from traits.models import Trait, TraitCategory
+from beckonmu.traits.models import Trait, TraitCategory
 
 
 class Command(BaseCommand):

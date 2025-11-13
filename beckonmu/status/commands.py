@@ -86,81 +86,21 @@ class CmdStatus(default_cmds.MuxCommand):
 
     def _display_status(self, character, char_status):
         """Display character status."""
-        caller = self.caller
-
-        output = []
-        output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {GOLD}♛{RESET} {PALE_IVORY}STATUS: {character.key.upper()}{RESET}{' ' * (65 - len(character.key))}{BOX_V}")
-        output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
-
-        # Total Status
-        total = char_status.total_status
-        status_dots = f"{GOLD}{CIRCLE_FILLED * total}{SHADOW_GREY}{CIRCLE_EMPTY * (5 - total)}{RESET}"
-        output.append(f"\n{PALE_IVORY}Total Status:{RESET} {status_dots} ({total}/5)")
-
-        # Breakdown
-        breakdown = []
-        if char_status.earned_status > 0:
-            breakdown.append(f"Earned: {char_status.earned_status}")
-        if char_status.position_status > 0:
-            breakdown.append(f"Position: {char_status.position_status}")
-        if char_status.temporary_status != 0:
-            breakdown.append(f"Temporary: {char_status.temporary_status:+d}")
-
-        if breakdown:
-            output.append(f"{SHADOW_GREY}  ({', '.join(breakdown)}){RESET}")
-
-        # Position
-        if char_status.position:
-            output.append(f"\n{PALE_IVORY}Position:{RESET} {GOLD}{char_status.position.name}{RESET}")
-            if char_status.position.title:
-                output.append(f"{SHADOW_GREY}  \"{char_status.position.title}\"{RESET}")
-            output.append(f"{SHADOW_GREY}  {char_status.position.description}{RESET}")
-
-        # Sect
-        output.append(f"\n{PALE_IVORY}Sect:{RESET} {char_status.sect}")
-
-        # Mechanical Bonus
-        bonus = char_status.get_status_bonus()
-        if bonus > 0:
-            output.append(f"\n{PALE_IVORY}Social Roll Bonus:{RESET} +{bonus} dice")
-
-        # Reputation
-        if char_status.reputation:
-            output.append(f"\n{PALE_IVORY}Reputation:{RESET}")
-            output.append(f"{SHADOW_GREY}{char_status.reputation}{RESET}")
-
-        caller.msg("\n".join(output))
+        from .utils import format_character_status
+        output = format_character_status(character, char_status)
+        self.caller.msg(output)
 
     def _show_history(self):
         """Show status history."""
-        caller = self.caller
-        char_status = get_character_status(caller)
+        from .utils import format_status_history
+        char_status = get_character_status(self.caller)
 
         if not char_status or not char_status.status_history:
-            caller.msg("|yYou have no status history.|n")
+            self.caller.msg("|yYou have no status history.|n")
             return
 
-        output = []
-        output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {PALE_IVORY}STATUS HISTORY{RESET}{' ' * 60}{BOX_V}")
-        output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}\n")
-
-        for entry in reversed(char_status.status_history[-10:]):  # Last 10 entries
-            date = entry.get('date', 'Unknown')[:10]  # Just the date part
-            change = entry.get('change', 0)
-            reason = entry.get('reason', 'No reason given')
-            changed_by = entry.get('changed_by', 'Unknown')
-            new_total = entry.get('new_total', 0)
-
-            change_str = f"{GOLD}+{change}{RESET}" if change > 0 else f"{BLOOD_RED}{change}{RESET}" if change < 0 else f"{SHADOW_GREY}±0{RESET}"
-
-            output.append(f"{SHADOW_GREY}{date}{RESET} - {change_str} → {new_total}")
-            output.append(f"  {PALE_IVORY}{reason}{RESET}")
-            output.append(f"  {SHADOW_GREY}(by {changed_by}){RESET}")
-            output.append("")
-
-        caller.msg("\n".join(output))
+        output = format_status_history(char_status)
+        self.caller.msg(output)
 
 
 class CmdPositions(default_cmds.MuxCommand):
@@ -198,83 +138,28 @@ class CmdPositions(default_cmds.MuxCommand):
 
     def _list_positions(self):
         """List all positions."""
-        caller = self.caller
+        from .utils import format_positions_list
         positions = get_all_positions()
 
         if not positions:
-            caller.msg("|yNo positions are currently defined.|n")
+            self.caller.msg("|yNo positions are currently defined.|n")
             return
 
-        output = []
-        output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {GOLD}♛{RESET} {PALE_IVORY}CAMARILLA POSITIONS{RESET}{' ' * 53}{BOX_V}")
-        output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}\n")
-
-        for position in positions:
-            holders = get_position_holders(position.name)
-            holder_count = holders.count()
-
-            status_dots = f"{GOLD}{CIRCLE_FILLED * position.status_granted}{RESET}"
-
-            output.append(f"{PALE_IVORY}{position.name}{RESET} {status_dots}")
-            output.append(f"  {SHADOW_GREY}{position.description}{RESET}")
-
-            if holder_count > 0:
-                holder_names = ", ".join([h.character.key for h in holders])
-                output.append(f"  {GOLD}Holder(s):{RESET} {holder_names}")
-            elif position.is_unique:
-                output.append(f"  {SHADOW_GREY}(Vacant){RESET}")
-
-            output.append("")
-
-        output.append(f"{SHADOW_GREY}Use |w+positions <name>|x for details.{RESET}")
-
-        caller.msg("\n".join(output))
+        output = format_positions_list(positions)
+        self.caller.msg(output)
 
     def _show_position_detail(self, position_name):
         """Show detail for a specific position."""
-        caller = self.caller
+        from .utils import format_position_detail
 
         try:
             position = CamarillaPosition.objects.get(name__iexact=position_name, is_active=True)
         except CamarillaPosition.DoesNotExist:
-            caller.msg(f"|rPosition '{position_name}' not found.|n")
+            self.caller.msg(f"|rPosition '{position_name}' not found.|n")
             return
 
-        holders = get_position_holders(position.name)
-
-        output = []
-        output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {GOLD}♛{RESET} {PALE_IVORY}{position.name.upper()}{RESET}{' ' * (68 - len(position.name))}{BOX_V}")
-        output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
-
-        # Status granted
-        status_dots = f"{GOLD}{CIRCLE_FILLED * position.status_granted}{CIRCLE_EMPTY * (5 - position.status_granted)}{RESET}"
-        output.append(f"\n{PALE_IVORY}Status Granted:{RESET} {status_dots} ({position.status_granted})")
-
-        # Hierarchy
-        output.append(f"{PALE_IVORY}Hierarchy Level:{RESET} {position.hierarchy_level}")
-
-        # Requirements
-        if position.requires_status > 0:
-            output.append(f"{PALE_IVORY}Requires:{RESET} {position.requires_status}+ earned Status")
-
-        if position.requires_clan:
-            output.append(f"{PALE_IVORY}Requires Clan:{RESET} {position.requires_clan}")
-
-        # Description
-        output.append(f"\n{PALE_IVORY}Description:{RESET}")
-        output.append(f"{SHADOW_GREY}{position.description}{RESET}")
-
-        # Current holders
-        if holders.count() > 0:
-            output.append(f"\n{PALE_IVORY}Current Holder(s):{RESET}")
-            for holder in holders:
-                output.append(f"  {GOLD}●{RESET} {holder.character.key}")
-        elif position.is_unique:
-            output.append(f"\n{SHADOW_GREY}Position is currently vacant.{RESET}")
-
-        caller.msg("\n".join(output))
+        output = format_position_detail(position)
+        self.caller.msg(output)
 
 
 class CmdStatusRequest(default_cmds.MuxCommand):

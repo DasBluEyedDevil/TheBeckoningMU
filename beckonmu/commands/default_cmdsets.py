@@ -93,14 +93,14 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(DiceCmdSet)
 
         # Add Status system commands
-        from status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
+        from beckonmu.status.commands import CmdStatus, CmdPositions, CmdStatusRequest, CmdStatusAdmin
         self.add(CmdStatus)
         self.add(CmdPositions)
         self.add(CmdStatusRequest)
         self.add(CmdStatusAdmin)
 
         # Add Boons system commands
-        from boons.commands import (
+        from beckonmu.boons.commands import (
             CmdBoon, CmdBoonGive, CmdBoonAccept, CmdBoonDecline,
             CmdBoonCall, CmdBoonFulfill, CmdBoonAdmin
         )
@@ -118,11 +118,11 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdSocial)
 
         # Add BBS commands
-        from bbs.commands import BBSCmdSet
+        from beckonmu.bbs.commands import BBSCmdSet
         self.add(BBSCmdSet)
 
         # Add Jobs commands
-        from jobs.cmdset import JobsCmdSet
+        from beckonmu.jobs.cmdset import JobsCmdSet
         self.add(JobsCmdSet)
 
         # Add V5 blood system (feeding, Blood Surge, Hunger tracking)

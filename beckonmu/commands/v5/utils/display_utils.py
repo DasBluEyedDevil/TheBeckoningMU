@@ -471,7 +471,7 @@ def _format_clan_section(character):
 def _format_status_section(character):
     """Section 4.5: Status (Position & Standing in Kindred Society)."""
     try:
-        from status.utils import get_character_status
+        from beckonmu.status.utils import get_character_status
     except ImportError:
         # Status system not installed/migrated yet
         return ""
@@ -604,7 +604,7 @@ def _format_advantages(character):
 def _format_boons_section(character):
     """Section 6.5: Boons (Political Favors & Debts)."""
     try:
-        from boons.utils import get_or_create_ledger
+        from beckonmu.boons.utils import get_or_create_ledger
     except ImportError:
         # Boons system not installed/migrated yet
         return ""

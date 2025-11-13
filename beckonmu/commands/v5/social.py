@@ -400,7 +400,7 @@ class CmdSocial(Command):
 
         # Status Section
         try:
-            from status.utils import get_character_status
+            from beckonmu.status.utils import get_character_status
             char_status = get_character_status(target)
 
             if char_status:
@@ -425,7 +425,7 @@ class CmdSocial(Command):
 
         # Boons Section
         try:
-            from boons.utils import get_or_create_ledger
+            from beckonmu.boons.utils import get_or_create_ledger
             ledger = get_or_create_ledger(target)
 
             if ledger.total_debt_weight > 0 or ledger.total_credit_weight > 0:

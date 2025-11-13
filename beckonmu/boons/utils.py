@@ -470,7 +470,7 @@ def check_harpy_permissions(character):
         bool: True if character is a Harpy
     """
     try:
-        from status.utils import get_character_status
+        from beckonmu.status.utils import get_character_status
 
         char_status = get_character_status(character)
         if not char_status or not char_status.position:

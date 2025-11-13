@@ -31,7 +31,7 @@ from world.ansi_theme import (
 )
 
 
-class CmdBoon(Command):
+class CmdBoon(default_cmds.MuxCommand):
     """
     View boons (favors and debts).
 
@@ -214,7 +214,7 @@ class CmdBoon(Command):
         caller.msg("\n".join(output))
 
 
-class CmdBoonGive(Command):
+class CmdBoonGive(default_cmds.MuxCommand):
     """
     Offer a boon to someone.
 
@@ -277,7 +277,7 @@ class CmdBoonGive(Command):
             caller.msg(f"|r{message}|n")
 
 
-class CmdBoonAccept(Command):
+class CmdBoonAccept(default_cmds.MuxCommand):
     """
     Accept a boon offer.
 
@@ -324,7 +324,7 @@ class CmdBoonAccept(Command):
             caller.msg(f"|r{message}|n")
 
 
-class CmdBoonDecline(Command):
+class CmdBoonDecline(default_cmds.MuxCommand):
     """
     Decline a boon offer.
 
@@ -375,7 +375,7 @@ class CmdBoonDecline(Command):
             caller.msg(f"|r{message}|n")
 
 
-class CmdBoonCall(Command):
+class CmdBoonCall(default_cmds.MuxCommand):
     """
     Call in a boon owed to you.
 
@@ -426,7 +426,7 @@ class CmdBoonCall(Command):
             caller.msg(f"|r{message}|n")
 
 
-class CmdBoonFulfill(Command):
+class CmdBoonFulfill(default_cmds.MuxCommand):
     """
     Mark a boon as fulfilled.
 

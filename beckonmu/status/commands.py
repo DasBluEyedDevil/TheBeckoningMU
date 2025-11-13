@@ -29,7 +29,7 @@ from world.ansi_theme import (
 )
 
 
-class CmdStatus(Command):
+class CmdStatus(default_cmds.MuxCommand):
     """
     View Status in Kindred society.
 
@@ -163,7 +163,7 @@ class CmdStatus(Command):
         caller.msg("\n".join(output))
 
 
-class CmdPositions(Command):
+class CmdPositions(default_cmds.MuxCommand):
     """
     View Camarilla positions.
 
@@ -277,7 +277,7 @@ class CmdPositions(Command):
         caller.msg("\n".join(output))
 
 
-class CmdStatusRequest(Command):
+class CmdStatusRequest(default_cmds.MuxCommand):
     """
     Request Status changes or position appointments.
 

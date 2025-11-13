@@ -67,34 +67,34 @@ def get_hunger_color(hunger_level):
 RESET = "|n"               # Reset all formatting
 
 # ============================================================================
-# BOX DRAWING CHARACTERS
+# BOX DRAWING CHARACTERS (ASCII-only for client compatibility)
 # ============================================================================
 
-# Single line
-BOX_H = "─"                # Horizontal
-BOX_V = "│"                # Vertical
-BOX_TL = "┌"               # Top-left corner
-BOX_TR = "┐"               # Top-right corner
-BOX_BL = "└"               # Bottom-left corner
-BOX_BR = "┘"               # Bottom-right corner
-BOX_T = "┬"                # T-junction top
-BOX_B = "┴"                # T-junction bottom
-BOX_L = "├"                # T-junction left
-BOX_R = "┤"                # T-junction right
-BOX_X = "┼"                # Cross
+# Single line (ASCII)
+BOX_H = "-"                # Horizontal
+BOX_V = "|"                # Vertical
+BOX_TL = "+"               # Top-left corner
+BOX_TR = "+"               # Top-right corner
+BOX_BL = "+"               # Bottom-left corner
+BOX_BR = "+"               # Bottom-right corner
+BOX_T = "+"                # T-junction top
+BOX_B = "+"                # T-junction bottom
+BOX_L = "+"                # T-junction left
+BOX_R = "+"                # T-junction right
+BOX_X = "+"                # Cross
 
-# Double line (for headers/emphasis)
-DBOX_H = "═"               # Horizontal
-DBOX_V = "║"               # Vertical
-DBOX_TL = "╔"              # Top-left corner
-DBOX_TR = "╗"              # Top-right corner
-DBOX_BL = "╚"              # Bottom-left corner
-DBOX_BR = "╝"              # Bottom-right corner
-DBOX_T = "╦"               # T-junction top
-DBOX_B = "╩"               # T-junction bottom
-DBOX_L = "╠"               # T-junction left
-DBOX_R = "╣"               # T-junction right
-DBOX_X = "╬"               # Cross
+# Double line (ASCII - uses = for emphasis)
+DBOX_H = "="               # Horizontal
+DBOX_V = "|"               # Vertical
+DBOX_TL = "+"              # Top-left corner
+DBOX_TR = "+"              # Top-right corner
+DBOX_BL = "+"              # Bottom-left corner
+DBOX_BR = "+"              # Bottom-right corner
+DBOX_T = "+"               # T-junction top
+DBOX_B = "+"               # T-junction bottom
+DBOX_L = "+"               # T-junction left
+DBOX_R = "+"               # T-junction right
+DBOX_X = "+"               # Cross
 
 # ============================================================================
 # THEMATIC SYMBOLS

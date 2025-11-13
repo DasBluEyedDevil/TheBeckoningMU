@@ -88,91 +88,126 @@ def get_post(caller, board, post_id, check_perm=True):
 
 def format_board_list(caller, boards):
     """
-    Format a list of boards as a simple list.
+    Formats a list of Board objects into a table view with elegant styling.
 
     Args:
-        caller: Character or Account object
-        boards: QuerySet or list of Board objects
+        caller: The calling character
+        boards: List of Board objects
 
     Returns:
-        str: Formatted list
+        Formatted string for display
     """
     if not boards:
-        return "|wNo boards available.|n"
+        return "No boards available."
 
-    output = []
-    output.append("|w=== BULLETIN BOARDS ===|n")
-    output.append("|wBoard" + " " * 16 + "Description" + " " * 34 + "Posts|n")
-    output.append("-" * 70)
+    # Build elegant table with colors and proper formatting
+    table = "|c" + "=" * 78 + "|n\n"
+    table += "|c{:<30} {:<15} {:<22} {:<13}|n\n".format(
+        "  Board Name", "Group", "Last Post", "# of Messages"
+    )
+    table += "|c" + "=" * 78 + "|n\n"
 
+    # Add each board with proper formatting
     for board in boards:
-        post_count = board.posts.count()
-        description = crop(board.description, width=40)
-        output.append(f"{board.name:<20} {description:<45} {post_count:>5}")
+        # Count posts that the caller can read
+        readable_posts = [p for p in board.posts.all()
+                         if p.read_perm == 'all' or caller.check_permstring(p.read_perm)]
+        post_count = len(readable_posts)
 
-    return "\n".join(output)
+        # Get last post info
+        last_post = board.posts.order_by('-created_at').first() if readable_posts else None
+        if last_post:
+            last_post_info = f"{last_post.author.username[:15]} - {last_post.created_at.strftime('%m/%d/%y')}"
+        else:
+            last_post_info = "No posts"
+
+        # Determine group/category display
+        group_display = "IC" if getattr(board, 'is_ic', True) else "OOC"
+
+        table += "|w{:<30}|n {:<15} {:<22} {:<13}\n".format(
+            f"  {board.name[:28]}",
+            group_display,
+            last_post_info[:22],
+            str(post_count)
+        )
+
+    table += "|c" + "=" * 78 + "|n\n"
+    return table
 
 
 def format_board_view(caller, board):
     """
-    Format a board view showing all posts.
+    Formats the list of posts for a given board.
 
     Args:
-        caller: Character or Account object
+        caller: The calling character
         board: Board object
 
     Returns:
-        str: Formatted board view
+        Formatted string for display
     """
-    posts = board.posts.all()
-    if not posts:
-        return f"|wBoard:|n {board.name}\n|wNo posts yet.|n"
+    # Get posts the caller can read
+    readable_posts = []
+    for post in board.posts.all():
+        if post.read_perm == 'all' or caller.check_permstring(post.read_perm):
+            readable_posts.append(post)
 
-    output = []
-    output.append(f"|w=== Board: {board.name} ===|n")
-    output.append("|w#    Author" + " " * 14 + "Title" + " " * 35 + "Date|n")
-    output.append("-" * 70)
+    if not readable_posts:
+        return f"Board '{board.name}' has no posts or you don't have permission to read them."
 
-    for post in posts:
-        author_name = post.get_author_name(viewer=caller.account)
-        title = crop(post.title, width=36)
+    # Build header
+    output = f"|wBoard: {board.name}|n\n"
+    output += "|w{:<5} {:<30} {:<15} {:<10}|n\n".format("#", "Title", "Author", "Date")
+    output += "-" * 60 + "\n"
+
+    # Add each post
+    for post in readable_posts:
+        author_name = post.author.username if post.author else "Unknown"
         date_str = post.created_at.strftime("%m/%d/%y")
-        output.append(f"{post.sequence_number:<4} {author_name:<20} {title:<40} {date_str}")
 
-    return "\n".join(output)
+        output += "{:<5} {:<30} {:<15} {:<10}\n".format(
+            post.sequence_number,
+            post.title[:29],
+            author_name[:14],
+            date_str
+        )
+
+    return output
 
 
 def format_post_read(post, viewer=None):
     """
-    Format a full post with comments.
+    Formats a single post and its comments for reading.
 
     Args:
         post: Post object
-        viewer: AccountDB object of the viewer (optional)
+        viewer: AccountDB object of the viewer (optional, for compatibility)
 
     Returns:
-        str: Formatted post
+        Formatted string for display
     """
-    author_name = post.get_author_name(viewer=viewer)
-    date_str = post.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    author_name = post.author.username if post.author else "Unknown"
+    date_str = post.created_at.strftime("%B %d, %Y at %I:%M %p")
 
-    output = []
-    output.append(f"|wPost #{post.sequence_number}: {post.title}|n")
-    output.append(f"|wBoard:|n {post.board.name}")
-    output.append(f"|wAuthor:|n {author_name}")
-    output.append(f"|wDate:|n {date_str}")
-    output.append("-" * 78)
-    output.append(post.body)
-    output.append("-" * 78)
+    # Post header
+    output = f"|wPost #{post.sequence_number}: {post.title}|n\n"
+    output += f"|wBy: {author_name} on {date_str}|n\n"
+    output += "-" * 60 + "\n"
 
+    # Post body
+    output += f"{post.body}\n"
+
+    # Comments
     comments = post.comments.all()
     if comments:
-        output.append("|wComments:|n")
-        for i, comment in enumerate(comments, 1):
-            comment_date = comment.created_at.strftime("%Y-%m-%d %H:%M:%S")
-            output.append(
-                f"|w[{i}] {comment.author.username}|n - |x{comment_date}|n"
-            )
-            output.append(f"  {comment.body}")
+        output += "\n|wComments:|n\n"
+        output += "-" * 60 + "\n"
 
-    return "\n".join(output)
+        for comment in comments:
+            comment_author = comment.author.username if comment.author else "Unknown"
+            comment_date = comment.created_at.strftime("%m/%d/%y %I:%M %p")
+
+            output += f"|w{comment_author}|n ({comment_date}):\n"
+            output += f"{comment.body}\n\n"
+
+    return output

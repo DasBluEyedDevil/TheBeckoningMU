@@ -5,7 +5,7 @@ Commands for viewing and managing active discipline effects.
 """
 
 from evennia import Command
-from evennia.commands import default_cmds
+from evennia import default_cmds
 from .utils.discipline_effects import (
     get_active_effects,
     remove_effect,

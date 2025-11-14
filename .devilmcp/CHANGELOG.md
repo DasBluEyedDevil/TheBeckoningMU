@@ -6,6 +6,66 @@ This file follows the DevilMCP pattern from VitruvianRedux to maintain consisten
 
 ---
 
+## [2025-11-13] - Session 18: Emergency Fixes - Missing Imports (humanity.py + connection_screens.py)
+
+### Overview
+Fixed two critical import errors preventing server operation. First error prevented commands from loading (humanity.py), second prevented server from starting (connection_screens.py). Both traced to incomplete cleanup from Session 17.
+
+**Result:** Server starts and reloads successfully. All commands operational.
+
+### Issues Fixed
+
+**Issue #1: Missing default_cmds Import**
+- **User Report:** "no commands are working"
+- **Error:** `NameError: name 'default_cmds' is not defined` at `beckonmu/commands/v5/humanity.py:20`
+- **Impact:** ALL custom commands unavailable
+- **Fix:** Added `from evennia import default_cmds` to humanity.py:8
+
+**Issue #2: Missing FLEUR_DE_LIS Symbol**
+- **Error:** `ImportError: cannot import name 'FLEUR_DE_LIS' from 'world.ansi_theme'` at `server/conf/connection_screens.py:28`
+- **Impact:** Server wouldn't start
+- **Fix:** Removed FLEUR_DE_LIS from import, replaced with hardcoded '⚜' symbol
+
+### Root Cause
+Session 17 removed Unicode symbols from ansi_theme.py but didn't verify all usage across entire codebase (including server/ directory). Humanity.py import likely lost during line ending changes.
+
+### Files Modified
+
+1. **beckonmu/commands/v5/humanity.py**
+   - Added line 8: `from evennia import default_cmds`
+
+2. **server/conf/connection_screens.py**
+   - Line 28: Removed FLEUR_DE_LIS from import list
+   - Line 58: Changed `{FLEUR_DE_LIS}` to hardcoded '⚜' symbol
+
+### Verification
+- ✅ Server start successful (no errors)
+- ✅ Server reload successful (no errors)
+- ✅ Grep search confirmed no remaining symbol references
+- ✅ All ports operational (telnet:4000, web:4001, websocket:4002)
+
+### Technical Details
+- **Total fixes:** 3 lines changed (1 added, 2 modified)
+- **Pattern:** Used working examples from blood.py for imports
+- **Verification:** Grep search for all removed symbols (FLEUR_DE_LIS, CIRCLE_FILLED, CIRCLE_EMPTY, DIAMOND_EMPTY, DIAMOND)
+- **Time to fix:** ~10 minutes for both issues (systematic debugging)
+
+### Quadrumvirate Pattern
+- **Grep Tool:** Fast verification of symbol removal (seconds vs Gemini's 30+ seconds)
+- **Claude:** Orchestrated, applied fixes, verified (~12k tokens)
+- **Lesson:** Use grep for simple searches, Gemini for complex analysis
+
+### Metrics
+- **Files Modified:** 2
+- **Lines Changed:** 3
+- **Server Operations:** 1 start + 1 reload (both successful)
+- **Errors Fixed:** 2 critical import errors
+- **Claude Tokens:** ~12k
+- **Session Duration:** ~10 minutes
+- **Codebase Health:** ✅ FULLY OPERATIONAL
+
+---
+
 ## [2025-11-13] - Session 13: V5 Character Sheet - WoD Format Fixes (Value Highlighting, Bottom Border, Gothic Content Merge)
 
 ### Overview

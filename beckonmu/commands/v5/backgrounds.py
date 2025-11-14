@@ -5,7 +5,7 @@ Commands for using Background advantages.
 """
 
 from evennia import Command
-from evennia.commands import default_cmds
+from evennia import default_cmds
 from .utils.background_utils import (
     get_all_backgrounds,
     get_background_benefits,

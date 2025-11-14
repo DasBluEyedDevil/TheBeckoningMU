@@ -5,7 +5,7 @@ Commands for managing coteries and viewing social standing.
 """
 
 from evennia import Command
-from evennia.commands import default_cmds
+from evennia import default_cmds
 from evennia.utils import search
 
 from world.ansi_theme import (

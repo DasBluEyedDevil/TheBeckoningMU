@@ -25,7 +25,7 @@ from django.conf import settings
 from evennia import utils
 from world.ansi_theme import (
     BLOOD_RED, DARK_RED, BONE_WHITE, SHADOW_GREY, PALE_IVORY, GOLD, RESET,
-    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR, FLEUR_DE_LIS
+    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR
 )
 
 CONNECTION_SCREEN = f"""{DARK_RED}
@@ -55,7 +55,7 @@ CONNECTION_SCREEN = f"""{DARK_RED}
 
 {SHADOW_GREY}════════════════════════════════════════════════════════════════════════════════{RESET}
 
-  {BLOOD_RED}{FLEUR_DE_LIS}{RESET} {PALE_IVORY}Original Work by lcanady (github/lcanady){RESET}
+  {BLOOD_RED}⚜{RESET} {PALE_IVORY}Original Work by lcanady (github/lcanady){RESET}
   {SHADOW_GREY}Modifications by Devil and erratic{RESET}
   {SHADOW_GREY}Powered By Evennia v{utils.get_evennia_version("short")}{RESET}
 

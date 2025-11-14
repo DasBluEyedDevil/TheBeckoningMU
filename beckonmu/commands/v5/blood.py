@@ -6,7 +6,7 @@ Blood Surge, and Hunger tracking.
 """
 
 from evennia import Command
-from evennia.commands import default_cmds
+from evennia import default_cmds
 from evennia.utils.utils import inherits_from
 
 

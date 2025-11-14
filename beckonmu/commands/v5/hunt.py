@@ -5,7 +5,7 @@ Commands for hunting and feeding mechanics with staff-run hunt scenes.
 """
 
 from evennia import Command
-from evennia.commands import default_cmds
+from evennia import default_cmds
 from .utils.hunting_utils import (
     hunt_prey,
     get_predator_hunting_bonus,

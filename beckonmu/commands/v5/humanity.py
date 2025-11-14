@@ -5,6 +5,7 @@ Commands for managing Humanity, Convictions, Touchstones, Stains, Remorse, and F
 """
 
 from evennia.commands.command import Command
+from evennia import default_cmds
 from beckonmu.commands.v5.utils.humanity_utils import (
     get_humanity_status, add_stain, add_conviction, add_touchstone,
     remove_conviction, remove_touchstone, remorse_roll, check_frenzy_risk,

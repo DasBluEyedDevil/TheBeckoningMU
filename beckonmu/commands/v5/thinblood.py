@@ -5,7 +5,7 @@ Commands for Thin-Blood vampires and Alchemy.
 """
 
 from evennia import Command
-from evennia.commands import default_cmds
+from evennia import default_cmds
 from .utils.thin_blood_utils import (
     is_thin_blood,
     get_thin_blood_powers,

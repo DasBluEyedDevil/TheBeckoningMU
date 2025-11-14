@@ -5,6 +5,7 @@ Provides a comprehensive character creation system following V5 rules.
 """
 
 from evennia.commands.command import Command
+from evennia.commands import default_cmds
 from evennia.utils.utils import inherits_from
 from .utils import chargen_utils, clan_utils, trait_utils, blood_utils
 from world.v5_data import PREDATOR_TYPES

@@ -147,7 +147,7 @@ def format_character_sheet(character):
 
 def _format_bio_section(character):
     """Format bio section with two-column space-padded layout."""
-    v5 = character.db.vampire if (hasattr(character.db, 'v5') and character.db.vampire) else {}
+    v5 = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
     bio = []
 
     # Get clan
@@ -187,7 +187,7 @@ def _format_bio_section(character):
 
 def _format_attributes_section(character):
     """Format attributes in three columns with dot leaders."""
-    v5 = character.db.vampire if (hasattr(character.db, 'v5') and character.db.vampire) else {}
+    v5 = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
     attrs = v5.get('attributes', {})
 
     # Get Physical attributes
@@ -235,7 +235,7 @@ def _format_attributes_section(character):
 
 def _format_skills_section(character):
     """Format skills in three columns with dot leaders, showing ALL skills."""
-    v5 = character.db.vampire if (hasattr(character.db, 'v5') and character.db.vampire) else {}
+    v5 = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
     skills = v5.get('skills', {})
 
     # Build lists for all skills
@@ -282,7 +282,7 @@ def _format_skills_section(character):
 
 def _format_experience_section(character):
     """Format experience points section."""
-    v5 = character.db.vampire if (hasattr(character.db, 'v5') and character.db.vampire) else {}
+    v5 = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
     xp = v5.get('xp', {})
 
     earned = xp.get('earned', 0)
@@ -295,7 +295,7 @@ def _format_experience_section(character):
 
 def _format_disciplines_section(character):
     """Format disciplines section (V5 powers)."""
-    v5 = character.db.vampire if (hasattr(character.db, 'v5') and character.db.vampire) else {}
+    v5 = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
     disciplines = v5.get('disciplines', {})
 
     if not disciplines or all(val == 0 for val in disciplines.values()):
@@ -311,7 +311,7 @@ def _format_disciplines_section(character):
 
 def _format_humanity_section(character):
     """Format humanity, touchstones, and convictions."""
-    v5 = character.db.vampire if (hasattr(character.db, 'v5') and character.db.vampire) else {}
+    v5 = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
 
     humanity = v5.get('humanity', 7)
     stains = v5.get('stains', 0)
@@ -335,7 +335,7 @@ def _format_humanity_section(character):
 
 def _format_advantages_section(character):
     """Format backgrounds, merits, and flaws."""
-    v5 = character.db.vampire if (hasattr(character.db, 'v5') and character.db.vampire) else {}
+    v5 = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
 
     backgrounds = v5.get('backgrounds', {})
     merits = v5.get('merits', {})
@@ -412,7 +412,7 @@ def _format_boons_section(character):
 def _format_coterie_section(character):
     """Format coterie membership."""
     # Coterie functionality uses character.db.coterie, not Django models
-    v5 = character.db.vampire if (hasattr(character.db, 'v5') and character.db.vampire) else {}
+    v5 = character.db.vampire if (hasattr(character.db, 'vampire') and character.db.vampire) else {}
     coterie_data = v5.get('coterie', None)
 
     if coterie_data:
@@ -435,7 +435,7 @@ def format_short_sheet(character):
     hunger = vamp.get('hunger', 0)
 
     hunger_color = get_hunger_color(hunger)
-    hunger_dots = f"{hunger_color}{}{SHADOW_GREY}{CIRCLE_EMPTY * (5 - hunger)}{RESET}"
+    hunger_dots = f"{hunger_color}{'●' * hunger}{SHADOW_GREY}{'○' * (5 - hunger)}{RESET}"
 
     pools = character.db.pools or {}
     health = pools.get('current_health', pools.get('health', 0))

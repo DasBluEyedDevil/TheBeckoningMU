@@ -13,7 +13,7 @@ from .hunting_utils import generate_hunting_opportunity, HUNTING_COMPLICATIONS
 from .blood_utils import feed, increase_hunger
 from world.ansi_theme import (
     BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
-    GOLD, RESET, CIRCLE_FILLED
+    GOLD, RESET
 )
 
 

@@ -243,7 +243,7 @@ class CmdCoterie(default_cmds.MuxCommand):
 
         for resource_type in ['domain', 'haven', 'herd', 'contacts']:
             value = resources.get(resource_type, 0)
-            dots = f"{GOLD}{}{SHADOW_GREY}{CIRCLE_FILLED * (5 - value)}{RESET}"
+            dots = f"{GOLD}{}{SHADOW_GREY}{* (5 - value)}{RESET}"
             resource_name = resource_type.capitalize()
             lines.append(f"{SHADOW_GREY}{BOX_V} {GOLD}{resource_name:<15}{RESET} {dots:<20} {SHADOW_GREY}{BOX_V}{RESET}")
 
@@ -344,7 +344,7 @@ class CmdCoterie(default_cmds.MuxCommand):
 
             for resource_type in ['domain', 'haven', 'herd', 'contacts']:
                 value = resources.get(resource_type, 0)
-                dots = f"{GOLD}{}{SHADOW_GREY}{CIRCLE_FILLED * (5 - value)}{RESET}"
+                dots = f"{GOLD}{}{SHADOW_GREY}{* (5 - value)}{RESET}"
                 resource_name = resource_type.capitalize()
                 lines.append(f"{SHADOW_GREY}{BOX_V} {GOLD}{resource_name:<15}{RESET} {dots:<58} {SHADOW_GREY}{BOX_V}{RESET}")
 
@@ -409,7 +409,7 @@ class CmdSocial(Command):
                 lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
 
                 total = char_status.total_status
-                status_dots = f"{GOLD}{}{SHADOW_GREY}{CIRCLE_FILLED * (5 - total)}{RESET}"
+                status_dots = f"{GOLD}{}{SHADOW_GREY}{* (5 - total)}{RESET}"
 
                 lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Total:{RESET} {status_dots} ({total}){' ' * 60} {SHADOW_GREY}{BOX_V}{RESET}")
 

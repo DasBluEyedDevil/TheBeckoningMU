@@ -62,6 +62,13 @@ FILE_HELP_ENTRY_MODULES = ["world.help_entries"]
 FILE_NEWS_ENTRY_MODULES = ["world.news_entries"]
 
 ######################################################################
+# Command System Configuration
+######################################################################
+
+# Custom search result handler for styled error messages
+SEARCH_AT_RESULT = "server.conf.at_search.at_search_result"
+
+######################################################################
 # Settings given in secret_settings.py override those in this file.
 ######################################################################
 try:

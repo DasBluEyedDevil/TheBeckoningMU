@@ -111,10 +111,6 @@ CROSS_ALT = "✝"            # Alternative cross
 
 # Status/Power
 
-
-
-DIAMOND_EMPTY = "◇"        # Empty diamond
-
 # Warning/Danger
 WARNING = "⚠"              # Warnings, caution
 NO_ENTRY = "⛔"            # Forbidden
@@ -182,7 +178,7 @@ def make_separator(width=65):
     """
     return f"{SHADOW_GREY}{BOX_H * width}{RESET}"
 
-def trait_dots(current, maximum=5, filled_symbol= empty_symbol=CIRCLE_EMPTY):
+def trait_dots(current, maximum=5, filled_symbol='●', empty_symbol='○'):
     """
     Create a visual representation of trait dots.
 
@@ -388,8 +384,8 @@ def trait_dots_colored(current, maximum=5, filled_color=None, empty_color=None):
     if empty_color is None:
         empty_color = SHADOW_GREY
 
-    filled = f"{filled_color}{}{RESET}"
-    empty = f"{empty_color}{CIRCLE_EMPTY * (maximum - current)}{RESET}"
+    filled = f"{filled_color}{'●' * current}{RESET}"
+    empty = f"{empty_color}{'○' * (maximum - current)}{RESET}"
     return filled + empty
 
 

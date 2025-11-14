@@ -5,7 +5,7 @@ Commands for viewing, spending, and awarding XP.
 """
 
 from evennia import Command
-from evennia.commands import default_cmds, default_cmds
+from evennia.commands import default_cmds
 from .utils.xp_utils import (
     get_current_xp,
     get_total_earned_xp,

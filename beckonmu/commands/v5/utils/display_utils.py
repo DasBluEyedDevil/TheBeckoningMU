@@ -304,7 +304,7 @@ def _format_disciplines_section(character):
     output = "\n"
     for disc, level in sorted(disciplines.items()):
         if level > 0:
-            output += f" {disc.capitalize()}: {} ({level})\n"
+            output += f" {disc.capitalize()}: {'●' * level} ({level})\n"
 
     return output
 
@@ -348,7 +348,7 @@ def _format_advantages_section(character):
         output += " Backgrounds:\n"
         for bg, level in sorted(backgrounds.items()):
             if level > 0:
-                output += f"  {bg.capitalize()}: {} ({level})\n"
+                output += f"  {bg.capitalize()}: {'●' * level} ({level})\n"
         has_content = True
 
     if merits:

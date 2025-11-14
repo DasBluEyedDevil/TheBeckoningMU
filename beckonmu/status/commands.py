@@ -5,6 +5,7 @@ Commands for viewing and managing Status in Kindred society.
 """
 
 from evennia import Command, default_cmds
+from world.ansi_theme import GOLD, RESET
 from .utils import (
     get_character_status,
     get_or_create_character_status,

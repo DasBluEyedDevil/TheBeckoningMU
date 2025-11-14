@@ -498,14 +498,13 @@ def format_boon_ledger(caller, ledger):
         str: Formatted boon ledger display
     """
     from beckonmu.world.ansi_theme import (
-        DARK_RED, BOX_TL, BOX_TR, BOX_BL, BOX_BR, BOX_H, BOX_V,
-        GOLD, DIAMOND, PALE_IVORY, RESET, BLOOD_RED, SHADOW_GREY
+        GOLD, PALE_IVORY, RESET, BLOOD_RED, SHADOW_GREY
     )
 
     output = []
-    output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-    output.append(f"{BOX_V} {GOLD}{DIAMOND}{RESET} {PALE_IVORY}BOON LEDGER: {caller.key.upper()}{RESET}{' ' * (60 - len(caller.key))}{BOX_V}")
-    output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
+    output.append("\n|c*" + "=" * 78 + "*|n")
+    output.append(f"|c|||n {PALE_IVORY}BOON LEDGER: {caller.key.upper()}{RESET}{' ' * (62 - len(caller.key))} |c|||n")
+    output.append("|c*" + "=" * 78 + "*|n")
 
     # Debts
     output.append(f"\n{PALE_IVORY}DEBTS (What You Owe):{RESET}")
@@ -553,6 +552,9 @@ def format_boon_ledger(caller, ledger):
 
     output.append(f"\n{SHADOW_GREY}Use |w+boon <character>|x to see boons with specific individuals.{RESET}")
 
+    # Close the box
+    output.append("\n|c*" + "=" * 78 + "*|n")
+
     return "\n".join(output)
 
 
@@ -570,14 +572,13 @@ def format_boons_with_character(caller, target, boons, net_position):
         str: Formatted boons display
     """
     from beckonmu.world.ansi_theme import (
-        DARK_RED, BOX_TL, BOX_TR, BOX_BL, BOX_BR, BOX_H, BOX_V,
         PALE_IVORY, RESET, GOLD, BLOOD_RED, SHADOW_GREY
     )
 
     output = []
-    output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-    output.append(f"{BOX_V} {PALE_IVORY}BOONS WITH {target.key.upper()}{RESET}{' ' * (63 - len(target.key))}{BOX_V}")
-    output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
+    output.append("\n|c*" + "=" * 78 + "*|n")
+    output.append(f"|c|||n {PALE_IVORY}BOONS WITH {target.key.upper()}{RESET}{' ' * (63 - len(target.key))} |c|||n")
+    output.append("|c*" + "=" * 78 + "*|n")
 
     # Net position
     if net_position['net'] > 0:
@@ -604,6 +605,9 @@ def format_boons_with_character(caller, target, boons, net_position):
         output.append(f"  Status: {status_color}{boon.status.title()}{RESET}")
         output.append(f"  {SHADOW_GREY}{boon.description[:60]}{'...' if len(boon.description) > 60 else ''}{RESET}")
 
+    # Close the box
+    output.append("\n|c*" + "=" * 78 + "*|n")
+
     return "\n".join(output)
 
 
@@ -619,14 +623,13 @@ def format_pending_boons(caller, pending):
         str: Formatted pending boons display
     """
     from beckonmu.world.ansi_theme import (
-        DARK_RED, BOX_TL, BOX_TR, BOX_BL, BOX_BR, BOX_H, BOX_V,
         PALE_IVORY, RESET, GOLD, BLOOD_RED, SHADOW_GREY
     )
 
     output = []
-    output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-    output.append(f"{BOX_V} {PALE_IVORY}PENDING BOONS{RESET}{' ' * 60}{BOX_V}")
-    output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
+    output.append("\n|c*" + "=" * 78 + "*|n")
+    output.append(f"|c|||n {PALE_IVORY}PENDING BOONS{RESET}{' ' * 60} |c|||n")
+    output.append("|c*" + "=" * 78 + "*|n")
 
     has_pending = False
 
@@ -658,5 +661,8 @@ def format_pending_boons(caller, pending):
 
     if not has_pending:
         output.append(f"\n{SHADOW_GREY}No boons pending action.{RESET}")
+
+    # Close the box
+    output.append("\n|c*" + "=" * 78 + "*|n")
 
     return "\n".join(output)

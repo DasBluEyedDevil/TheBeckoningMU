@@ -11,12 +11,11 @@ from world.v5_data import PREDATOR_TYPES
 from world.ansi_theme import (
     BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
     BONE_WHITE, GOLD, SUCCESS, RESET,
-    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR,
-    CIRCLE_FILLED, CIRCLE_EMPTY
+    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR
 )
 
 
-class CmdChargen(Command):
+class CmdChargen(default_cmds.MuxCommand):
     """
     Character generation system for V5.
 
@@ -254,7 +253,7 @@ To reject: +reject {self.caller.name} <reason>"""
         self.caller.msg(f"\n{GOLD}Recommendation:{RESET} {chargen_utils.get_recommended_next_step(self.caller)}")
 
 
-class CmdSetStat(Command):
+class CmdSetStat(default_cmds.MuxCommand):
     """
     Set an attribute, skill, or discipline during character creation.
 

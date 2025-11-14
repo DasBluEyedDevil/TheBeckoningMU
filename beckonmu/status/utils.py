@@ -491,7 +491,9 @@ def format_character_status(character, char_status):
         str: Formatted character status display
     """
     output = []
-    output.append(f"|w=== STATUS: {character.key.upper()} ===|n\n")
+    output.append("\n|c*" + "=" * 78 + "*|n")
+    output.append(f"|c|||n |wSTATUS: {character.key.upper()}|n{' ' * (62 - len(character.key))} |c|||n")
+    output.append("|c*" + "=" * 78 + "*|n\n")
 
     # Total Status
     total = char_status.total_status
@@ -545,7 +547,9 @@ def format_status_history(char_status):
         str: Formatted status history display
     """
     output = []
-    output.append(f"|w=== STATUS HISTORY ===|n\n")
+    output.append("\n|c*" + "=" * 78 + "*|n")
+    output.append(f"|c|||n |wSTATUS HISTORY|n{' ' * 60} |c|||n")
+    output.append("|c*" + "=" * 78 + "*|n\n")
 
     for entry in reversed(char_status.status_history[-10:]):  # Last 10 entries
         date = entry.get('date', 'Unknown')[:10]  # Just the date part
@@ -575,27 +579,42 @@ def format_positions_list(positions):
         str: Formatted positions list display
     """
     output = []
-    output.append(f"|w=== CAMARILLA POSITIONS ===|n\n")
-    output.append("|wPosition" + " " * 13 + "Status Bonus  Description|n")
-    output.append("-" * 70)
+    output.append("\n|c*" + "=" * 78 + "*|n")
 
+    # Header
+    header_content = "|w{:<20} {:<8} {:<44}|n".format("Position", "Bonus", "Description")
+    output.append(f"|c|||n {header_content} |c|||n")
+    output.append("|c*" + "=" * 78 + "*|n")
+
+    first_pos = True
     for position in positions:
         holders = get_position_holders(position.name)
         holder_count = holders.count()
 
+        # Add divider between positions
+        if not first_pos:
+            output.append("|c|||n" + "-" * 78 + "|c|||n")
+        first_pos = False
+
         bonus_str = f"+{position.status_granted}" if position.status_granted > 0 else str(position.status_granted)
-        description = position.description[:40] + "..." if len(position.description) > 40 else position.description
+        description = position.description[:44] + "..." if len(position.description) > 44 else position.description
 
-        output.append(f"{position.name:<20} {bonus_str:^12}  {description}")
+        row_content = "|w{:<20} {:<8} {:<44}|n".format(position.name, bonus_str, description)
+        output.append(f"|c|||n {row_content} |c|||n")
 
+        # Holder info (if any)
         if holder_count > 0:
             holder_names = ", ".join([h.character.key for h in holders])
-            output.append(f"  |wHolder(s):|n {holder_names}")
+            holder_line = f"  |wHolder(s):|n {holder_names}"
+            # Pad to 74 chars
+            holder_line = f"{holder_line:<74}"
+            output.append(f"|c|||n {holder_line} |c|||n")
         elif position.is_unique:
-            output.append(f"  (Vacant)")
+            vacant_line = f"  (Vacant)"
+            vacant_line = f"{vacant_line:<74}"
+            output.append(f"|c|||n {vacant_line} |c|||n")
 
-        output.append("")
-
+    output.append("|c*" + "=" * 78 + "*|n")
     return "\n".join(output)
 
 
@@ -612,7 +631,9 @@ def format_position_detail(position):
     holders = get_position_holders(position.name)
 
     output = []
-    output.append(f"|w=== {position.name.upper()} ===|n\n")
+    output.append("\n|c*" + "=" * 78 + "*|n")
+    output.append(f"|c|||n |w{position.name.upper()}|n{' ' * (72 - len(position.name))} |c|||n")
+    output.append("|c*" + "=" * 78 + "*|n\n")
 
     # Status granted
     dots = "•" * position.status_granted

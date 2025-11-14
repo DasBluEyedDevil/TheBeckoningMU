@@ -29,8 +29,7 @@ from .utils import (
 from .models import Boon
 from world.ansi_theme import (
     BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
-    GOLD, RESET, BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR,
-    CIRCLE_FILLED, DIAMOND
+    GOLD, RESET, BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR
 )
 
 

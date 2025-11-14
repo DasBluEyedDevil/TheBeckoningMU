@@ -770,3 +770,26 @@ def _wrap_text(text, width):
         lines.append(" ".join(current_line))
 
     return lines
+
+
+def format_short_sheet(character):
+    """Compact one-line status display."""
+    name = character.key
+    clan = get_clan(character) or "Unknown"
+    vamp = character.db.vampire or {}
+    generation = vamp.get('generation', 13)
+    hunger = vamp.get('hunger', 0)
+
+    hunger_color = get_hunger_color(hunger)
+    hunger_dots = f"{hunger_color}{CIRCLE_FILLED * hunger}{SHADOW_GREY}{CIRCLE_EMPTY * (5 - hunger)}{RESET}"
+
+    pools = character.db.pools or {}
+    health = pools.get('current_health', pools.get('health', 0))
+    willpower = pools.get('current_willpower', pools.get('willpower', 0))
+
+    return (
+        f"{BONE_WHITE}{name}{RESET} "
+        f"({DARK_RED}{clan}{RESET} Gen {generation}) "
+        f"Hunger: {hunger_dots} "
+        f"Health: {health} Willpower: {willpower}"
+    )

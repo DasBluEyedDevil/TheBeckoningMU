@@ -17,7 +17,7 @@ from beckonmu.commands.v5.utils.display_utils import (
 from world.v5_dice import format_dice_result
 
 
-class CmdHumanity(Command):
+class CmdHumanity(default_cmds.MuxCommand):
     """
     View and manage Humanity, Convictions, and Touchstones.
 
@@ -306,7 +306,7 @@ class CmdRemorse(Command):
         caller.msg("\n".join(lines))
 
 
-class CmdFrenzy(Command):
+class CmdFrenzy(default_cmds.MuxCommand):
     """
     Check frenzy status or attempt to resist frenzy.
 

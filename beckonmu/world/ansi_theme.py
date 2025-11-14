@@ -101,7 +101,7 @@ DBOX_X = "+"               # Cross
 # ============================================================================
 
 # Vampire/Gothic
-FLEUR_DE_LIS = "⚜"         # Camarilla symbol
+
 CROWN = "♛"                # Royalty, Prince
 QUEEN = "♕"                # Alternative crown
 ROSE = "❦"                 # Toreador, romance
@@ -110,9 +110,9 @@ CROSS = "†"                # Faith
 CROSS_ALT = "✝"            # Alternative cross
 
 # Status/Power
-DIAMOND = "◆"              # Critical success, value
-CIRCLE_FILLED = "●"        # Dot filled (traits, successes)
-CIRCLE_EMPTY = "○"         # Dot empty (missing traits)
+
+
+
 DIAMOND_EMPTY = "◇"        # Empty diamond
 
 # Warning/Danger
@@ -182,7 +182,7 @@ def make_separator(width=65):
     """
     return f"{SHADOW_GREY}{BOX_H * width}{RESET}"
 
-def trait_dots(current, maximum=5, filled_symbol=CIRCLE_FILLED, empty_symbol=CIRCLE_EMPTY):
+def trait_dots(current, maximum=5, filled_symbol= empty_symbol=CIRCLE_EMPTY):
     """
     Create a visual representation of trait dots.
 
@@ -203,11 +203,11 @@ def trait_dots(current, maximum=5, filled_symbol=CIRCLE_FILLED, empty_symbol=CIR
 # DICE SYMBOLS
 # ============================================================================
 
-DICE_SUCCESS_NORMAL = f"{BONE_WHITE}{CIRCLE_FILLED}{RESET}"
-DICE_CRITICAL_NORMAL = f"{GOLD}{DIAMOND}{RESET}"
-DICE_SUCCESS_HUNGER = f"{BLOOD_RED}{CIRCLE_FILLED}{RESET}"
-DICE_CRITICAL_HUNGER = f"{MESSY}{DIAMOND}{RESET}"
-DICE_FAILURE = f"{SHADOW_GREY}{CIRCLE_EMPTY}{RESET}"
+DICE_SUCCESS_NORMAL = f"{BONE_WHITE}{RESET}"
+DICE_CRITICAL_NORMAL = f"{GOLD}{RESET}"
+DICE_SUCCESS_HUNGER = f"{BLOOD_RED}{RESET}"
+DICE_CRITICAL_HUNGER = f"{MESSY}{RESET}"
+DICE_FAILURE = f"{SHADOW_GREY}{RESET}"
 
 # V5 Dice Symbols (Simple text-based, for dice rolling output)
 DICE_CRITICAL = "|g(X)|n"  # Critical Success (10)
@@ -298,10 +298,10 @@ def format_vampire_header(title, subtitle=None, width=80):
 
     # Title line with fleur-de-lis symbols
     title_padding = (width - len(title) - 8) // 2
-    output.append(f"{DBOX_V} {BLOOD_RED}{FLEUR_DE_LIS}{RESET}  "
+    output.append(f"{DBOX_V} {BLOOD_RED}{RESET}  "
                  f"{BONE_WHITE}{title}{RESET}"
                  f"{' ' * (width - len(title) - 8)}"
-                 f"{BLOOD_RED}{FLEUR_DE_LIS}{RESET}  "
+                 f"{BLOOD_RED}{RESET}  "
                  f"{DARK_RED}{DBOX_V}")
 
     # Subtitle line (if provided)
@@ -388,7 +388,7 @@ def trait_dots_colored(current, maximum=5, filled_color=None, empty_color=None):
     if empty_color is None:
         empty_color = SHADOW_GREY
 
-    filled = f"{filled_color}{CIRCLE_FILLED * current}{RESET}"
+    filled = f"{filled_color}{}{RESET}"
     empty = f"{empty_color}{CIRCLE_EMPTY * (maximum - current)}{RESET}"
     return filled + empty
 

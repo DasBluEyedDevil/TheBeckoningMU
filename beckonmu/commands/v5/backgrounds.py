@@ -5,6 +5,7 @@ Commands for using Background advantages.
 """
 
 from evennia import Command
+from evennia.commands import default_cmds
 from .utils.background_utils import (
     get_all_backgrounds,
     get_background_benefits,
@@ -20,7 +21,7 @@ from world.ansi_theme import (
 from world.v5_data import BACKGROUNDS
 
 
-class CmdBackground(Command):
+class CmdBackground(default_cmds.MuxCommand):
     """
     View and use Background advantages.
 

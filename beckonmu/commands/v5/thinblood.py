@@ -5,6 +5,7 @@ Commands for Thin-Blood vampires and Alchemy.
 """
 
 from evennia import Command
+from evennia.commands import default_cmds
 from .utils.thin_blood_utils import (
     is_thin_blood,
     get_thin_blood_powers,
@@ -20,7 +21,7 @@ from world.ansi_theme import (
 )
 
 
-class CmdAlchemy(Command):
+class CmdAlchemy(default_cmds.MuxCommand):
     """
     Craft and use Thin-Blood Alchemy formulae.
 
@@ -215,7 +216,7 @@ class CmdAlchemy(Command):
         caller.msg(f"{GOLD}Added {quantity} {ingredient}{RESET}")
 
 
-class CmdDaylight(Command):
+class CmdDaylight(default_cmds.MuxCommand):
     """
     Check or expose to daylight (Thin-Blood specific).
 

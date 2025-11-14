@@ -5,18 +5,18 @@ Commands for managing coteries and viewing social standing.
 """
 
 from evennia import Command
+from evennia.commands import default_cmds
 from evennia.utils import search
 
 from world.ansi_theme import (
     BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY, GOLD, BONE_WHITE, RESET,
-    BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR, BOX_L, BOX_R,
-    CIRCLE_FILLED, FLEUR_DE_LIS
+    BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR, BOX_L, BOX_R
 )
 
 from .utils import social_utils
 
 
-class CmdCoterie(Command):
+class CmdCoterie(default_cmds.MuxCommand):
     """
     Manage your coterie (vampire group).
 
@@ -243,7 +243,7 @@ class CmdCoterie(Command):
 
         for resource_type in ['domain', 'haven', 'herd', 'contacts']:
             value = resources.get(resource_type, 0)
-            dots = f"{GOLD}{CIRCLE_FILLED * value}{SHADOW_GREY}{CIRCLE_FILLED * (5 - value)}{RESET}"
+            dots = f"{GOLD}{}{SHADOW_GREY}{CIRCLE_FILLED * (5 - value)}{RESET}"
             resource_name = resource_type.capitalize()
             lines.append(f"{SHADOW_GREY}{BOX_V} {GOLD}{resource_name:<15}{RESET} {dots:<20} {SHADOW_GREY}{BOX_V}{RESET}")
 
@@ -288,7 +288,7 @@ class CmdCoterie(Command):
         # Build display
         lines = []
         lines.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}{RESET}")
-        lines.append(f"{SHADOW_GREY}{BOX_V} {FLEUR_DE_LIS} {BONE_WHITE}COTERIE{' ' * 67}{BOX_V}{RESET}")
+        lines.append(f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}COTERIE{' ' * 70}{BOX_V}{RESET}")
         lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
 
         # Name and description
@@ -344,7 +344,7 @@ class CmdCoterie(Command):
 
             for resource_type in ['domain', 'haven', 'herd', 'contacts']:
                 value = resources.get(resource_type, 0)
-                dots = f"{GOLD}{CIRCLE_FILLED * value}{SHADOW_GREY}{CIRCLE_FILLED * (5 - value)}{RESET}"
+                dots = f"{GOLD}{}{SHADOW_GREY}{CIRCLE_FILLED * (5 - value)}{RESET}"
                 resource_name = resource_type.capitalize()
                 lines.append(f"{SHADOW_GREY}{BOX_V} {GOLD}{resource_name:<15}{RESET} {dots:<58} {SHADOW_GREY}{BOX_V}{RESET}")
 
@@ -394,7 +394,7 @@ class CmdSocial(Command):
         # Build social display
         lines = []
         lines.append(f"{SHADOW_GREY}{BOX_TL}{BOX_H * 78}{BOX_TR}{RESET}")
-        lines.append(f"{SHADOW_GREY}{BOX_V} {FLEUR_DE_LIS} {BONE_WHITE}SOCIAL STANDING: {target.key}{' ' * (55 - len(target.key))}{BOX_V}{RESET}")
+        lines.append(f"{SHADOW_GREY}{BOX_V} {BONE_WHITE}SOCIAL STANDING: {target.key}{' ' * (58 - len(target.key))}{BOX_V}{RESET}")
         lines.append(f"{SHADOW_GREY}{BOX_BL}{BOX_H * 78}{BOX_BR}{RESET}")
         lines.append("")
 
@@ -409,7 +409,7 @@ class CmdSocial(Command):
                 lines.append(f"{SHADOW_GREY}{BOX_L}{BOX_H * 78}{BOX_R}{RESET}")
 
                 total = char_status.total_status
-                status_dots = f"{GOLD}{CIRCLE_FILLED * total}{SHADOW_GREY}{CIRCLE_FILLED * (5 - total)}{RESET}"
+                status_dots = f"{GOLD}{}{SHADOW_GREY}{CIRCLE_FILLED * (5 - total)}{RESET}"
 
                 lines.append(f"{SHADOW_GREY}{BOX_V} {PALE_IVORY}Total:{RESET} {status_dots} ({total}){' ' * 60} {SHADOW_GREY}{BOX_V}{RESET}")
 

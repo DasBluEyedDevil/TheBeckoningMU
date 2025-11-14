@@ -5,6 +5,7 @@ Commands for viewing and managing active discipline effects.
 """
 
 from evennia import Command
+from evennia.commands import default_cmds
 from .utils.discipline_effects import (
     get_active_effects,
     remove_effect,
@@ -19,7 +20,7 @@ from world.ansi_theme import (
 from datetime import datetime
 
 
-class CmdEffects(Command):
+class CmdEffects(default_cmds.MuxCommand):
     """
     View and manage active discipline effects.
 

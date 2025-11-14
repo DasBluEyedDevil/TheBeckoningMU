@@ -6,12 +6,13 @@ performing Rouse checks, and viewing dice mechanics.
 """
 
 from evennia import Command
+from evennia.commands import default_cmds
 from evennia.utils.utils import inherits_from
 from . import dice_roller, discipline_roller, rouse_checker
 from .roll_result import RollResult
 
 
-class CmdRoll(Command):
+class CmdRoll(default_cmds.MuxCommand):
     """
     Roll a V5 dice pool with optional Hunger dice.
 
@@ -197,7 +198,7 @@ class CmdRoll(Command):
         return getattr(self.caller.db, 'willpower', None)
 
 
-class CmdRollPower(Command):
+class CmdRollPower(default_cmds.MuxCommand):
     """
     Roll a discipline power automatically.
 

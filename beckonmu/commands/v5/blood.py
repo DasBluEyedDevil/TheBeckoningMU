@@ -6,10 +6,11 @@ Blood Surge, and Hunger tracking.
 """
 
 from evennia import Command
+from evennia.commands import default_cmds
 from evennia.utils.utils import inherits_from
 
 
-class CmdFeed(Command):
+class CmdFeed(default_cmds.MuxCommand):
     """
     Feed on a mortal to reduce Hunger.
 

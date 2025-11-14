@@ -104,9 +104,18 @@ def format_job_view(job):
     Returns:
         Formatted string for display
     """
-    # Header
+    # Header with box border
+    output = "\n|c*" + "=" * 78 + "*|n\n"
+
+    # Title
+    title_text = f"|wJob #{job.sequence_number}: {job.title}|n"
+    title_len = len(f"Job #{job.sequence_number}: {job.title}")  # Calculate without color codes
+    padding = 74 - title_len
+    output += f"|c|||n {title_text}{' ' * padding} |c|||n\n"
+    output += "|c*" + "=" * 78 + "*|n\n\n"
+
+    # Job details
     status_color = "|g" if job.status == "OPEN" else "|r" if job.completed else "|y"
-    output = f"|wJob #{job.sequence_number}: {job.title}|n\n"
     output += f"|wBucket:|n {job.bucket.name}\n"
     output += f"|wStatus:|n {status_color}{job.status}|n\n"
     output += f"|wCreated by:|n {job.creator.username}\n"
@@ -166,15 +175,23 @@ def format_job_list(jobs, title="Jobs"):
         else:
             return f"No {title.lower()} found."
 
-    # Header
-    output = f"|w{title}:|n\n"
-    output += "|w{:<5} {:<25} {:<15} {:<10} {:<15}|n\n".format(
+    # Box border header
+    output = "\n|c*" + "=" * 78 + "*|n\n"
+
+    # Header row (ID=4, Title=28, Bucket=15, Status=8, Assigned=15 = 70 + 4 spaces = 74)
+    header_content = "|w{:<4} {:<28} {:<15} {:<8} {:<15}|n".format(
         "ID", "Title", "Bucket", "Status", "Assigned"
     )
-    output += "-" * 70 + "\n"
+    output += f"|c|||n {header_content} |c|||n\n"
+    output += "|c*" + "=" * 78 + "*|n\n"
 
-    # Jobs
+    # Jobs with dividers
+    first_job = True
     for job in jobs:
+        if not first_job:
+            output += "|c|||n" + "-" * 78 + "|c|||n\n"
+        first_job = False
+
         # Get assigned players
         players = job.players.all()
         if players:
@@ -189,14 +206,16 @@ def format_job_list(jobs, title="Jobs"):
         if job.completed:
             status = "CLOSED"
 
-        output += "{:<5} {:<25} {:<15} {:<10} {:<15}\n".format(
-            job.sequence_number,
-            job.title[:24],
-            job.bucket.name[:14],
-            status[:9],
+        row_content = "|w{:<4} {:<28} {:<15} {:<8} {:<15}|n".format(
+            str(job.sequence_number),
+            job.title[:28],
+            job.bucket.name[:15],
+            status[:8],
             assigned
         )
+        output += f"|c|||n {row_content} |c|||n\n"
 
+    output += "|c*" + "=" * 78 + "*|n\n"
     return output
 
 
@@ -213,22 +232,32 @@ def format_bucket_list(buckets):
     if not buckets:
         return "No buckets found."
 
-    # Header
-    output = "|wJob Buckets:|n\n"
-    output += "|w{:<20} {:<10} {:<40}|n\n".format("Name", "Jobs", "Description")
-    output += "-" * 70 + "\n"
+    # Box border header
+    output = "\n|c*" + "=" * 78 + "*|n\n"
 
-    # Buckets
+    # Header row (Name=20, Jobs=8, Description=44 = 72 + 2 spaces = 74)
+    header_content = "|w{:<20} {:<8} {:<44}|n".format("Name", "Jobs", "Description")
+    output += f"|c|||n {header_content} |c|||n\n"
+    output += "|c*" + "=" * 78 + "*|n\n"
+
+    # Buckets with dividers
+    first_bucket = True
     for bucket in buckets:
-        job_count = bucket.jobs.count()
-        description = bucket.description[:39] if bucket.description else "No description"
+        if not first_bucket:
+            output += "|c|||n" + "-" * 78 + "|c|||n\n"
+        first_bucket = False
 
-        output += "{:<20} {:<10} {:<40}\n".format(
-            bucket.name[:19],
-            job_count,
+        job_count = bucket.jobs.count()
+        description = bucket.description[:44] if bucket.description else "No description"
+
+        row_content = "|w{:<20} {:<8} {:<44}|n".format(
+            bucket.name[:20],
+            str(job_count),
             description
         )
+        output += f"|c|||n {row_content} |c|||n\n"
 
+    output += "|c*" + "=" * 78 + "*|n\n"
     return output
 
 

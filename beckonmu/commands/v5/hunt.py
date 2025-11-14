@@ -5,6 +5,7 @@ Commands for hunting and feeding mechanics with staff-run hunt scenes.
 """
 
 from evennia import Command
+from evennia.commands import default_cmds
 from .utils.hunting_utils import (
     hunt_prey,
     get_predator_hunting_bonus,
@@ -14,12 +15,11 @@ from .utils.hunting_utils import (
 from .utils.blood_utils import get_hunger
 from world.ansi_theme import (
     BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
-    GOLD, RESET, BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR,
-    CIRCLE_FILLED
+    GOLD, RESET, BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR
 )
 
 
-class CmdHunt(Command):
+class CmdHunt(default_cmds.MuxCommand):
     """
     Hunt for prey to feed upon.
 
@@ -174,7 +174,7 @@ To view character sheet: +sheet {caller.name}"""
             # Notify player
             output = []
             output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-            output.append(f"{BOX_V} {BLOOD_RED}{CIRCLE_FILLED}{RESET} {PALE_IVORY}HUNT SCENE REQUESTED{RESET}{' ' * 51}{BOX_V}")
+            output.append(f"{BOX_V} {BLOOD_RED}{RESET} {PALE_IVORY}HUNT SCENE REQUESTED{RESET}{' ' * 51}{BOX_V}")
             output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
             output.append("")
             output.append(f"{PALE_IVORY}Your hunt request has been submitted to staff.{RESET}")
@@ -195,7 +195,7 @@ To view character sheet: +sheet {caller.name}"""
 
         output = []
         output.append(f"{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {BLOOD_RED}{CIRCLE_FILLED}{RESET} {PALE_IVORY}HUNTING SCENE{RESET}{' ' * 60}{BOX_V}")
+        output.append(f"{BOX_V} {BLOOD_RED}{RESET} {PALE_IVORY}HUNTING SCENE{RESET}{' ' * 60}{BOX_V}")
         output.append(f"{BOX_V} {GOLD}Location:{RESET} {opportunity['location'].title()}{' ' * (67 - len(opportunity['location']))}{BOX_V}")
         output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
         output.append("")
@@ -220,9 +220,9 @@ To view character sheet: +sheet {caller.name}"""
         output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
 
         if result["hunting_success"]:
-            output.append(f"{BOX_V} {BLOOD_RED}{CIRCLE_FILLED}{RESET} {PALE_IVORY}SUCCESSFUL HUNT{RESET}{' ' * 58}{BOX_V}")
+            output.append(f"{BOX_V} {BLOOD_RED}{RESET} {PALE_IVORY}SUCCESSFUL HUNT{RESET}{' ' * 58}{BOX_V}")
         else:
-            output.append(f"{BOX_V} {SHADOW_GREY}{CIRCLE_FILLED}{RESET} {PALE_IVORY}HUNT FAILED{RESET}{' ' * 62}{BOX_V}")
+            output.append(f"{BOX_V} {SHADOW_GREY}{RESET} {PALE_IVORY}HUNT FAILED{RESET}{' ' * 62}{BOX_V}")
 
         output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
         output.append("")
@@ -258,7 +258,7 @@ class CmdHuntingInfo(Command):
 
         output = []
         output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {BLOOD_RED}{CIRCLE_FILLED}{RESET} {PALE_IVORY}HUNTING INFORMATION{RESET}{' ' * 54}{BOX_V}")
+        output.append(f"{BOX_V} {BLOOD_RED}{RESET} {PALE_IVORY}HUNTING INFORMATION{RESET}{' ' * 54}{BOX_V}")
         output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
 
         # Current Hunger

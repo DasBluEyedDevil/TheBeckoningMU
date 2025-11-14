@@ -4,7 +4,8 @@ V5 Experience Point Commands
 Commands for viewing, spending, and awarding XP.
 """
 
-from evennia import Command, default_cmds
+from evennia import Command
+from evennia.commands import default_cmds, default_cmds
 from .utils.xp_utils import (
     get_current_xp,
     get_total_earned_xp,
@@ -25,12 +26,11 @@ from .utils.xp_utils import (
 )
 from world.ansi_theme import (
     BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY,
-    GOLD, RESET, BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR,
-    CIRCLE_FILLED
+    GOLD, RESET, BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR
 )
 
 
-class CmdXP(Command):
+class CmdXP(default_cmds.MuxCommand):
     """
     View your experience points and spending log.
 
@@ -77,7 +77,7 @@ class CmdXP(Command):
 
         output = []
         output.append(f"\n{DARK_RED}{BOX_TL}{BOX_H * 76}{BOX_TR}{RESET}")
-        output.append(f"{BOX_V} {GOLD}{CIRCLE_FILLED}{RESET} {PALE_IVORY}EXPERIENCE POINTS{RESET}{' ' * 56}{BOX_V}")
+        output.append(f"{BOX_V} {GOLD}{RESET} {PALE_IVORY}EXPERIENCE POINTS{RESET}{' ' * 56}{BOX_V}")
         output.append(f"{DARK_RED}{BOX_BL}{BOX_H * 76}{BOX_BR}{RESET}")
 
         output.append(f"\n{PALE_IVORY}Current XP:{RESET} {GOLD}{current}{RESET}")

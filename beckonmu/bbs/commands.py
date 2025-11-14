@@ -3,6 +3,7 @@ BBS commands for bulletin board system.
 """
 
 from evennia.commands.command import Command
+from evennia.commands import default_cmds
 from evennia.commands.cmdset import CmdSet
 from .models import Board, Post, Comment
 from .utils import get_board, get_post, format_board_list, format_board_view, format_post_read
@@ -102,7 +103,7 @@ class CmdBBSRead(Command):
         self.caller.msg(output)
 
 
-class CmdBBSPost(Command):
+class CmdBBSPost(default_cmds.MuxCommand):
     """
     Create a new post on a board.
 
@@ -209,10 +210,10 @@ class CmdBBSPost(Command):
             self.caller.msg(f"Error creating post: {e}")
 
 
-class CmdBBSComment(Command):
+class CmdBBSComment(default_cmds.MuxCommand):
     """
     Add a comment to a post.
-    
+
     Usage:
         +bbcomment <board>/<post#>=<comment>
     
@@ -288,10 +289,10 @@ class CmdBBSComment(Command):
             self.caller.msg(f"Error creating comment: {e}")
 
 
-class CmdBBSDelete(Command):
+class CmdBBSDelete(default_cmds.MuxCommand):
     """
     Delete a post (admin only).
-    
+
     Usage:
         +bbdelete/post <board>/<post#>
     
@@ -344,10 +345,10 @@ class CmdBBSDelete(Command):
             self.caller.msg(f"Error deleting post: {e}")
 
 
-class CmdBBSAdmin(Command):
+class CmdBBSAdmin(default_cmds.MuxCommand):
     """
     Administer bulletin boards (admin only).
-    
+
     Usage:
         +bbadmin/create <name>=<description>
         +bbadmin/edit <board>/<field>=<value>

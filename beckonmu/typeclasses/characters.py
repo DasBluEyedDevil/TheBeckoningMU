@@ -194,6 +194,48 @@ class Character(ObjectParent, DefaultCharacter):
             self.db.vampire['hunger'] = value
         self.db.hunger = value  # Keep legacy location synced
 
+    def get_display_shortdesc(self, looker=None, **kwargs):
+        if self.db.shortdesc:
+            return self.db.shortdesc
+        else:
+            return "Use '+short <description>' to set a description."
+
+    def format_idle_time(self, looker, **kwargs):
+        # If the character is the looker, show 0s.
+        if self == looker:
+            return "|g0s|n"
+        time = self.idle_time or self.connection_time
+        if time is None:
+            return "|g0s|n"
+        minutes, seconds = divmod(time, 60)
+        hours, minutes = divmod(minutes, 60)
+        days, hours = divmod(hours, 24)
+
+        # round seconds
+        seconds = int(round(seconds, 0))
+        minutes = int(round(minutes, 0))
+        hours = int(round(hours, 0))
+        days = int(round(days, 0))
+
+        if days > 0:
+            time_str = f"|x{days}d|n"
+        elif hours > 0:
+            time_str = f"|x{hours}h|n"
+        elif minutes > 0:
+            if minutes > 10 and minutes < 15:
+                time_str = f"|G{minutes}m|n"
+            elif minutes > 15 and minutes < 20:
+                time_str = f"|y{minutes}m|n"
+            elif minutes > 20 and minutes < 30:
+                time_str = f"|r{minutes}m|n"
+            elif minutes >= 30:
+                time_str = f"|r{minutes}m|n"
+            else:
+                time_str = f"|g{minutes}m|n"
+        elif seconds > 0:
+            time_str = f"|g{seconds}s|n"
+        return time_str.strip()
+
     def get_display_name(self, looker, **kwargs):
         """
         Returns the name to display for this character.

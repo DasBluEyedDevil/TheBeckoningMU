@@ -9,6 +9,7 @@ with a location in the game world (like Characters, Rooms, Exits).
 """
 
 from evennia.objects.objects import DefaultObject
+from django.conf import settings
 
 
 class ObjectParent:
@@ -21,6 +22,72 @@ class ObjectParent:
     take precedence.
 
     """
+
+    def get_display_tags(self, looker, **kwargs):
+
+        display_tag_mapping = self.get_display_tag_mapping(looker, **kwargs)
+
+        tags = "".join(
+            f"|w[{display_tag_mapping[tag] or tag}]" for tag in display_tag_mapping.keys() if self.tags.has(tag))
+
+        if tags:
+            return tags + " "
+        else:
+            return tags
+
+    def get_display_tag_mapping(self, looker, **kwargs):
+        """
+        Returns a mapping of Evennia tags that should be displayed next to the name of an object
+
+        The keys are the names of the Evennia Tags that should be displayed.
+        The values are the text to display when that tag is present on the object.
+        """
+        mapping = {}
+        # Show OOC tag only when in an IC room
+        if looker is None or hasattr(looker, "location") and not looker.location.tags.has("ooc"):
+            mapping["ooc"] = "OOC"
+        return mapping
+
+    def get_display_name(self, looker=None, **kwargs):
+        """
+        Displays the name of the object in a viewer-aware manner.
+
+        Args:
+            looker (TypedObject): The object or account that is looking
+                at/getting inforamtion for this object. If not given, `.name` will be
+                returned, which can in turn be used to display colored data.
+
+        Returns:
+            str: A name to display for this object. This can contain color codes and may
+                be customized based on `looker`. By default this contains the `.key` of the object,
+                followed by the DBREF if this user is privileged to control said object.
+
+        Notes:
+            This function could be extended to change how object names appear to users in character,
+            but be wary. This function does not change an object's keys or aliases when searching,
+            and is expected to produce something useful for builders.
+
+        """
+        tags = self.get_display_tags(looker, **kwargs)
+        name = self.db.moniker or self.name
+        return f"{tags}{name}"
+
+    def get_min_client_width(self):
+        """
+        Get the minimum client width that will display on any of the attached
+        sessions.
+
+        If no session is found on the looker, will use the DEFAULT_CLIENT_WIDTH
+        from settings.
+
+        Returned width can never exceed DEFAULT_CLIENT_WIDTH
+        """
+
+        return min(
+            [settings.CLIENT_DEFAULT_WIDTH]
+            + [session.get_client_size()[0]
+               for session in self.sessions.get()],
+        )
 
 
 class Object(ObjectParent, DefaultObject):

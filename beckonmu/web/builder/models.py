@@ -26,6 +26,7 @@ class BuildProject(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        app_label = "builder"
         ordering = ["-updated_at"]
 
     def __str__(self):
@@ -58,6 +59,7 @@ class RoomTemplate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        app_label = "builder"
         ordering = ["name"]
 
     def __str__(self):

@@ -41,7 +41,7 @@ INSTALLED_APPS += (
     "beckonmu.status",
     "beckonmu.boons",
     "beckonmu.traits",
-    "beckonmu.web.builder",
+    "beckonmu.web.builder.apps.BuilderConfig",
 )
 
 ######################################################################

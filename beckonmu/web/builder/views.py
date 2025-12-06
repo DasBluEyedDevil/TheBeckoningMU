@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import BuildProject, RoomTemplate
 from .exporter import generate_batch_script
+from .validators import validate_project
 
 
 class StaffRequiredMixin(LoginRequiredMixin):
@@ -80,6 +81,9 @@ class SaveProjectView(StaffRequiredMixin, View):
         name = data.get("name", "Untitled Project")
         map_data = data.get("map_data", {})
 
+        # Validate project data
+        is_valid, errors, warnings = validate_project(map_data)
+
         if project_id:
             # Update existing
             project = get_object_or_404(BuildProject, pk=project_id)
@@ -99,7 +103,15 @@ class SaveProjectView(StaffRequiredMixin, View):
                 map_data=map_data
             )
 
-        return JsonResponse({"status": "success", "id": project.id})
+        return JsonResponse({
+            "status": "success",
+            "id": project.id,
+            "validation": {
+                "is_valid": is_valid,
+                "errors": errors,
+                "warnings": warnings
+            }
+        })
 
 
 class GetProjectView(StaffRequiredMixin, View):

@@ -154,8 +154,33 @@ class DeleteProjectView(StaffRequiredMixin, View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class BuildProjectView(StaffRequiredMixin, View):
+    """Build project to sandbox."""
+
     def post(self, request, pk, *args, **kwargs):
-        return JsonResponse({"status": "not_implemented"}, status=501)
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Check ownership - only owner can build
+        if project.user != request.user:
+            return JsonResponse(
+                {"status": "error", "error": "Not authorized"},
+                status=403
+            )
+
+        # Check if sandbox already exists
+        if project.sandbox_room_id:
+            return JsonResponse({
+                "status": "error",
+                "error": "Sandbox already exists. Use @abandon in-game first.",
+                "sandbox_id": project.sandbox_room_id
+            }, status=400)
+
+        # For now, return manual_required status with download URL
+        # Automatic execution requires more integration work
+        return JsonResponse({
+            "status": "manual_required",
+            "message": "Automatic execution not yet implemented. Download and run manually.",
+            "download_url": f"/builder/export/{pk}/"
+        })
 
 
 class PrototypesView(StaffRequiredMixin, View):

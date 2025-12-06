@@ -102,14 +102,53 @@ class SaveProjectView(StaffRequiredMixin, View):
 
 
 class GetProjectView(StaffRequiredMixin, View):
+    """Get project data."""
+
     def get(self, request, pk, *args, **kwargs):
-        return JsonResponse({"status": "not_implemented"}, status=501)
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Check visibility
+        if not project.is_public and project.user != request.user:
+            return JsonResponse(
+                {"status": "error", "error": "Not authorized"},
+                status=403
+            )
+
+        return JsonResponse({
+            "status": "success",
+            "project": {
+                "id": project.id,
+                "name": project.name,
+                "description": project.description,
+                "map_data": project.map_data,
+                "is_public": project.is_public,
+                "sandbox_room_id": project.sandbox_room_id,
+                "can_edit": project.user == request.user,
+                "created_at": project.created_at.isoformat(),
+                "updated_at": project.updated_at.isoformat(),
+            }
+        })
 
 
 @method_decorator(csrf_exempt, name="dispatch")
 class DeleteProjectView(StaffRequiredMixin, View):
+    """Delete a project."""
+
     def delete(self, request, pk, *args, **kwargs):
-        return JsonResponse({"status": "not_implemented"}, status=501)
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        if project.user != request.user:
+            return JsonResponse(
+                {"status": "error", "error": "Not authorized"},
+                status=403
+            )
+
+        project.delete()
+        return JsonResponse({"status": "success"})
+
+    def post(self, request, pk, *args, **kwargs):
+        # Allow POST as fallback for clients that don't support DELETE
+        return self.delete(request, pk, *args, **kwargs)
 
 
 @method_decorator(csrf_exempt, name="dispatch")

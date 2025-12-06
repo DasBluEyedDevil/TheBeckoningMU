@@ -34,13 +34,14 @@ from evennia.settings_default import *
 # This is the name of your game. Make it catchy!
 SERVERNAME = "beckonmu"
 
-# Add custom Django apps (BBS, Jobs, Status, Boons, Traits)
+# Add custom Django apps (BBS, Jobs, Status, Boons, Traits, Web Builder)
 INSTALLED_APPS += (
     "beckonmu.bbs",
     "beckonmu.jobs",
     "beckonmu.status",
     "beckonmu.boons",
     "beckonmu.traits",
+    "beckonmu.web.builder",
 )
 
 ######################################################################

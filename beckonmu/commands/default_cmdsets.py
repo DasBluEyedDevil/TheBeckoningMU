@@ -137,6 +137,11 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         from beckonmu.commands.news import CmdNews
         self.add(CmdNews)
 
+        # Add Builder commands
+        from beckonmu.commands.builder import CmdPromote, CmdAbandon
+        self.add(CmdPromote)
+        self.add(CmdAbandon)
+
 
 class AccountCmdSet(default_cmds.AccountCmdSet):
     """

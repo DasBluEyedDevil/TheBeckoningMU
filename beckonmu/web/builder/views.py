@@ -64,11 +64,41 @@ class BuilderEditorView(LoginRequiredMixin, TemplateView):
         return ctx
 
 
-# Placeholder views - will be implemented in later tasks
+# API views
 @method_decorator(csrf_exempt, name="dispatch")
 class SaveProjectView(StaffRequiredMixin, View):
+    """Save or create a project."""
+
     def post(self, request, *args, **kwargs):
-        return JsonResponse({"status": "not_implemented"}, status=501)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"status": "error", "error": "Invalid JSON"}, status=400)
+
+        project_id = data.get("id")
+        name = data.get("name", "Untitled Project")
+        map_data = data.get("map_data", {})
+
+        if project_id:
+            # Update existing
+            project = get_object_or_404(BuildProject, pk=project_id)
+            if project.user != request.user:
+                return JsonResponse(
+                    {"status": "error", "error": "Not authorized"},
+                    status=403
+                )
+            project.name = name
+            project.map_data = map_data
+            project.save()
+        else:
+            # Create new
+            project = BuildProject.objects.create(
+                user=request.user,
+                name=name,
+                map_data=map_data
+            )
+
+        return JsonResponse({"status": "success", "id": project.id})
 
 
 class GetProjectView(StaffRequiredMixin, View):

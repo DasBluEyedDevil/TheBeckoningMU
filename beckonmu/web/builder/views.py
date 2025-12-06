@@ -8,6 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import BuildProject, RoomTemplate
+from .exporter import generate_batch_script
 
 
 class StaffRequiredMixin(LoginRequiredMixin):
@@ -168,5 +169,23 @@ class TemplatesView(StaffRequiredMixin, View):
 
 
 class ExportProjectView(StaffRequiredMixin, View):
+    """Download project as .ev batch file."""
+
     def get(self, request, pk, *args, **kwargs):
-        return JsonResponse({"status": "not_implemented"}, status=501)
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Check visibility
+        if not project.is_public and project.user != request.user:
+            return JsonResponse(
+                {"status": "error", "error": "Not authorized"},
+                status=403
+            )
+
+        # Generate script
+        script_content = generate_batch_script(project, request.user.username)
+
+        # Return as downloadable file
+        filename = f"{project.name.replace(' ', '_')}_build.ev"
+        response = HttpResponse(script_content, content_type="text/plain")
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return response

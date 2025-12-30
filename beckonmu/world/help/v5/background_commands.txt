@@ -1,0 +1,105 @@
+|[R+===================================================================+
+|W|                  BACKGROUND COMMANDS                             |
+|[R+===================================================================+|n
+
+Commands for viewing and using your Background advantages.
+Backgrounds represent your character's social connections,
+resources, and external assets.
+
+|WVIEWING BACKGROUNDS:|n
+
+|y+background|n
+|ybackgrounds|n
+|ybg|n
+  List all your backgrounds with their current levels and benefits.
+
+|y+background <name>|n
+  View detailed information about a specific background.
+
+|yExamples:|n
+  +background                     # List all backgrounds
+  +background contacts            # View Contacts details
+  +background resources           # View Resources details
+
+|WUSING BACKGROUNDS:|n
+
+|y+background/use <name>=<task description>|n
+  Use a background to gain bonus dice for a task.
+
+|yExamples:|n
+  +background/use contacts=investigate the gang
+  +background/use allies=get police records
+  +background/use influence=sway city council vote
+
+|yEffects:|n
+  - Grants bonus dice based on background level
+  - May consume one of your background's uses per session
+  - ST may require a roll to see if contacts come through
+
+|WSPECIAL BACKGROUND COMMANDS:|n
+
+|y+background/herd|n
+  Feed from your Herd background.
+  Reduces Hunger based on Herd level.
+  Safer than hunting on the streets.
+
+|y+background/resources <item>=<rating>|n
+  Acquire an item using your Resources background.
+  Rating indicates item cost (1-5).
+  Can only acquire items at or below your Resources level.
+
+|yExamples:|n
+  +background/herd                # Feed from herd
+  +background/resources pistol=2  # Buy a pistol (rating 2)
+  +background/resources car=3     # Acquire a car (rating 3)
+
+|WBACKGROUND TYPES:|n
+
+|yAllies|n - Mortal friends who help when asked
+|yContacts|n - Information sources in various fields
+|yFame|n - Public recognition and celebrity
+|yHaven|n - Safe resting place quality
+|yHerd|n - Reliable feeding sources
+|yInfluence|n - Political or social pull
+|yMask|n - Alternate mortal identity
+|yMentor|n - Elder vampire guidance
+|yResources|n - Wealth and financial access
+|yRetainers|n - Loyal servants (may be ghouls)
+|yStatus|n - Standing within Kindred society
+
+|WUSES PER SESSION:|n
+
+Most backgrounds have limited uses per game session:
+
+  |yLevel 1-2:|n 1 use per session
+  |yLevel 3-4:|n 2 uses per session
+  |yLevel 5:|n 3 uses per session
+
+Uses reset at the start of each new session (or when ST calls
+for a reset with +background/reset).
+
+Some backgrounds (like Haven, Resources for small purchases)
+may have unlimited uses at ST discretion.
+
+|WSTAFF COMMANDS:|n
+
+|y+background/reset|n
+  Reset all background uses for a new session. (Staff only)
+
+|WTIPS:|n
+
+- Describe HOW you're using the background for better results
+- Backgrounds work best when they fit the narrative
+- ST may modify results based on circumstances
+- Overusing contacts may strain relationships
+
+|yExample Good Usage:|n
+  +background/use contacts=I call my source at the
+  police department to check for missing persons matching
+  the victim's description.
+
+|WRELATED TOPICS:|n
+
+|ySee also:|n help backgrounds, help herd, help resources, help hunt
+
+|[r+===================================================================+|n

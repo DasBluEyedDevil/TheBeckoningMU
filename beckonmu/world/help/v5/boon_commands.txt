@@ -1,0 +1,143 @@
+|[R+===================================================================+
+|W|                    BOON SYSTEM COMMANDS                          |
+|[R+===================================================================+|n
+
+Commands for managing boons (political favors and debts) in
+Kindred society. See |yhelp boons|n for conceptual overview.
+
+|WVIEWING BOONS:|n
+
+|y+boon|n
+|yboons|n
+  View your complete boon ledger summary.
+
+Shows:
+  - Boons you are owed (credits)
+  - Boons you owe (debts)
+  - Net political position
+
+|y+boon <character>|n
+  View boons between you and a specific character.
+
+|y+boon/pending|n
+  View boons requiring your action.
+
+|yExamples:|n
+  +boon
+  +boon Marcus
+  +boon/pending
+
+|WOFFERING A BOON:|n
+
+|y+boongive <character> <type> = <description>|n
+  Offer a boon to someone (you become the debtor).
+
+|yBoon Types:|n
+  - |ytrivial|n - Small favor, minor information
+  - |yminor|n - Standard favor, useful service
+  - |ymajor|n - Substantial favor, significant risk
+  - |yblood|n - Blood-related service (rare)
+  - |ylife|n - Life-saving debt (most serious)
+
+|yExamples:|n
+  +boongive Marcus minor = Saved me from a hunter
+  +boongive Elena major = She covered up my Masquerade breach
+  +boongive John trivial = Introduced me to the Primogen
+
+The recipient must accept the boon for it to become official.
+
+|WACCEPTING OR DECLINING:|n
+
+|y+boonaccept <boon #>|n
+  Accept a boon that has been offered to you.
+
+|y+boondecline <boon #>|n
+|y+boondecline <boon #> = <reason>|n
+  Decline a boon offer (optionally with reason).
+
+|yExamples:|n
+  +boonaccept 42
+  +boondecline 43 = I do not wish to be owed this debt.
+
+|WCALLING IN A BOON:|n
+
+|y+booncall <boon #> = <description>|n
+  Call in a boon that is owed to you.
+
+The description explains what favor you're requesting.
+The debtor will be notified.
+
+|yExamples:|n
+  +booncall 42 = I need you to vote for Marcus at the Primogen meeting.
+  +booncall 15 = Provide me an alibi for last night.
+
+|yNote:|n The request should be proportional to the boon level.
+Calling in a Life Boon for a trivial favor is poor form.
+
+|WFULFILLING A BOON:|n
+
+|y+boonfulfill <boon #> = <description>|n
+  Mark a called boon as fulfilled.
+
+Used by the debtor after completing the requested favor.
+
+|yExamples:|n
+  +boonfulfill 42 = Voted for Marcus as requested.
+  +boonfulfill 15 = Told the Sheriff you were with me all night.
+
+|WBOON WORKFLOW:|n
+
+1. |yService Performed|n
+   Someone helps you, creating an obligation.
+
+2. |yBoon Offered|n
+   You use |y+boongive|n to acknowledge the debt.
+
+3. |yBoon Accepted|n
+   The creditor uses |y+boonaccept|n to formalize it.
+
+4. |yHarpy Acknowledgment|n (optional)
+   For major boons, the Harpy may officially record it.
+
+5. |yBoon Called|n
+   When the creditor needs a favor, they use |y+booncall|n.
+
+6. |yBoon Fulfilled|n
+   After completing the favor, debtor uses |y+boonfulfill|n.
+
+|WSTAFF/HARPY COMMANDS:|n
+
+|y+boonadmin/acknowledge <boon #>|n
+  Officially acknowledge a boon (Harpy function).
+
+|y+boonadmin/cancel <boon #> = <reason>|n
+  Cancel a boon.
+
+|y+boonadmin/list|n
+  List all public boons.
+
+|y+boonadmin/refresh <character>|n
+  Refresh a character's boon ledger calculations.
+
+|WBOON STATUS MEANINGS:|n
+
+|yPending|n - Offered but not yet accepted
+|yActive|n - Accepted and waiting to be called
+|yCalled|n - Creditor has requested the favor
+|yFulfilled|n - Debt has been repaid
+|yCancelled|n - Boon was cancelled (rare)
+|yDisputed|n - Parties disagree (Harpy arbitration needed)
+
+|WTIPS:|n
+
+- Keep descriptions clear and specific
+- Harpy acknowledgment adds legitimacy to major boons
+- Trading boons requires both parties to agree
+- Life Boons should be offered rarely and never refused
+- Use |y+boon/pending|n regularly to check obligations
+
+|WRELATED TOPICS:|n
+
+|ySee also:|n help boons, help status, help harpy, help social
+
+|[r+===================================================================+|n

@@ -1,0 +1,96 @@
+|[R+===================================================================+
+|W|                 DISCIPLINE POWER COMMANDS                        |
+|[R+===================================================================+|n
+
+Commands for viewing and activating your vampire discipline powers.
+
+|WVIEWING DISCIPLINES:|n
+
+|y+disciplines|n
+|y+disc|n
+  View all your known disciplines and powers.
+
+|y+disciplines <discipline name>|n
+|y+disc <discipline name>|n
+  View details of a specific discipline.
+
+|yExamples:|n
+  +disciplines                   # Show all disciplines
+  +disciplines animalism         # Show Animalism powers
+  +disc celerity                 # Show Celerity powers
+
+|WACTIVATING POWERS:|n
+
+|y+power <discipline>/<power name>|n
+|y+activate <discipline>/<power name>|n
+|y+use <discipline>/<power name>|n
+  Activate a discipline power.
+
+|yExamples:|n
+  +power animalism/bond famulus
+  +power celerity/cat's grace
+  +activate dominate/compel
+  +use presence/awe
+
+Activating a power will:
+  1. Verify you have the required discipline level
+  2. Perform a |WRouse check|n if required
+  3. Apply any resonance bonuses
+  4. Show the dice pool for contested powers
+  5. Apply effects (viewable with +effects)
+
+|WPOWER INFORMATION:|n
+
+|y+powerinfo <discipline>/<power name>|n
+|y+pinfo <discipline>/<power name>|n
+  Get detailed information about a specific power.
+
+|yExamples:|n
+  +powerinfo animalism/bond famulus
+  +pinfo celerity/cat's grace
+
+Shows:
+  - Power level requirement
+  - Full description
+  - Dice pool (if applicable)
+  - Duration and effects
+  - Whether you can currently use it
+
+|WPOWER COSTS:|n
+
+Most powers require a |WRouse check|n when activated:
+  - Roll 1 die
+  - On 1-5: Hunger increases by 1
+  - On 6-10: No Hunger increase
+
+Some powers are free to use (passive or low-level).
+
+|WRESONANCE BONUSES:|n
+
+If you have the right resonance from feeding, you gain
+|g+1 die|n to powers that match:
+
+  |ycholeric|n - Celerity, Potence powers
+  |ymelancholic|n - Fortitude, Obfuscate powers
+  |yphlegmatic|n - Auspex, Dominate powers
+  |ysanguine|n - Blood Sorcery, Presence powers
+
+|WACTIVE EFFECTS:|n
+
+When powers create ongoing effects, use |y+effects|n to view them.
+Effects may last for:
+  - |WScene|n - Until the scene ends
+  - |WTurns|n - A specific number of combat turns
+  - |WPermanent|n - Until manually ended
+
+|WHUNGER RESTRICTIONS:|n
+
+At |[RHunger 5|n, you cannot activate most discipline powers.
+Feed before attempting to use your vampiric abilities.
+
+|WRELATED TOPICS:|n
+
+|ySee also:|n help disciplines, help disciplines_powers, help effects,
+         help rouse, help hunger
+
+|[r+===================================================================+|n

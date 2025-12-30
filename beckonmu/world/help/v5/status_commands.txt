@@ -1,0 +1,136 @@
+|[R+===================================================================+
+|W|                    STATUS SYSTEM COMMANDS                        |
+|[R+===================================================================+|n
+
+Commands for viewing and managing Status in Kindred society.
+See |yhelp status|n for conceptual overview of the Status system.
+
+|WVIEWING STATUS:|n
+
+|y+status|n
+|ystatus|n
+  View your current Status in Kindred society.
+
+|y+status <character>|n
+  View another character's Status.
+
+|y+status/history|n
+  View your status change history.
+
+|yExamples:|n
+  +status
+  +status Marcus
+  +status/history
+
+|yStatus Display Shows:|n
+  - Total Status rating
+  - Position (if any)
+  - Sect affiliation
+  - Earned Status
+  - Position-granted Status
+
+|WVIEWING POSITIONS:|n
+
+|y+positions|n
+  List all available Camarilla positions.
+
+|y+positions <position name>|n
+  View details of a specific position.
+
+|yExamples:|n
+  +positions
+  +positions Prince
+  +positions Primogen
+
+Shows:
+  - Position name and description
+  - Status granted by position
+  - Current holder (if any)
+  - Powers and responsibilities
+
+|WREQUESTING STATUS CHANGES:|n
+
+|y+statusreq/status <+/-amount> = <reason>|n
+  Request earned Status change.
+
+|y+statusreq/position <position name> = <reason>|n
+  Request position appointment.
+
+|y+statusreq/view|n
+|y+statusreq|n
+  View your pending requests.
+
+|y+statusreq/cancel <#>|n
+  Cancel a pending request.
+
+|yExamples:|n
+  +statusreq/status +1 = Resolved conflict with rival coterie peacefully
+  +statusreq/position Primogen = Clan Ventrue has nominated me
+  +statusreq/cancel 5
+
+|yNotes:|n
+  - Status changes are typically limited to +/- 2 at a time
+  - Provide IC justification for status requests
+  - Staff will review and approve/deny requests
+
+|WSTAFF COMMANDS:|n
+
+|y+statusadmin/pending|n
+  View all pending status requests.
+
+|y+statusadmin/approve <#> = <reason>|n
+  Approve a status request.
+
+|y+statusadmin/deny <#> = <reason>|n
+  Deny a status request.
+
+|y+statusadmin/set <character> = <amount>|n
+  Set character's earned status directly.
+
+|y+statusadmin/modify <character> = <+/-amount>|n
+  Modify character's earned status by amount.
+
+|y+statusadmin/position <character> = <position>|n
+  Assign position to character.
+
+|y+statusadmin/remove <character>|n
+  Remove character's position.
+
+|yExamples:|n
+  +statusadmin/pending
+  +statusadmin/approve 15 = Verified IC actions warrant this
+  +statusadmin/set Marcus = 2
+  +statusadmin/modify Marcus = +1
+  +statusadmin/position Marcus = Primogen
+  +statusadmin/remove Marcus
+
+|WSTATUS OVERVIEW:|n
+
+|yTotal Status|n = Earned Status + Position Status
+
+|yEarned Status (0-3):|n
+  Gained through actions and recognition.
+  Can be modified through +statusreq.
+
+|yPosition Status (0-5):|n
+  Granted automatically by holding positions.
+  Prince = 5, Primogen = 3, Sheriff = 4, etc.
+
+|ySect Affiliation:|n
+  Your vampire's political alignment.
+  Affects which positions are available.
+
+|WSTATUS EFFECTS:|n
+
+Higher Status provides:
+  - Greater political influence
+  - More weight in formal votes
+  - Bonus dice for social rolls in sect matters
+  - Priority access to domain resources
+  - Protection from minor slights
+
+|WRELATED TOPICS:|n
+
+|ySee also:|n help status, help boons, help positions, help social
+
+|[r+===================================================================+|n

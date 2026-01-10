@@ -2,6 +2,7 @@
 Batch script exporter for the Web Builder.
 Converts JSON map data to Evennia .ev batch command format.
 """
+import json
 import re
 from datetime import datetime
 
@@ -9,15 +10,61 @@ from datetime import datetime
 def sanitize_string(value):
     """
     Sanitize a string for safe inclusion in batch commands.
-    Removes/escapes characters that could break command parsing.
+    Uses whitelist approach - only allow known-safe characters.
     """
     if not value:
         return ""
-    # Remove problematic characters
+
     value = str(value)
-    # Escape any @ at start of lines (could be interpreted as commands)
-    value = re.sub(r'^@', '\\@', value, flags=re.MULTILINE)
-    return value
+
+    # Allow alphanumeric, spaces, common punctuation
+    # Disallow: @, newlines, control characters, semicolons
+    allowed_pattern = re.compile(r'[^a-zA-Z0-9\s\.\,\!\?\'\"\-\_\:\(\)\[\]]')
+    sanitized = allowed_pattern.sub('', value)
+
+    # Collapse multiple spaces
+    sanitized = re.sub(r'\s+', ' ', sanitized)
+
+    # Trim
+    return sanitized.strip()
+
+
+def sanitize_alias(value):
+    """
+    Sanitize an alias string - allows underscores at start.
+    """
+    if not value:
+        return ""
+
+    value = str(value)
+    # Allow alphanumeric, underscore only for aliases
+    allowed_pattern = re.compile(r'[^a-zA-Z0-9\_]')
+    return allowed_pattern.sub('', value).strip()
+
+
+def sanitize_lock(value):
+    """
+    Sanitize a lock string - allows lock function syntax.
+    """
+    if not value:
+        return ""
+    value = str(value)
+    # Allow alphanumeric, parentheses, colons, ampersands, pipes, underscores, spaces
+    allowed_pattern = re.compile(r'[^a-zA-Z0-9\(\)\:\&\|\_ ]')
+    return allowed_pattern.sub('', value).strip()
+
+
+def sanitize_typeclass(value, default="typeclasses.objects.Object"):
+    """
+    Sanitize a typeclass path - only allows valid Python module paths.
+    """
+    if not value:
+        return default
+    value = str(value)
+    # Only allow alphanumeric, dots, underscores
+    allowed_pattern = re.compile(r'[^a-zA-Z0-9\._]')
+    sanitized = allowed_pattern.sub('', value)
+    return sanitized if sanitized else default
 
 
 def generate_batch_script(project, username="unknown"):
@@ -114,7 +161,6 @@ def generate_batch_script(project, username="unknown"):
         # Triggers (stored as JSON attribute)
         triggers = room.get("triggers", [])
         if triggers:
-            import json
             triggers_json = json.dumps(triggers)
             lines.append(f"@set {room_alias}/triggers = {triggers_json}")
             lines.append("#")
@@ -137,8 +183,13 @@ def generate_batch_script(project, username="unknown"):
         aliases = exit_data.get("aliases", [])
 
         # Build exit name with aliases
+        # User-provided aliases must be sanitized with sanitize_alias
         if aliases:
-            exit_full = f"{exit_name};{';'.join(aliases)}"
+            sanitized_aliases = [s for s in (sanitize_alias(a) for a in aliases) if s]
+            if sanitized_aliases:
+                exit_full = f"{exit_name};{';'.join(sanitized_aliases)}"
+            else:
+                exit_full = exit_name
         else:
             exit_full = exit_name
 
@@ -156,7 +207,7 @@ def generate_batch_script(project, username="unknown"):
             lines.append("#")
 
         # Exit locks
-        locks = exit_data.get("locks", "")
+        locks = sanitize_lock(exit_data.get("locks", ""))
         if locks:
             lines.append(f"@lock {exit_name} = {locks}")
             lines.append("#")
@@ -176,7 +227,7 @@ def generate_batch_script(project, username="unknown"):
             lines.append(f"@tel {room_alias}")
             lines.append("#")
 
-            prototype = obj_data.get("prototype")
+            prototype = sanitize_alias(obj_data.get("prototype", ""))
             if prototype:
                 lines.append(f"@spawn {prototype}")
                 lines.append("#")
@@ -185,7 +236,7 @@ def generate_batch_script(project, username="unknown"):
                     lines.append(f"@name {prototype.lower()} = {obj_name}")
                     lines.append("#")
             else:
-                typeclass = obj_data.get("typeclass", "typeclasses.objects.Object")
+                typeclass = sanitize_typeclass(obj_data.get("typeclass"))
                 lines.append(f"@create/drop {obj_name} : {typeclass}")
                 lines.append("#")
 
@@ -198,8 +249,11 @@ def generate_batch_script(project, username="unknown"):
             # Custom attributes
             custom_attrs = obj_data.get("custom_attrs", {})
             for attr_name, attr_value in custom_attrs.items():
-                lines.append(f"@set {obj_name}/{attr_name} = {attr_value}")
-                lines.append("#")
+                safe_name = sanitize_alias(attr_name)
+                safe_value = sanitize_string(str(attr_value))
+                if safe_name:  # Only set if valid attribute name
+                    lines.append(f"@set {obj_name}/{safe_name} = {safe_value}")
+                    lines.append("#")
 
     # Footer
     lines.append("# " + "=" * 60)

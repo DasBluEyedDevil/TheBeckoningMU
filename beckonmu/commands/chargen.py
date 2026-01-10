@@ -29,22 +29,21 @@ import json
 import os
 from django.conf import settings
 
+# Import trait constants from v5_data - single source of truth
+from world.v5_data import CLANS, ATTRIBUTES, SKILLS
 
-VALID_CLANS = [
-    'Banu Haqim', 'Brujah', 'Gangrel', 'Hecata', 'Lasombra', 'Malkavian',
-    'Ministry', 'Nosferatu', 'Ravnos', 'Salubri', 'Toreador', 'Tremere',
-    'Tzimisce', 'Ventrue', 'Caitiff', 'Thin-Blood'
-]
+# Derive lists from v5_data constants for backward compatibility
+VALID_CLANS = list(CLANS.keys())
 
-# Attributes
-PHYSICAL_ATTRIBUTES = ['strength', 'dexterity', 'stamina']
-SOCIAL_ATTRIBUTES = ['charisma', 'manipulation', 'composure']
-MENTAL_ATTRIBUTES = ['intelligence', 'wits', 'resolve']
+# Attributes - derive from ATTRIBUTES dict (lowercase for consistency)
+PHYSICAL_ATTRIBUTES = [attr.lower() for attr in ATTRIBUTES['Physical']]
+SOCIAL_ATTRIBUTES = [attr.lower() for attr in ATTRIBUTES['Social']]
+MENTAL_ATTRIBUTES = [attr.lower() for attr in ATTRIBUTES['Mental']]
 
-# Skills
-PHYSICAL_SKILLS = ['athletics', 'brawl', 'craft', 'drive', 'firearms', 'larceny', 'melee', 'stealth', 'survival']
-SOCIAL_SKILLS = ['animal ken', 'etiquette', 'insight', 'intimidation', 'leadership', 'performance', 'persuasion', 'streetwise', 'subterfuge']
-MENTAL_SKILLS = ['academics', 'awareness', 'finance', 'investigation', 'medicine', 'occult', 'politics', 'science', 'technology']
+# Skills - derive from SKILLS dict (lowercase for consistency)
+PHYSICAL_SKILLS = [skill.lower() for skill in SKILLS['Physical']]
+SOCIAL_SKILLS = [skill.lower() for skill in SKILLS['Social']]
+MENTAL_SKILLS = [skill.lower() for skill in SKILLS['Mental']]
 
 
 class CmdPending(Command):

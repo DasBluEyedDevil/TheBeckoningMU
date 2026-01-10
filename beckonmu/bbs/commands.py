@@ -5,6 +5,8 @@ BBS commands for bulletin board system.
 from evennia.commands.command import Command
 from evennia import default_cmds
 from evennia.commands.cmdset import CmdSet
+from django.db import IntegrityError, OperationalError
+from django.core.exceptions import ValidationError
 from .models import Board, Post, Comment
 from .utils import get_board, get_post, format_board_list, format_board_view, format_post_read
 
@@ -206,8 +208,10 @@ class CmdBBSPost(default_cmds.MuxCommand):
                 self.caller.msg(f"Posted anonymously to '{board.name}' as post #{post.sequence_number}.")
             else:
                 self.caller.msg(f"Posted to '{board.name}' as post #{post.sequence_number}.")
-        except Exception as e:
+        except (IntegrityError, ValidationError) as e:
             self.caller.msg(f"Error creating post: {e}")
+        except OperationalError as e:
+            self.caller.msg(f"Database error creating post: {e}")
 
 
 class CmdBBSComment(default_cmds.MuxCommand):
@@ -285,8 +289,10 @@ class CmdBBSComment(default_cmds.MuxCommand):
                 body=comment_body
             )
             self.caller.msg(f"Added comment to post #{post.sequence_number} on '{board.name}'.")
-        except Exception as e:
+        except (IntegrityError, ValidationError) as e:
             self.caller.msg(f"Error creating comment: {e}")
+        except OperationalError as e:
+            self.caller.msg(f"Database error creating comment: {e}")
 
 
 class CmdBBSDelete(default_cmds.MuxCommand):
@@ -341,8 +347,10 @@ class CmdBBSDelete(default_cmds.MuxCommand):
         try:
             post.delete()
             self.caller.msg(f"Deleted post #{post_num} from '{board.name}'.")
-        except Exception as e:
+        except (IntegrityError, ValidationError) as e:
             self.caller.msg(f"Error deleting post: {e}")
+        except OperationalError as e:
+            self.caller.msg(f"Database error deleting post: {e}")
 
 
 class CmdBBSAdmin(default_cmds.MuxCommand):
@@ -418,8 +426,10 @@ class CmdBBSAdmin(default_cmds.MuxCommand):
                 description=description
             )
             self.caller.msg(f"Created board '{board.name}'.")
-        except Exception as e:
+        except (IntegrityError, ValidationError) as e:
             self.caller.msg(f"Error creating board: {e}")
+        except OperationalError as e:
+            self.caller.msg(f"Database error creating board: {e}")
     
     def do_edit(self):
         """Edit a board."""
@@ -471,8 +481,10 @@ class CmdBBSAdmin(default_cmds.MuxCommand):
             
             board.save()
             self.caller.msg(f"Updated {field} for board '{board.name}'.")
-        except Exception as e:
+        except (IntegrityError, ValidationError) as e:
             self.caller.msg(f"Error updating board: {e}")
+        except OperationalError as e:
+            self.caller.msg(f"Database error updating board: {e}")
     
     def do_delete(self):
         """Delete a board."""
@@ -493,8 +505,10 @@ class CmdBBSAdmin(default_cmds.MuxCommand):
             board_name = board.name
             board.delete()
             self.caller.msg(f"Deleted board '{board_name}'.")
-        except Exception as e:
+        except (IntegrityError, ValidationError) as e:
             self.caller.msg(f"Error deleting board: {e}")
+        except OperationalError as e:
+            self.caller.msg(f"Database error deleting board: {e}")
 
 
 class BBSCmdSet(CmdSet):

@@ -21,6 +21,7 @@ from .utils import (
 )
 from .models import TraitCategory, Trait, DisciplinePower, CharacterBio, CharacterTrait, CharacterPower
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class BaseAPIView(View):
@@ -461,6 +462,22 @@ class CharacterCreateAPI(BaseAPIView):
                 'message': 'Character created and submitted for approval'
             })
 
+        except (ValueError, KeyError) as e:
+            # Clean up if anything went wrong
+            if 'character' in locals():
+                try:
+                    character.delete()
+                except Exception:
+                    pass
+            return JsonResponse({'error': f'Invalid data: {e}'}, status=400)
+        except ObjectDoesNotExist as e:
+            # Clean up if anything went wrong
+            if 'character' in locals():
+                try:
+                    character.delete()
+                except Exception:
+                    pass
+            return JsonResponse({'error': f'Not found: {e}'}, status=404)
         except Exception as e:
             import traceback
             traceback.print_exc()
@@ -468,9 +485,9 @@ class CharacterCreateAPI(BaseAPIView):
             if 'character' in locals():
                 try:
                     character.delete()
-                except:
+                except Exception:
                     pass
-            return JsonResponse({'error': f'Failed to create character: {str(e)}'}, status=500)
+            return JsonResponse({'error': 'Server error'}, status=500)
 
 
 @method_decorator(csrf_exempt, name='dispatch')

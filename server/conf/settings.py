@@ -65,6 +65,9 @@ FILE_NEWS_ENTRY_MODULES = ["world.news_entries"]
 # Command System Configuration
 ######################################################################
 
+# Custom command handler for styled error messages
+CMDHANDLER_MODULE = "server.conf.cmdhandler"
+
 # Custom search result handler for styled error messages
 SEARCH_AT_RESULT = "server.conf.at_search.at_search_result"
 

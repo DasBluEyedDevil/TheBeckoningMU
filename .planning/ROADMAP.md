@@ -32,12 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Builder export generates correct Evennia batch commands that match the visual map layout
   4. All API endpoints require authentication, use CSRF protection, and return proper error responses for invalid input
   5. No API endpoint allows unauthorized access to another user's data
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Review and fix character creation system
-- [ ] 01-02: Review and fix grid builder system
-- [ ] 01-03: Review and fix API security
+- [ ] 01-01-PLAN.md -- Harden character creation API: remove CSRF exemptions, add auth checks, add V5 server-side pool validation
+- [ ] 01-02-PLAN.md -- Harden grid builder: remove CSRF exemptions, fix exporter injection, add concurrency control, improve validator
+- [ ] 01-03-PLAN.md -- Verify all hardening changes work end-to-end (automated checks + human smoke test)
 
 ### Phase 2: Character Approval Completion
 **Goal**: Players experience a complete character creation lifecycle -- from first draft through rejection feedback to approval and entering the game
@@ -139,7 +139,7 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
-| 1. Review & Hardening | 0/3 | Not started | - |
+| 1. Review & Hardening | 0/3 | Planned | - |
 | 2. Character Approval Completion | 0/2 | Not started | - |
 | 3. Builder UX | 0/2 | Not started | - |
 | 4. Builder Approval Workflow | 0/1 | Not started | - |

@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.decorators.csrf import csrf_exempt
 
 from .models import BuildProject, RoomTemplate
 from .exporter import generate_batch_script
@@ -67,7 +66,6 @@ class BuilderEditorView(LoginRequiredMixin, TemplateView):
 
 
 # API views
-@method_decorator(csrf_exempt, name="dispatch")
 class SaveProjectView(StaffRequiredMixin, View):
     """Save or create a project."""
 
@@ -92,20 +90,33 @@ class SaveProjectView(StaffRequiredMixin, View):
                     {"status": "error", "error": "Not authorized"},
                     status=403
                 )
+
+            # Optimistic concurrency check
+            client_version = data.get("version")
+            if client_version is not None and client_version != project.version:
+                return JsonResponse({
+                    "status": "error",
+                    "error": "Project was modified by another session. Reload and try again.",
+                    "server_version": project.version,
+                }, status=409)
+
             project.name = name
             project.map_data = map_data
+            project.version = (project.version or 0) + 1
             project.save()
         else:
             # Create new
             project = BuildProject.objects.create(
                 user=request.user,
                 name=name,
-                map_data=map_data
+                map_data=map_data,
+                version=1,
             )
 
         return JsonResponse({
             "status": "success",
             "id": project.id,
+            "version": project.version,
             "validation": {
                 "is_valid": is_valid,
                 "errors": errors,
@@ -143,7 +154,6 @@ class GetProjectView(StaffRequiredMixin, View):
         })
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class DeleteProjectView(StaffRequiredMixin, View):
     """Delete a project."""
 
@@ -164,7 +174,6 @@ class DeleteProjectView(StaffRequiredMixin, View):
         return self.delete(request, pk, *args, **kwargs)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class BuildProjectView(StaffRequiredMixin, View):
     """Build project to sandbox."""
 

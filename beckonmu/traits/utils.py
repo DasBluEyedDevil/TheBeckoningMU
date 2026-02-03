@@ -43,6 +43,154 @@ import json
 import copy
 
 
+# V5 Character Creation Rules -- must match frontend validation
+# Source: character_creation.html lines 319-345 (attributes), 404-431 (skills), 557-558 (disciplines)
+V5_CHARGEN_RULES = {
+    'attribute_total_additional': 15,  # 7 + 5 + 3 (above base 1 per attribute)
+    'attribute_base_per': 1,
+    'attribute_count': 9,              # 3 physical + 3 social + 3 mental
+    'skill_total': 27,                 # 13 + 9 + 5
+    'discipline_total': 3,
+    'discipline_min_in_clan': 2,       # At least 2 must be in-clan (non-Caitiff)
+    'advantage_total': 7,
+    'flaw_max': 2,
+    'trait_max': 5,
+}
+
+# V5 attribute names (all start at base 1)
+V5_ATTRIBUTES = [
+    'strength', 'dexterity', 'stamina',
+    'charisma', 'manipulation', 'composure',
+    'intelligence', 'wits', 'resolve',
+]
+
+# V5 skill names (all start at 0)
+V5_SKILLS = [
+    # Physical
+    'athletics', 'brawl', 'craft', 'drive', 'firearms', 'melee', 'larceny', 'stealth', 'survival',
+    # Social
+    'animal_ken', 'etiquette', 'insight', 'intimidation', 'leadership', 'performance',
+    'persuasion', 'streetwise', 'subterfuge',
+    # Mental
+    'academics', 'awareness', 'finance', 'investigation', 'medicine', 'occult',
+    'politics', 'science', 'technology',
+]
+
+
+def validate_v5_chargen_pools(json_data, clan=None):
+    """
+    Validate V5 character creation pool totals against chargen rules.
+
+    Checks that total dots spent on attributes, skills, disciplines,
+    advantages, and flaws match the allowed totals from V5 chargen rules.
+    Does NOT validate priority distribution (which category gets 7/5/3).
+
+    Args:
+        json_data: Dictionary containing character data from the frontend.
+                   Attributes and skills are flat keys (e.g., 'strength': 3).
+                   Disciplines are in json_data['disciplines'] dict.
+                   Advantages are in json_data['advantages'] dict with {value, instance?, specialty?}.
+                   Flaws are in json_data['flaws'] dict with {value, instance?, specialty?}.
+        clan: Optional clan name for in-clan discipline validation.
+
+    Returns:
+        List of validation error strings (empty if valid).
+    """
+    errors = []
+    rules = V5_CHARGEN_RULES
+
+    # --- Attribute pool validation ---
+    # Attributes are flat keys in json_data with base of 1 each
+    attribute_total = 0
+    for attr_name in V5_ATTRIBUTES:
+        rating = json_data.get(attr_name, 0)
+        if isinstance(rating, (int, float)):
+            attribute_total += int(rating)
+
+    # Total additional dots = total ratings - (base 1 * 9 attributes)
+    additional_dots = attribute_total - (rules['attribute_base_per'] * rules['attribute_count'])
+    if additional_dots != rules['attribute_total_additional']:
+        errors.append(
+            f"Attributes: Must spend exactly {rules['attribute_total_additional']} additional dots "
+            f"(currently {additional_dots})"
+        )
+
+    # --- Skill pool validation ---
+    # Skills are flat keys in json_data with base of 0
+    skill_total = 0
+    for skill_name in V5_SKILLS:
+        rating = json_data.get(skill_name, 0)
+        if isinstance(rating, (int, float)):
+            skill_total += int(rating)
+
+    if skill_total != rules['skill_total']:
+        errors.append(
+            f"Skills: Must spend exactly {rules['skill_total']} dots (currently {skill_total})"
+        )
+
+    # --- Discipline pool validation ---
+    disciplines = json_data.get('disciplines', {})
+    discipline_total = 0
+    if isinstance(disciplines, dict):
+        for disc_name, rating in disciplines.items():
+            if isinstance(rating, (int, float)):
+                discipline_total += int(rating)
+
+    if discipline_total != rules['discipline_total']:
+        errors.append(
+            f"Disciplines: Must spend exactly {rules['discipline_total']} dots "
+            f"(currently {discipline_total})"
+        )
+
+    # In-clan discipline check (skip for Caitiff and Thin-Blood)
+    if (discipline_total == rules['discipline_total'] and clan
+            and clan not in ('Caitiff', 'Thin-Blood') and isinstance(disciplines, dict)):
+        # Try to determine in-clan disciplines from Trait model splat_restriction
+        # NOTE: The Trait model uses splat_restriction for vampire/ghoul/mortal, not
+        # per-clan restrictions. The clan-to-discipline mapping lives in the frontend
+        # CLANS object (character_creation.html). Until a ClanDiscipline model or
+        # similar mapping is added, this check cannot be performed server-side.
+        # Staff review catches invalid clan/discipline combinations.
+        pass
+
+    # --- Advantage pool validation ---
+    advantages = json_data.get('advantages', {})
+    advantage_total = 0
+    if isinstance(advantages, dict):
+        for adv_name, adv_data in advantages.items():
+            if isinstance(adv_data, dict):
+                value = adv_data.get('value', 0)
+                if isinstance(value, (int, float)):
+                    advantage_total += int(value)
+            elif isinstance(adv_data, (int, float)):
+                advantage_total += int(adv_data)
+
+    if advantage_total != rules['advantage_total']:
+        errors.append(
+            f"Advantages: Must spend exactly {rules['advantage_total']} points "
+            f"(currently {advantage_total})"
+        )
+
+    # --- Flaw pool validation ---
+    flaws = json_data.get('flaws', {})
+    flaw_total = 0
+    if isinstance(flaws, dict):
+        for flaw_name, flaw_data in flaws.items():
+            if isinstance(flaw_data, dict):
+                value = flaw_data.get('value', 0)
+                if isinstance(value, (int, float)):
+                    flaw_total += int(value)
+            elif isinstance(flaw_data, (int, float)):
+                flaw_total += int(flaw_data)
+
+    if flaw_total > rules['flaw_max']:
+        errors.append(
+            f"Flaws: Cannot exceed {rules['flaw_max']} points (currently {flaw_total})"
+        )
+
+    return errors
+
+
 def get_trait_definition(trait_name):
     """
     Get trait definition from the database, with fallback to world/data.py.
@@ -430,6 +578,14 @@ def enhanced_import_character_from_json(character, json_data, validate_only=Fals
 
     # Get character's splat for validation
     splat = json_data.get('splat', 'mortal')
+
+    # Run V5 chargen pool validation before processing individual traits
+    clan = json_data.get('clan')
+    pool_errors = validate_v5_chargen_pools(json_data, clan=clan)
+    if pool_errors:
+        results['validation_errors'].extend(pool_errors)
+        results['success'] = False
+        return results
 
     # Process basic traits
     for category_name, traits_dict in json_data.items():

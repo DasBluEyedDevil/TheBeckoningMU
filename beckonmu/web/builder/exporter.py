@@ -177,8 +177,13 @@ def generate_batch_script(project, username="unknown"):
     lines.append("#")
 
     for exit_id, exit_data in exits.items():
-        source_alias = f"_bld_{project_id}_{exit_data['source']}"
-        target_alias = f"_bld_{project_id}_{exit_data['target']}"
+        source_id = exit_data.get("source")
+        target_id = exit_data.get("target")
+        if not source_id or not target_id:
+            # Skip malformed exit data -- validator should catch this
+            continue
+        source_alias = f"_bld_{project_id}_{source_id}"
+        target_alias = f"_bld_{project_id}_{target_id}"
         exit_name = sanitize_string(exit_data.get("name", "exit"))
         aliases = exit_data.get("aliases", [])
 
@@ -219,7 +224,11 @@ def generate_batch_script(project, username="unknown"):
         lines.append("#")
 
         for obj_id, obj_data in objects.items():
-            room_alias = f"_bld_{project_id}_{obj_data['room']}"
+            room_id = obj_data.get("room")
+            if not room_id:
+                # Skip malformed object data -- validator should catch this
+                continue
+            room_alias = f"_bld_{project_id}_{room_id}"
             obj_name = sanitize_string(obj_data.get("name", "object"))
 
             lines.append(f"# Object: {obj_name} in {room_alias}")
@@ -261,7 +270,9 @@ def generate_batch_script(project, username="unknown"):
     lines.append("#")
     lines.append(f"@tel {sandbox_alias}")
     lines.append("#")
-    lines.append(f"@py from evennia import logger; logger.log_info('Web Builder: Project {project_id} ({project.name}) built successfully')")
+    lines.append(f"@set {sandbox_alias}/build_completed = True")
+    lines.append("#")
+    lines.append(f"@set {sandbox_alias}/build_project_id = {project_id}")
     lines.append("#")
 
     return "\n".join(lines)

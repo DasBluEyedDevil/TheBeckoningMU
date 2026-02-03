@@ -49,11 +49,13 @@ Plans:
   3. Approved character appears in the game's starting room -- player can immediately log in and play
   4. Player receives an in-game notification when their character is approved or rejected
   5. Player can save a partially completed character and return later to finish it
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01: Rejection resubmission and background field
-- [ ] 02-02: Auto-placement, notifications, and draft save/resume
+- [ ] 02-01-PLAN.md -- Model extension: add status/background/rejection fields to CharacterBio, migrate from boolean, refactor all call sites
+- [ ] 02-02-PLAN.md -- New API endpoints (my-characters, for-edit, resubmit), auto-placement, notification helpers, chargen command updates
+- [ ] 02-03-PLAN.md -- Frontend: approval UI rejection modal + background display; creation UI edit mode + background field + draft save/resume
+- [ ] 02-04-PLAN.md -- Run migration and end-to-end verification (automated checks + human smoke test of full lifecycle)
 
 ### Phase 3: Builder UX
 **Goal**: Builders can orient their maps spatially and apply V5 room presets, making the grid editor faster and more intuitive
@@ -140,7 +142,7 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
 | 1. Review & Hardening | 3/3 | Complete | 2026-02-03 |
-| 2. Character Approval Completion | 0/2 | Not started | - |
+| 2. Character Approval Completion | 0/4 | Planned | - |
 | 3. Builder UX | 0/2 | Not started | - |
 | 4. Builder Approval Workflow | 0/1 | Not started | - |
 | 5. Sandbox Building | 0/2 | Not started | - |

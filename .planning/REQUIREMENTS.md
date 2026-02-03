@@ -7,9 +7,9 @@
 
 ### Review & Hardening
 
-- [ ] **REVW-01**: Review character creation for V5 rule correctness (validation rules, edge cases, data integrity)
-- [ ] **REVW-02**: Review grid builder for correctness (save/load, export accuracy, UI behavior)
-- [ ] **REVW-03**: Review API endpoints for security (fix csrf_exempt, add concurrency controls, verify auth checks)
+- [x] **REVW-01**: Review character creation for V5 rule correctness (validation rules, edge cases, data integrity)
+- [x] **REVW-02**: Review grid builder for correctness (save/load, export accuracy, UI behavior)
+- [x] **REVW-03**: Review API endpoints for security (fix csrf_exempt, add concurrency controls, verify auth checks)
 
 ### Character Creation & Approval
 
@@ -83,9 +83,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REVW-01 | Phase 1: Review & Hardening | Pending |
-| REVW-02 | Phase 1: Review & Hardening | Pending |
-| REVW-03 | Phase 1: Review & Hardening | Pending |
+| REVW-01 | Phase 1: Review & Hardening | Complete |
+| REVW-02 | Phase 1: Review & Hardening | Complete |
+| REVW-03 | Phase 1: Review & Hardening | Complete |
 | CHAR-01 | Phase 2: Character Approval Completion | Pending |
 | CHAR-02 | Phase 2: Character Approval Completion | Pending |
 | CHAR-03 | Phase 2: Character Approval Completion | Pending |
@@ -119,4 +119,4 @@
 
 ---
 *Requirements defined: 2026-02-03*
-*Last updated: 2026-02-03 after roadmap creation*
+*Last updated: 2026-02-03 after Phase 1 completion*

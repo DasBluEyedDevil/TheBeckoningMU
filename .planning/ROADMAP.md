@@ -12,7 +12,7 @@ This roadmap takes the existing Evennia-based web portal -- which already has wo
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Review & Hardening** - Verify and fix existing chargen, builder, and API code before building on it
+- [x] **Phase 1: Review & Hardening** - Verify and fix existing chargen, builder, and API code before building on it
 - [ ] **Phase 2: Character Approval Completion** - Players can submit, get rejected, revise, and get approved with full workflow
 - [ ] **Phase 3: Builder UX** - Compass rose navigation and V5 room templates enhance the grid editor
 - [ ] **Phase 4: Builder Approval Workflow** - Builders submit projects for staff review with state machine lifecycle
@@ -35,9 +35,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Harden character creation API: remove CSRF exemptions, add auth checks, add V5 server-side pool validation
-- [ ] 01-02-PLAN.md -- Harden grid builder: remove CSRF exemptions, fix exporter injection, add concurrency control, improve validator
-- [ ] 01-03-PLAN.md -- Verify all hardening changes work end-to-end (automated checks + human smoke test)
+- [x] 01-01-PLAN.md -- Harden character creation API: remove CSRF exemptions, add auth checks, add V5 server-side pool validation
+- [x] 01-02-PLAN.md -- Harden grid builder: remove CSRF exemptions, fix exporter injection, add concurrency control, improve validator
+- [x] 01-03-PLAN.md -- Verify all hardening changes work end-to-end (automated checks + human smoke test)
 
 ### Phase 2: Character Approval Completion
 **Goal**: Players experience a complete character creation lifecycle -- from first draft through rejection feedback to approval and entering the game
@@ -139,7 +139,7 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
-| 1. Review & Hardening | 0/3 | Planned | - |
+| 1. Review & Hardening | 3/3 | Complete | 2026-02-03 |
 | 2. Character Approval Completion | 0/2 | Not started | - |
 | 3. Builder UX | 0/2 | Not started | - |
 | 4. Builder Approval Workflow | 0/1 | Not started | - |

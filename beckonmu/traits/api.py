@@ -4,9 +4,7 @@ Provides JSON-based endpoints for web-based character applications.
 """
 
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
 from django.views import View
 from django.db import models
 from evennia.objects.models import ObjectDB
@@ -40,12 +38,14 @@ class BaseAPIView(View):
         return super().dispatch(request, *args, **kwargs)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class TraitCategoriesAPI(BaseAPIView):
     """API endpoint for trait categories."""
 
     def get(self, request):
         """Get all trait categories."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         categories = TraitCategory.objects.all()
         data = []
 
@@ -61,12 +61,14 @@ class TraitCategoriesAPI(BaseAPIView):
         return JsonResponse({'categories': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class TraitsAPI(BaseAPIView):
     """API endpoint for traits."""
 
     def get(self, request):
         """Get traits, optionally filtered by category or splat."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         category_code = request.GET.get('category')
         splat = request.GET.get('splat', 'mortal')
 
@@ -103,12 +105,14 @@ class TraitsAPI(BaseAPIView):
         return JsonResponse({'traits': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class DisciplinePowersAPI(BaseAPIView):
     """API endpoint for discipline powers."""
 
     def get(self, request):
         """Get discipline powers, optionally filtered by discipline."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         discipline_name = request.GET.get('discipline')
         level = request.GET.get('level')
 
@@ -146,12 +150,14 @@ class DisciplinePowersAPI(BaseAPIView):
         return JsonResponse({'powers': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterValidationAPI(BaseAPIView):
     """API endpoint for character validation."""
 
     def post(self, request):
         """Validate character data without creating the character."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         character_data = request.json
 
         if not character_data:
@@ -176,7 +182,6 @@ class CharacterValidationAPI(BaseAPIView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterImportAPI(BaseAPIView):
     """API endpoint for character import."""
 
@@ -203,9 +208,9 @@ class CharacterImportAPI(BaseAPIView):
             )
 
         except AccountDB.DoesNotExist:
-            return JsonResponse({'error': f'Account {account_name} not found'}, status=404)
+            return JsonResponse({'error': 'Account not found'}, status=404)
         except ObjectDB.DoesNotExist:
-            return JsonResponse({'error': f'Character {character_name} not found for account {account_name}'}, status=404)
+            return JsonResponse({'error': 'Character not found'}, status=404)
 
         # Import the character data
         results = enhanced_import_character_from_json(character, character_data)
@@ -223,7 +228,6 @@ class CharacterImportAPI(BaseAPIView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterExportAPI(BaseAPIView):
     """API endpoint for character export."""
 
@@ -245,7 +249,6 @@ class CharacterExportAPI(BaseAPIView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterAvailableTraitsAPI(BaseAPIView):
     """API endpoint for getting available traits for a character."""
 
@@ -276,7 +279,6 @@ class CharacterAvailableTraitsAPI(BaseAPIView):
         return JsonResponse({'available_traits': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class PendingCharactersAPI(BaseAPIView):
     """API endpoint for listing characters awaiting approval."""
 
@@ -306,7 +308,6 @@ class PendingCharactersAPI(BaseAPIView):
         return JsonResponse({'pending_characters': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterDetailAPI(BaseAPIView):
     """API endpoint for getting full character sheet data for review."""
 
@@ -382,7 +383,6 @@ class CharacterDetailAPI(BaseAPIView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterCreateAPI(BaseAPIView):
     """API endpoint for creating new characters from web form."""
 
@@ -469,7 +469,7 @@ class CharacterCreateAPI(BaseAPIView):
                     character.delete()
                 except Exception:
                     pass
-            return JsonResponse({'error': f'Invalid data: {e}'}, status=400)
+            return JsonResponse({'error': 'Invalid character data'}, status=400)
         except ObjectDoesNotExist as e:
             # Clean up if anything went wrong
             if 'character' in locals():
@@ -477,7 +477,7 @@ class CharacterCreateAPI(BaseAPIView):
                     character.delete()
                 except Exception:
                     pass
-            return JsonResponse({'error': f'Not found: {e}'}, status=404)
+            return JsonResponse({'error': 'Required data not found'}, status=404)
         except Exception as e:
             import traceback
             traceback.print_exc()
@@ -490,7 +490,6 @@ class CharacterCreateAPI(BaseAPIView):
             return JsonResponse({'error': 'Server error'}, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterApprovalAPI(BaseAPIView):
     """API endpoint for approving or rejecting characters."""
 

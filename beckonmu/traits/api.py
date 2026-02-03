@@ -187,6 +187,11 @@ class CharacterImportAPI(BaseAPIView):
 
     def post(self, request):
         """Import character data to an existing character."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+        if not request.user.is_staff:
+            return JsonResponse({'error': 'Staff permissions required'}, status=403)
+
         character_name = request.json.get('character_name')
         character_data = request.json.get('character_data')
         account_name = request.json.get('account_name')
@@ -233,10 +238,17 @@ class CharacterExportAPI(BaseAPIView):
 
     def get(self, request, character_id):
         """Export character data to JSON format."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         try:
             character = ObjectDB.objects.get(id=character_id, db_typeclass_path__contains='characters')
         except ObjectDB.DoesNotExist:
             return JsonResponse({'error': 'Character not found'}, status=404)
+
+        # Enforce ownership: only the character's owner or staff can export
+        if character.db_account != request.user and not request.user.is_staff:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
 
         include_powers = request.GET.get('include_powers', 'true').lower() == 'true'
 
@@ -254,10 +266,17 @@ class CharacterAvailableTraitsAPI(BaseAPIView):
 
     def get(self, request, character_id):
         """Get all traits available to a specific character based on their splat."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         try:
             character = ObjectDB.objects.get(id=character_id, db_typeclass_path__contains='characters')
         except ObjectDB.DoesNotExist:
             return JsonResponse({'error': 'Character not found'}, status=404)
+
+        # Enforce ownership: only the character's owner or staff can view available traits
+        if character.db_account != request.user and not request.user.is_staff:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
 
         available_traits = get_available_traits_for_character(character)
 
@@ -514,6 +533,13 @@ class CharacterApprovalAPI(BaseAPIView):
 
         if action not in ['approve', 'reject']:
             return JsonResponse({'error': 'Invalid action. Must be "approve" or "reject"'}, status=400)
+
+        # Idempotent approval check: prevent double-approval race condition
+        if action == 'approve' and bio.approved:
+            return JsonResponse({
+                'error': 'Character already approved',
+                'approved_by': bio.approved_by
+            }, status=409)
 
         # Update character bio
         if action == 'approve':

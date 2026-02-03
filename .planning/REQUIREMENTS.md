@@ -83,40 +83,40 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REVW-01 | TBD | Pending |
-| REVW-02 | TBD | Pending |
-| REVW-03 | TBD | Pending |
-| CHAR-01 | TBD | Pending |
-| CHAR-02 | TBD | Pending |
-| CHAR-03 | TBD | Pending |
-| CHAR-04 | TBD | Pending |
-| CHAR-05 | TBD | Pending |
-| BLDX-01 | TBD | Pending |
-| BLDX-02 | TBD | Pending |
-| BLDX-03 | TBD | Pending |
-| BLDX-04 | TBD | Pending |
-| BLDX-05 | TBD | Pending |
-| BLDW-01 | TBD | Pending |
-| BLDW-02 | TBD | Pending |
-| BLDW-03 | TBD | Pending |
-| BLDW-04 | TBD | Pending |
-| BLDW-05 | TBD | Pending |
-| BLDW-06 | TBD | Pending |
-| BLDW-07 | TBD | Pending |
-| BLDW-08 | TBD | Pending |
-| TRIG-01 | TBD | Pending |
-| TRIG-02 | TBD | Pending |
-| TRIG-03 | TBD | Pending |
-| TRIG-04 | TBD | Pending |
-| TRIG-05 | TBD | Pending |
-| TRIG-06 | TBD | Pending |
-| TRIG-07 | TBD | Pending |
+| REVW-01 | Phase 1: Review & Hardening | Pending |
+| REVW-02 | Phase 1: Review & Hardening | Pending |
+| REVW-03 | Phase 1: Review & Hardening | Pending |
+| CHAR-01 | Phase 2: Character Approval Completion | Pending |
+| CHAR-02 | Phase 2: Character Approval Completion | Pending |
+| CHAR-03 | Phase 2: Character Approval Completion | Pending |
+| CHAR-04 | Phase 2: Character Approval Completion | Pending |
+| CHAR-05 | Phase 2: Character Approval Completion | Pending |
+| BLDX-01 | Phase 3: Builder UX | Pending |
+| BLDX-02 | Phase 3: Builder UX | Pending |
+| BLDX-03 | Phase 3: Builder UX | Pending |
+| BLDX-04 | Phase 3: Builder UX | Pending |
+| BLDX-05 | Phase 3: Builder UX | Pending |
+| BLDW-01 | Phase 4: Builder Approval Workflow | Pending |
+| BLDW-02 | Phase 4: Builder Approval Workflow | Pending |
+| BLDW-03 | Phase 4: Builder Approval Workflow | Pending |
+| BLDW-04 | Phase 5: Sandbox Building | Pending |
+| BLDW-05 | Phase 5: Sandbox Building | Pending |
+| BLDW-06 | Phase 5: Sandbox Building | Pending |
+| BLDW-07 | Phase 6: Live Promotion | Pending |
+| BLDW-08 | Phase 6: Live Promotion | Pending |
+| TRIG-01 | Phase 7: Trigger System | Pending |
+| TRIG-02 | Phase 7: Trigger System | Pending |
+| TRIG-03 | Phase 7: Trigger System | Pending |
+| TRIG-04 | Phase 7: Trigger System | Pending |
+| TRIG-05 | Phase 7: Trigger System | Pending |
+| TRIG-06 | Phase 7: Trigger System | Pending |
+| TRIG-07 | Phase 7: Trigger System | Pending |
 
 **Coverage:**
 - v1 requirements: 28 total
-- Mapped to phases: 0
-- Unmapped: 28
+- Mapped to phases: 28
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-03*
-*Last updated: 2026-02-03 after initial definition*
+*Last updated: 2026-02-03 after roadmap creation*

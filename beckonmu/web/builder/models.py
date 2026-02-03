@@ -18,6 +18,11 @@ class BuildProject(models.Model):
     map_data = models.JSONField(default=dict)
     # Visibility to other builders
     is_public = models.BooleanField(default=True)
+    # Optimistic concurrency version -- incremented on each save
+    version = models.PositiveIntegerField(
+        default=1,
+        help_text="Optimistic concurrency version -- incremented on each save",
+    )
     # Link to in-game sandbox instance (if built)
     sandbox_room_id = models.IntegerField(null=True, blank=True)
     # When promoted to live
@@ -35,6 +40,7 @@ class BuildProject(models.Model):
     def get_default_map_data(self):
         """Return empty map data structure."""
         return {
+            "schema_version": 1,
             "rooms": {},
             "exits": {},
             "objects": {},

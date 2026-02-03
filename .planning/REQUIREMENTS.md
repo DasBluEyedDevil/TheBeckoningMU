@@ -1,0 +1,122 @@
+# Requirements: TheBeckoningMU Web Portal
+
+**Defined:** 2026-02-03
+**Core Value:** Players and builders can do complex, multi-step tasks (character creation and area building) through an intuitive web interface instead of memorizing text commands.
+
+## v1 Requirements
+
+### Review & Hardening
+
+- [ ] **REVW-01**: Review character creation for V5 rule correctness (validation rules, edge cases, data integrity)
+- [ ] **REVW-02**: Review grid builder for correctness (save/load, export accuracy, UI behavior)
+- [ ] **REVW-03**: Review API endpoints for security (fix csrf_exempt, add concurrency controls, verify auth checks)
+
+### Character Creation & Approval
+
+- [ ] **CHAR-01**: Player can view rejection notes and edit/resubmit a rejected character without starting over
+- [ ] **CHAR-02**: CharacterBio includes background text field for free-text backstory
+- [ ] **CHAR-03**: Approved character is auto-placed in the starting room
+- [ ] **CHAR-04**: Player receives in-game notification when character is approved or rejected
+- [ ] **CHAR-05**: Player can save partial chargen progress and resume later (draft save/resume)
+
+### Builder UX
+
+- [ ] **BLDX-01**: Compass rose overlay shows exit directions (N/S/E/W/NE/NW/SE/SW/U/D) on room nodes
+- [ ] **BLDX-02**: Exit auto-naming infers cardinal direction from grid position and sets exit name + aliases
+- [ ] **BLDX-03**: V5 room template presets (Elysium, Haven, Rack, etc.) that pre-fill V5 settings
+- [ ] **BLDX-04**: Template dropdown in editor to apply preset to new or existing room
+- [ ] **BLDX-05**: Map orientation indicator (N/S/E/W labels) on canvas corner
+
+### Builder Workflow
+
+- [ ] **BLDW-01**: BuildProject has explicit status field (Draft, Submitted, Approved, Built, Live)
+- [ ] **BLDW-02**: Builder can submit project for staff review
+- [ ] **BLDW-03**: Staff review interface for builds (map preview + approve/reject with notes)
+- [ ] **BLDW-04**: Auto-sandbox creates rooms/exits in isolated sandbox area via Evennia API (not batch file)
+- [ ] **BLDW-05**: Builder can walk through sandbox to test their build in-game
+- [ ] **BLDW-06**: Sandbox cleanup deletes all sandbox rooms/exits tagged to a project
+- [ ] **BLDW-07**: Builder specifies connection point for live promotion
+- [ ] **BLDW-08**: Promotion auto-links sandbox rooms into the live game world at the specified connection point
+
+### Triggers
+
+- [ ] **TRIG-01**: Entry triggers fire when a character enters a room (atmospheric messages, danger notifications)
+- [ ] **TRIG-02**: Exit triggers fire when a character leaves a room (tracking, narrative messages)
+- [ ] **TRIG-03**: Timed triggers fire on configurable intervals (weather, ambient messages, respawning)
+- [ ] **TRIG-04**: Interaction triggers fire on specific player actions in a room (look at object, use item)
+- [ ] **TRIG-05**: Trigger editor UI in web builder (type selector, condition editor, action editor)
+- [ ] **TRIG-06**: V5-aware trigger conditions (hunger level, clan, time-of-night, danger level)
+- [ ] **TRIG-07**: Whitelisted trigger actions only (no arbitrary code execution)
+
+## v2 Requirements
+
+### Character Creation
+
+- **CHAR-06**: Player-facing character sheet view on web (read-only)
+- **CHAR-07**: Staff comments on specific traits during review
+- **CHAR-08**: Approval history log (track all approve/reject actions across revisions)
+
+### Builder
+
+- **BLDX-06**: Custom template creation and sharing between builders
+- **BLDX-07**: Template inheritance (e.g., Dark Alley inherits from Street)
+
+### Triggers
+
+- **TRIG-08**: Custom trigger action development guide for developers
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Full web MUD client replacement | Web portal complements the telnet/webclient, not replaces it |
+| Rich text/WYSIWYG room descriptions | MUDs use plain text; ANSI preview at most |
+| Stat optimization assistant | Undermines V5 roleplaying spirit |
+| Real-time collaborative building | Enormous complexity, minimal benefit for MU* building |
+| Automated character approval | V5 characters require narrative review by staff |
+| Free-form Python in triggers | Security risk; use whitelisted actions only |
+| Mobile-specific responsive design | Desktop browser is primary target |
+| Player dashboard (messages, notifications) | MUD client handles this |
+| Game wiki/help system on web | In-game help is sufficient |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| REVW-01 | TBD | Pending |
+| REVW-02 | TBD | Pending |
+| REVW-03 | TBD | Pending |
+| CHAR-01 | TBD | Pending |
+| CHAR-02 | TBD | Pending |
+| CHAR-03 | TBD | Pending |
+| CHAR-04 | TBD | Pending |
+| CHAR-05 | TBD | Pending |
+| BLDX-01 | TBD | Pending |
+| BLDX-02 | TBD | Pending |
+| BLDX-03 | TBD | Pending |
+| BLDX-04 | TBD | Pending |
+| BLDX-05 | TBD | Pending |
+| BLDW-01 | TBD | Pending |
+| BLDW-02 | TBD | Pending |
+| BLDW-03 | TBD | Pending |
+| BLDW-04 | TBD | Pending |
+| BLDW-05 | TBD | Pending |
+| BLDW-06 | TBD | Pending |
+| BLDW-07 | TBD | Pending |
+| BLDW-08 | TBD | Pending |
+| TRIG-01 | TBD | Pending |
+| TRIG-02 | TBD | Pending |
+| TRIG-03 | TBD | Pending |
+| TRIG-04 | TBD | Pending |
+| TRIG-05 | TBD | Pending |
+| TRIG-06 | TBD | Pending |
+| TRIG-07 | TBD | Pending |
+
+**Coverage:**
+- v1 requirements: 28 total
+- Mapped to phases: 0
+- Unmapped: 28
+
+---
+*Requirements defined: 2026-02-03*
+*Last updated: 2026-02-03 after initial definition*

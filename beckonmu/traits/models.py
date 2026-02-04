@@ -316,8 +316,33 @@ class CharacterBio(models.Model):
     # Character type
     splat = models.CharField(max_length=20, default='mortal', help_text="Character type (vampire, ghoul, mortal)")
 
+    # Status lifecycle
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted'),
+        ('rejected', 'Rejected'),
+        ('approved', 'Approved'),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='submitted',
+        help_text="Current approval status"
+    )
+    background = models.TextField(
+        blank=True,
+        help_text="Character's backstory/background narrative"
+    )
+    rejection_notes = models.TextField(
+        blank=True,
+        help_text="Staff feedback on why character was rejected"
+    )
+    rejection_count = models.PositiveIntegerField(
+        default=0,
+        help_text="Number of times this character has been rejected"
+    )
+
     # Approval tracking
-    approved = models.BooleanField(default=False, help_text="Has this character been approved?")
     approved_by = models.CharField(max_length=100, blank=True, help_text="Who approved this character")
     approved_at = models.DateTimeField(blank=True, null=True, help_text="When was this character approved")
 
@@ -342,6 +367,11 @@ class CharacterBio(models.Model):
     @property
     def is_mortal(self):
         return self.splat == 'mortal'
+
+    @property
+    def approved(self):
+        """Backward compatibility: returns True if status is 'approved'."""
+        return self.status == 'approved'
 
 
 class ExperienceTransaction(models.Model):

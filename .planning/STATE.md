@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 2 of 7 (Character Approval Completion)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-04 -- Completed 02-02-PLAN.md (API endpoints, notifications, auto-placement)
+Last activity: 2026-02-04 -- Completed 02-03-PLAN.md (frontend approval/creation templates)
 
-Progress: [#####_________] 36% (5/14 plans)
+Progress: [######________] 43% (6/14 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 6 min
-- Total execution time: 29 min
+- Total execution time: 37 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-review-and-hardening | 3/3 | 22 min | 7 min |
-| 02-character-approval-completion | 2/4 | 7 min | 4 min |
+| 02-character-approval-completion | 3/4 | 15 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (3 min), 01-03 (12 min), 02-01 (2 min), 02-02 (5 min)
-- Trend: improving
+- Last 5 plans: 01-03 (12 min), 02-01 (2 min), 02-02 (5 min), 02-03 (8 min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -58,6 +58,9 @@ Recent decisions affecting current work:
 - [02-02]: Helper functions (notify_account, place_approved_character) live in traits/api.py, shared by web API and commands
 - [02-02]: Notifications stored as list of dicts on account.db.pending_notifications
 - [02-02]: Resubmission deletes all CharacterTrait/CharacterPower rows before re-import
+- [02-03]: Rejection modal uses Bootstrap 5 Modal API (vanilla JS, no jQuery)
+- [02-03]: Draft keyed by chargen_draft_<id> for edit, chargen_draft_new for create
+- [02-03]: Draft TTL is 7 days; edit mode loads from API not localStorage
 
 ### Pending Todos
 
@@ -70,9 +73,10 @@ Recent decisions affecting current work:
 - [Research]: Phase 7 (Triggers) V5 condition system is novel -- needs design research during planning
 - [Research]: JSON map_data needs schema versioning before Phase 5 -- ADDRESSED: schema_version added to defaults
 - [01-01]: In-clan discipline server-side validation needs ClanDiscipline model (deferred, staff review catches it)
+- [02-03]: beckonmu/web/templates/ is an NTFS junction to web/templates/ -- git tracks both paths, causing duplicate diffs
 
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 02-02-PLAN.md (API endpoints, notifications, auto-placement)
+Stopped at: Completed 02-03-PLAN.md (frontend approval/creation templates)
 Resume file: None

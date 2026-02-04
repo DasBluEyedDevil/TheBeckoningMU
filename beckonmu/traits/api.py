@@ -307,8 +307,10 @@ class PendingCharactersAPI(BaseAPIView):
         if not (request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)):
             return JsonResponse({'error': 'Staff permissions required'}, status=403)
 
-        # Get all characters with CharacterBio that are not approved
-        pending_bios = CharacterBio.objects.filter(approved=False).select_related('character').order_by('created_at')
+        # Get all characters with CharacterBio that are submitted or rejected (not draft, not approved)
+        pending_bios = CharacterBio.objects.filter(
+            status__in=['submitted', 'rejected']
+        ).select_related('character').order_by('created_at')
 
         data = []
         for bio in pending_bios:
@@ -321,7 +323,8 @@ class PendingCharactersAPI(BaseAPIView):
                 'player_name': player_name,
                 'clan': bio.clan,
                 'submitted_date': bio.created_at.isoformat() if bio.created_at else None,
-                'concept': bio.concept
+                'concept': bio.concept,
+                'status': bio.status,
             })
 
         return JsonResponse({'pending_characters': data})
@@ -354,10 +357,14 @@ class CharacterDetailAPI(BaseAPIView):
                 'generation': bio.generation,
                 'predator_type': bio.predator_type,
                 'splat': bio.splat,
+                'status': bio.status,
                 'approved': bio.approved,
                 'approved_by': bio.approved_by,
                 'approved_at': bio.approved_at.isoformat() if bio.approved_at else None,
                 'created_at': bio.created_at.isoformat() if bio.created_at else None,
+                'background': bio.background,
+                'rejection_notes': bio.rejection_notes,
+                'rejection_count': bio.rejection_count,
             }
         except CharacterBio.DoesNotExist:
             bio_data = {}
@@ -445,7 +452,7 @@ class CharacterCreateAPI(BaseAPIView):
             character.db_account = request.user
             character.save()
 
-            # Create CharacterBio with approved=False
+            # Create CharacterBio with status='submitted'
             bio = CharacterBio.objects.create(
                 character=character,
                 full_name=character_data.get('name', character_name),
@@ -457,7 +464,8 @@ class CharacterCreateAPI(BaseAPIView):
                 generation=character_data.get('generation'),
                 predator_type=character_data.get('predator_type', ''),
                 splat='vampire',
-                approved=False,
+                status='submitted',
+                background=character_data.get('background', ''),
                 created_at=timezone.now()
             )
 
@@ -535,7 +543,7 @@ class CharacterApprovalAPI(BaseAPIView):
             return JsonResponse({'error': 'Invalid action. Must be "approve" or "reject"'}, status=400)
 
         # Idempotent approval check: prevent double-approval race condition
-        if action == 'approve' and bio.approved:
+        if action == 'approve' and bio.status == 'approved':
             return JsonResponse({
                 'error': 'Character already approved',
                 'approved_by': bio.approved_by
@@ -543,9 +551,11 @@ class CharacterApprovalAPI(BaseAPIView):
 
         # Update character bio
         if action == 'approve':
-            bio.approved = True
+            bio.status = 'approved'
         else:
-            bio.approved = False
+            bio.status = 'rejected'
+            bio.rejection_notes = notes
+            bio.rejection_count += 1
 
         bio.approved_by = request.user.username
         bio.approved_at = timezone.now()

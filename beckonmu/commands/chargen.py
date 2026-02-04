@@ -65,8 +65,10 @@ class CmdPending(Command):
 
     def func(self):
         """List pending characters."""
-        # Get all characters with CharacterBio that are not approved
-        pending_bios = CharacterBio.objects.filter(approved=False).select_related('character')
+        # Get all characters with CharacterBio that are submitted or rejected
+        pending_bios = CharacterBio.objects.filter(
+            status__in=['submitted', 'rejected']
+        ).select_related('character')
 
         if not pending_bios:
             self.caller.msg("|yNo characters currently pending approval.|n")
@@ -444,12 +446,12 @@ class CmdApprove(Command):
         # Get or create bio
         bio, created = CharacterBio.objects.get_or_create(character=character)
 
-        if bio.approved:
+        if bio.status == 'approved':
             self.caller.msg(f"|yCharacter '{character.key}' is already approved.|n")
             return
 
         # Approve the character
-        bio.approved = True
+        bio.status = 'approved'
         bio.approved_by = self.caller.key
         bio.approved_at = timezone.now()
         bio.save()
@@ -499,7 +501,7 @@ class CmdApprove(Command):
                     Comment.objects.create(
                         job=job,
                         author=self.caller.account,
-                        text=comment_text
+                        content=comment_text
                     )
 
                     # Close the job
@@ -569,6 +571,12 @@ class CmdReject(Command):
         # Get or create bio
         bio, created = CharacterBio.objects.get_or_create(character=character)
 
+        # Update status and rejection tracking on the model
+        bio.status = 'rejected'
+        bio.rejection_notes = reason
+        bio.rejection_count += 1
+        bio.save()
+
         # Notify staff
         self.caller.msg(f"|yCharacter '{character.key}' has been rejected.|n")
 
@@ -610,7 +618,7 @@ class CmdReject(Command):
                     Comment.objects.create(
                         job=job,
                         author=self.caller.account,
-                        text=comment_text
+                        content=comment_text
                     )
 
                     # Keep job OPEN for resubmission

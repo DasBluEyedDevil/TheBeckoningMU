@@ -363,6 +363,7 @@ class PendingCharactersAPI(BaseAPIView):
                 'submitted_date': bio.created_at.isoformat() if bio.created_at else None,
                 'concept': bio.concept,
                 'status': bio.status,
+                'rejection_count': bio.rejection_count,
             })
 
         return JsonResponse({'pending_characters': data})

@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 2 of 7 (Character Approval Completion)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-04 -- Completed 02-01-PLAN.md (model extension and call-site refactor)
+Last activity: 2026-02-04 -- Completed 02-02-PLAN.md (API endpoints, notifications, auto-placement)
 
-Progress: [####__________] 29% (4/14 plans)
+Progress: [#####_________] 36% (5/14 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 6 min
-- Total execution time: 24 min
+- Total execution time: 29 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-review-and-hardening | 3/3 | 22 min | 7 min |
-| 02-character-approval-completion | 1/4 | 2 min | 2 min |
+| 02-character-approval-completion | 2/4 | 7 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7 min), 01-02 (3 min), 01-03 (12 min), 02-01 (2 min)
+- Last 5 plans: 01-02 (3 min), 01-03 (12 min), 02-01 (2 min), 02-02 (5 min)
 - Trend: improving
 
 *Updated after each plan completion*
@@ -55,6 +55,9 @@ Recent decisions affecting current work:
 - [02-01]: Default status is 'submitted' (not 'draft') -- existing CharacterCreateAPI creates at submission time
 - [02-01]: approved @property for backward-compatible reads, all writes use bio.status
 - [02-01]: PendingCharactersAPI shows both submitted and rejected (not just submitted)
+- [02-02]: Helper functions (notify_account, place_approved_character) live in traits/api.py, shared by web API and commands
+- [02-02]: Notifications stored as list of dicts on account.db.pending_notifications
+- [02-02]: Resubmission deletes all CharacterTrait/CharacterPower rows before re-import
 
 ### Pending Todos
 
@@ -71,5 +74,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 02-01-PLAN.md (model extension and call-site refactor)
+Stopped at: Completed 02-02-PLAN.md (API endpoints, notifications, auto-placement)
 Resume file: None

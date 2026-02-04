@@ -136,7 +136,23 @@ class Account(DefaultAccount):
 
     """
 
-    pass
+    def at_post_login(self, session=None, **kwargs):
+        """Deliver any pending notifications on login."""
+        super().at_post_login(session=session, **kwargs)
+
+        pending = self.db.pending_notifications
+        if pending:
+            unread = [n for n in pending if not n.get('read')]
+            if unread:
+                self.msg("\n|w=== Notifications ===|n")
+                for notif in unread:
+                    self.msg(notif['message'])
+                    notif['read'] = True
+                self.msg("|w=====================|n\n")
+                # Remove delivered notifications
+                self.db.pending_notifications = [
+                    n for n in pending if not n.get('read')
+                ]
 
 
 class Guest(DefaultGuest):

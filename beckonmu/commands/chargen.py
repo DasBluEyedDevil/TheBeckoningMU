@@ -14,6 +14,7 @@ from beckonmu.traits.utils import (
     validate_trait_for_character,
     enhanced_import_character_from_json
 )
+from beckonmu.traits.api import place_approved_character, notify_account
 from evennia.utils.search import object_search
 from evennia.utils import evtable
 from django.utils import timezone
@@ -456,21 +457,19 @@ class CmdApprove(Command):
         bio.approved_at = timezone.now()
         bio.save()
 
+        # Auto-place approved character in starting room
+        place_approved_character(character)
+
         # Notify staff
         self.caller.msg(f"|gCharacter '{character.key}' has been approved!|n")
+        self.caller.msg(f"|gCharacter placed in starting room.|n")
 
-        # Notify player
+        # Notify player (stores for offline delivery and sends immediately if online)
         if character.account:
-            notification = f"|w{'=' * 78}|n\n"
-            notification += f"|gYour character '{character.key}' has been APPROVED by {self.caller.key}!|n\n"
-            notification += "|gYou may now begin playing.|n\n"
-            
+            msg = f"Your character '{character.key}' has been APPROVED by {self.caller.key}!\nYou may now begin playing."
             if message:
-                notification += f"\n|wStaff message:|n {message}\n"
-            
-            notification += f"|w{'=' * 78}|n"
-            
-            character.account.msg(notification)
+                msg += f"\nStaff message: {message}"
+            notify_account(character.account, msg, notification_type="approval")
 
         # Log the approval
         if not hasattr(character.db, 'staff_actions'):
@@ -580,16 +579,12 @@ class CmdReject(Command):
         # Notify staff
         self.caller.msg(f"|yCharacter '{character.key}' has been rejected.|n")
 
-        # Notify player
+        # Notify player (stores for offline delivery and sends immediately if online)
         if character.account:
-            notification = f"|w{'=' * 78}|n\n"
-            notification += f"|rYour character '{character.key}' requires revisions.|n\n"
-            notification += f"|wStaff member {self.caller.key} has provided the following feedback:|n\n"
-            notification += f"{reason}\n\n"
-            notification += "|wPlease make the necessary changes and resubmit your character.|n\n"
-            notification += f"|w{'=' * 78}|n"
-            
-            character.account.msg(notification)
+            msg = f"Your character '{character.key}' requires revisions.\n"
+            msg += f"Staff feedback from {self.caller.key}:\n{reason}\n"
+            msg += "Please edit and resubmit via the character creation page."
+            notify_account(character.account, msg, notification_type="rejection")
 
         # Log the rejection
         if not hasattr(character.db, 'staff_actions'):

@@ -5,16 +5,37 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Players and builders can do complex, multi-step tasks (character creation and area building) through an intuitive web interface instead of memorizing text commands.
-**Current focus:** Phase 3 -- Builder UX
+**Current focus:** Phase 4 -- Builder Approval Workflow
 
 ## Current Position
 
-Phase: 3 of 7 (Builder UX)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-02-05 -- Completed 03-02-PLAN.md (V5 room templates)
+Phase: 4 of 7 (Builder Approval Workflow)
+Plan: 0 of 1 in current phase
+Status: Ready to start
+Last activity: 2026-02-05 -- Completed Phase 3 (Builder UX)
 
 Progress: [#########_____] 64% (9/14 plans)
+
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 9
+- Average duration: 5 min
+- Total execution time: 47 min
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 01-review-and-hardening | 3/3 | 22 min | 7 min |
+| 02-character-approval-completion | 4/4 | 20 min | 5 min |
+| 03-builder-ux | 2/2 | 10 min | 5 min |
+
+**Recent Trend:**
+- Last 5 plans: 02-02 (5 min), 02-03 (8 min), 02-04 (3 min), 03-01 (2 min), 03-02 (8 min)
+- Trend: stable
+
+*Updated after each plan completion*
 
 ## Performance Metrics
 

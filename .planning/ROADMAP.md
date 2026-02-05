@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Review & Hardening** - Verify and fix existing chargen, builder, and API code before building on it
 - [x] **Phase 2: Character Approval Completion** - Players can submit, get rejected, revise, and get approved with full workflow
-- [ ] **Phase 3: Builder UX** - Compass rose navigation and V5 room templates enhance the grid editor
+- [x] **Phase 3: Builder UX** - Compass rose navigation and V5 room templates enhance the grid editor
 - [ ] **Phase 4: Builder Approval Workflow** - Builders submit projects for staff review with state machine lifecycle
 - [ ] **Phase 5: Sandbox Building** - Approved projects auto-build into isolated sandbox areas for testing
 - [ ] **Phase 6: Live Promotion** - Tested sandbox builds connect into the live game world

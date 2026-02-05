@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 7 of 7 (Trigger System) - **IN PROGRESS**
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-05 -- Completed 07-01-PLAN.md (Entry/exit trigger engine)
+Last activity: 2026-02-05 -- Completed 07-02-PLAN.md (Timed triggers via Evennia Scripts)
 
-Progress: [██████████████] 94% (14/16 plans)
+Progress: [███████████████] 94% (15/16 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 5 min
-- Total execution time: 54 min
+- Total plans completed: 11
+- Average duration: 6 min
+- Total execution time: 71 min
 
 **By Phase:**
 
@@ -33,10 +33,11 @@ Progress: [██████████████] 94% (14/16 plans)
 | 04-builder-approval-workflow | 1/1 | 7 min | 7 min |
 | 05-sandbox-building | 2/2 | 8 min | 4 min |
 | 06-live-promotion | 1/1 | 8 min | 8 min |
+| 07-trigger-system | 2/3 | 30 min | 15 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (2 min), 03-02 (8 min), 04-01 (7 min), 05-01 (3 min)
-- Trend: stable
+- Last 5 plans: 04-01 (7 min), 05-01 (3 min), 05-02 (5 min), 06-01 (8 min), 07-01 (13 min), 07-02 (17 min)
+- Trend: increasing (trigger system is more complex)
 
 *Updated after each plan completion*
 
@@ -91,6 +92,10 @@ Recent decisions affecting current work:
 - [07-01]: Trigger actions are pure functions with no eval/exec - security by design
 - [07-01]: Errors in triggers are logged but don't crash room movement
 - [07-01]: ACTION_REGISTRY pattern allows easy extension of whitelisted actions
+- [07-02]: RoomTriggerScript uses interval=300s default with 10s minimum to prevent abuse
+- [07-02]: Scripts attached to room via obj=room, trigger_id stored in script.db for filtering
+- [07-02]: is_valid() checks room.db.triggers to auto-stop orphaned scripts on server reload
+- [07-02]: Trigger scripts created during sandbox build, deleted during cleanup before rooms
 
 ### Pending Todos
 
@@ -100,7 +105,7 @@ Recent decisions affecting current work:
 ### Blockers/Concerns
 
 - [Research]: Phase 5 (Sandbox) needs run_in_main_thread() integration testing -- highest architectural risk
-- [Research]: Phase 7 (Triggers) V5 condition system is novel -- needs design research during planning
+- [Research]: Phase 7 (Triggers) V5 condition system is novel -- needs design research during planning (07-03 upcoming)
 - [Research]: JSON map_data needs schema versioning before Phase 5 -- ADDRESSED: schema_version added to defaults
 - [01-01]: In-clan discipline server-side validation needs ClanDiscipline model (deferred, staff review catches it)
 - [02-03]: beckonmu/web/templates/ is an NTFS junction to web/templates/ -- git tracks both paths, causing duplicate diffs
@@ -109,5 +114,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 07-01-PLAN.md (Entry/exit trigger engine with whitelisted actions)
+Stopped at: Completed 07-02-PLAN.md (Timed triggers via Evennia Scripts)
 Resume file: None

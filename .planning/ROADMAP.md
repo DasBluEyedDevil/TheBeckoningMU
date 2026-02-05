@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Builder UX** - Compass rose navigation and V5 room templates enhance the grid editor
 - [x] **Phase 4: Builder Approval Workflow** - Builders submit projects for staff review with state machine lifecycle
 - [x] **Phase 5: Sandbox Building** - Approved projects auto-build into isolated sandbox areas for testing
-- [ ] **Phase 6: Live Promotion** - Tested sandbox builds connect into the live game world
+- [x] **Phase 6: Live Promotion** - Tested sandbox builds connect into the live game world
 - [ ] **Phase 7: Trigger System** - Rooms respond to events with entry/exit, timed, and interaction triggers
 
 ## Phase Details
@@ -112,7 +112,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md — Connection point selection and promotion engine: model fields for connection_room_id/direction, promotion.py engine with thread-safe room moving, API endpoints for room list and promotion trigger, UI integration with modal
+- [x] 06-01-PLAN.md — Connection point selection and promotion engine: model fields for connection_room_id/direction, promotion.py engine with thread-safe room moving, API endpoints for room list and promotion trigger, UI integration with modal
 
 ### Phase 7: Trigger System
 **Goal**: Builders can add dynamic behavior to rooms -- atmospheric messages on entry, timed weather events, and responses to player actions -- all through the web editor
@@ -146,5 +146,5 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 | 3. Builder UX | 2/2 | Complete | 2026-02-05 |
 | 4. Builder Approval Workflow | 1/1 | Complete | 2026-02-05 |
 | 5. Sandbox Building | 2/2 | Complete | 2026-02-05 |
-| 6. Live Promotion | 0/1 | Not started | - |
+| 6. Live Promotion | 1/1 | Complete | 2026-02-05 |
 | 7. Trigger System | 0/3 | Not started | - |

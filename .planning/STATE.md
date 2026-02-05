@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 
 ## Current Position
 
-Phase: 5 of 7 (Sandbox Building) - **COMPLETE**
-Plan: 2 of 2 in current phase
+Phase: 6 of 7 (Live Promotion) - **COMPLETE**
+Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-02-05 -- Completed 05-02-PLAN.md (Sandbox Isolation, Walkthrough, and Cleanup)
+Last activity: 2026-02-05 -- Completed 06-01-PLAN.md (Connection Point Selection and Promotion Engine)
 
-Progress: [████████████__] 86% (12/14 plans)
+Progress: [█████████████_] 93% (13/14 plans)
 
 ## Performance Metrics
 
@@ -32,6 +32,7 @@ Progress: [████████████__] 86% (12/14 plans)
 | 03-builder-ux | 2/2 | 10 min | 5 min |
 | 04-builder-approval-workflow | 1/1 | 7 min | 7 min |
 | 05-sandbox-building | 2/2 | 8 min | 4 min |
+| 06-live-promotion | 1/1 | 8 min | 8 min |
 
 **Recent Trend:**
 - Last 5 plans: 03-01 (2 min), 03-02 (8 min), 04-01 (7 min), 05-01 (3 min)
@@ -82,11 +83,14 @@ Recent decisions affecting current work:
 - [05-02]: Builder commands package structure (beckonmu/commands/builder/ with submodules)
 - [05-02]: Cleanup deletes exits first, then objects, then rooms to avoid reference errors
 - [05-02]: Project status resets from 'built' to 'approved' after cleanup (not to 'draft')
+- [06-01]: Promotion moves rooms (removes 'sandbox' tag) rather than copying - preserves dbrefs and V5 attributes
+- [06-01]: Entry room selection uses lowest room ID as simple heuristic
+- [06-01]: Bidirectional exits created automatically with opposite direction mapping
+- [06-01]: run_in_main_thread import is from evennia.utils.utils (not evennia.server.sessionhandler in Evennia 5.0)
 
 ### Pending Todos
 
-- Run `evennia migrate` to apply 0002_buildproject_version migration on deployment
-- Run `evennia migrate` to apply 0003_buildproject_status_fields migration on deployment
+- Run `evennia migrate` to apply 0004_buildproject_connection_fields migration on deployment
 - ~~Run `evennia migrate` to apply 0002_characterbio_status_background migration on deployment~~ (Applied during 02-04)
 
 ### Blockers/Concerns
@@ -101,5 +105,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 05-02-PLAN.md (Sandbox Isolation, Walkthrough, and Cleanup) - Phase 5 Complete - All 2 plans verified and committed
+Stopped at: Completed 06-01-PLAN.md (Connection Point Selection and Promotion Engine) - Phase 6 Complete - All 1 plan verified and committed
 Resume file: None

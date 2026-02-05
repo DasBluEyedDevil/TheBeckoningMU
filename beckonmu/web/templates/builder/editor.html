@@ -279,6 +279,24 @@
         text-align: center;
         padding: 40px 20px;
     }
+
+    /* Template styles */
+    .template-select-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .template-select-row .builder-select {
+        flex: 1;
+    }
+
+    .template-desc {
+        font-size: 11px;
+        color: var(--builder-muted);
+        margin-top: 5px;
+        font-style: italic;
+        white-space: pre-line;
+    }
 </style>
 {% endblock %}
 
@@ -306,6 +324,23 @@
                         <span class="toggle-icon">-</span>
                     </div>
                     <div class="prop-section-content">
+                        <div class="form-group">
+                            <label class="builder-label">Room Template</label>
+                            <div class="template-select-row">
+                                <select id="room-template" class="builder-select">
+                                    <option value="">-- Select Template --</option>
+                                    <option value="elysium">Elysium</option>
+                                    <option value="haven">Haven</option>
+                                    <option value="rack">Rack (Feeding Ground)</option>
+                                    <option value="hostile_territory">Hostile Territory</option>
+                                    <option value="neutral_ground">Neutral Ground</option>
+                                    <option value="mortal_establishment">Mortal Establishment</option>
+                                    <option value="supernatural_site">Supernatural Site</option>
+                                    <option value="clear">-- Clear All Settings --</option>
+                                </select>
+                            </div>
+                            <div id="template-description" class="template-desc"></div>
+                        </div>
                         <div class="form-group">
                             <label class="builder-label">Name</label>
                             <input type="text" id="room-name" class="builder-input"
@@ -504,10 +539,98 @@
     const ROOM_WIDTH = 80;
     const ROOM_HEIGHT = 60;
 
+    // Template storage
+    let roomTemplates = {};
+
+    // Load templates on page load
+    async function loadTemplates() {
+        try {
+            const response = await fetch("{% url 'builder:templates' %}");
+            const result = await response.json();
+            if (result.status === 'success') {
+                roomTemplates = result.templates;
+            }
+        } catch (err) {
+            console.error('Failed to load templates:', err);
+        }
+    }
+
+    // Show template preview with description and settings summary
+    function showTemplatePreview(templateKey) {
+        const template = roomTemplates[templateKey];
+        if (!template) return;
+
+        const descEl = document.getElementById('template-description');
+        let preview = template.description;
+
+        // Add settings summary
+        const v5 = template.v5;
+        preview += `\n\nSettings:\n`;
+        preview += `• Type: ${v5.location_type || 'None'}\n`;
+        preview += `• Access: ${v5.day_night.replace('_', ' ')}\n`;
+        preview += `• Danger: ${v5.danger_level}\n`;
+        if (v5.hunting_modifier !== 0) {
+            preview += `• Hunting: ${v5.hunting_modifier > 0 ? '+' : ''}${v5.hunting_modifier}\n`;
+        }
+
+        descEl.textContent = preview;
+    }
+
+    // Apply template to current room
+    function applyTemplate(templateKey) {
+        if (!selectedRoomId || !roomTemplates[templateKey]) return;
+
+        const template = roomTemplates[templateKey];
+        const room = mapData.rooms[selectedRoomId];
+
+        // Confirm before applying (unless it's a new room or clear template)
+        if (templateKey !== 'clear' && room.v5 && room.v5.location_type) {
+            if (!confirm(`Apply "${template.name}" template? This will overwrite current V5 settings.`)) {
+                document.getElementById('room-template').value = '';
+                document.getElementById('template-description').textContent = '';
+                return;
+            }
+        }
+
+        // Apply V5 settings
+        room.v5 = {...room.v5, ...template.v5};
+
+        // Update UI
+        document.getElementById('room-location-type').value = room.v5.location_type || '';
+        document.getElementById('room-day-night').value = room.v5.day_night || 'always';
+        document.getElementById('room-danger').value = room.v5.danger_level || 'safe';
+        document.getElementById('room-hunting').value = room.v5.hunting_modifier || 0;
+
+        // Update haven section visibility
+        toggleHavenSection(room.v5.location_type === 'haven');
+
+        // Apply haven ratings if present
+        if (room.v5.haven_ratings) {
+            document.getElementById('haven-security').value = room.v5.haven_ratings.security || 0;
+            document.getElementById('haven-size').value = room.v5.haven_ratings.size || 0;
+            document.getElementById('haven-luxury').value = room.v5.haven_ratings.luxury || 0;
+            document.getElementById('haven-warding').value = room.v5.haven_ratings.warding || 0;
+            document.getElementById('haven-hidden').checked = room.v5.haven_ratings.location_hidden || false;
+        }
+
+        // Show description
+        showTemplatePreview(templateKey);
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
         initMap();
         updateStatusBar();
+        loadTemplates();
+
+        // Bind template dropdown
+        document.getElementById('room-template').onchange = function(e) {
+            if (e.target.value) {
+                applyTemplate(e.target.value);
+            } else {
+                document.getElementById('template-description').textContent = '';
+            }
+        };
     });
 
     function initMap() {
@@ -586,6 +709,10 @@
 
         // Triggers
         updateTriggersDisplay(room.triggers || []);
+
+        // Reset template dropdown and description
+        document.getElementById('room-template').value = '';
+        document.getElementById('template-description').textContent = '';
 
         // Bind input handlers
         bindRoomInputs(id);

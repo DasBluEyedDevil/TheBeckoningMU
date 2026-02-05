@@ -4,7 +4,7 @@ Can be called from web API or in-game commands.
 """
 
 from evennia.utils import search
-from evennia.server.sessionhandler import run_in_main_thread
+from evennia.utils.utils import run_in_main_thread
 import threading
 
 

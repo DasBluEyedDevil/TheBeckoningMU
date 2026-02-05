@@ -11,7 +11,7 @@ from typing import Any, Callable, Tuple, Dict, Optional
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from evennia.server.sessionhandler import run_in_main_thread
+from evennia.utils.utils import run_in_main_thread
 
 from .models import BuildProject
 from .sandbox_builder import build_sandbox_area

@@ -88,6 +88,12 @@
                                             Submit
                                         </button>
                                         {% endif %}
+                                        {% if project.status == 'built' %}
+                                        <button class="btn btn-sm btn-outline-success"
+                                                onclick="promoteProject({{ project.id }}, '{{ project.name|escapejs }}')">
+                                            Promote to Live
+                                        </button>
+                                        {% endif %}
                                         <a href="{% url 'builder:edit_project' project.pk %}"
                                            class="btn btn-sm btn-outline-light">Edit</a>
                                         <a href="{% url 'builder:export_project' project.pk %}"
@@ -186,6 +192,56 @@
     </div>
 </div>
 
+<!-- Promote to Live Modal -->
+<div class="modal fade" id="promoteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light">Promote to Live World</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-light">Promote <strong id="promote-project-name"></strong> to the live game world?</p>
+                <p class="text-muted small">This will connect your sandbox build to the live world.</p>
+                
+                <div class="mb-3">
+                    <label for="connection-room" class="form-label text-light">Connect to Room:</label>
+                    <select class="form-select bg-dark text-light border-secondary" id="connection-room">
+                        <option value="">Loading rooms...</option>
+                    </select>
+                    <div class="form-text text-muted">Select the live world room to connect your build to.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="connection-direction" class="form-label text-light">Direction from Live Room:</label>
+                    <select class="form-select bg-dark text-light border-secondary" id="connection-direction">
+                        <option value="n">North (n)</option>
+                        <option value="s">South (s)</option>
+                        <option value="e">East (e)</option>
+                        <option value="w">West (w)</option>
+                        <option value="ne">Northeast (ne)</option>
+                        <option value="nw">Northwest (nw)</option>
+                        <option value="se">Southeast (se)</option>
+                        <option value="sw">Southwest (sw)</option>
+                        <option value="u">Up (u)</option>
+                        <option value="d">Down (d)</option>
+                    </select>
+                    <div class="form-text text-muted">Players will use this direction to enter your build from the selected room.</div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Warning:</strong> This action cannot be undone. Make sure you have tested your build thoroughly in the sandbox.
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="confirm-promote">Promote to Live</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 // CSRF token helper
 function getCookie(name) {
@@ -244,7 +300,88 @@ document.getElementById('confirm-submit').addEventListener('click', async functi
     }
 });
 
-// Initialize tooltips
+// Promotion modal handling
+let promoteProjectId = null;
+const promoteModal = new bootstrap.Modal(document.getElementById('promoteModal'));
+let connectionRooms = [];
+
+function promoteProject(id, name) {
+    promoteProjectId = id;
+    document.getElementById('promote-project-name').textContent = name;
+    document.getElementById('connection-room').innerHTML = '<option value="">Loading rooms...</option>';
+    document.getElementById('connection-direction').value = 'n';
+    promoteModal.show();
+    loadConnectionRooms();
+}
+
+async function loadConnectionRooms() {
+    try {
+        const response = await fetch('/builder/api/connection-rooms/');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            connectionRooms = data.rooms;
+            const select = document.getElementById('connection-room');
+            select.innerHTML = '';
+            
+            if (connectionRooms.length === 0) {
+                select.innerHTML = '<option value="">No available rooms</option>';
+            } else {
+                connectionRooms.forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.id;
+                    option.textContent = `${room.name} (#${room.id})`;
+                    select.appendChild(option);
+                });
+            }
+        } else {
+            document.getElementById('connection-room').innerHTML = '<option value="">Error loading rooms</option>';
+        }
+    } catch (error) {
+        console.error('Failed to load connection rooms:', error);
+        document.getElementById('connection-room').innerHTML = '<option value="">Error loading rooms</option>';
+    }
+}
+
+document.getElementById('confirm-promote').addEventListener('click', async function() {
+    if (!promoteProjectId) return;
+    
+    const roomId = document.getElementById('connection-room').value;
+    const direction = document.getElementById('connection-direction').value;
+    
+    if (!roomId) {
+        alert('Please select a connection room');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/builder/api/build/${promoteProjectId}/promote/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ 
+                connection_room_id: parseInt(roomId),
+                connection_direction: direction
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            promoteModal.hide();
+            alert(`Project promoted successfully! ${data.promoted_rooms} rooms moved to live world.`);
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to promote project'));
+        }
+    } catch (error) {
+        alert('Error promoting project: ' + error.message);
+    }
+});
+
+// Initialize toolips
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)

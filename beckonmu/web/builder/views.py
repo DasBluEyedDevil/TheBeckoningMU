@@ -10,6 +10,7 @@ from .models import BuildProject, RoomTemplate
 from .exporter import generate_batch_script
 from .validators import validate_project
 from .sandbox_bridge import create_sandbox_from_project
+from .promotion import promote_project_to_live
 
 
 # V5 Room Template Presets
@@ -607,4 +608,140 @@ class CleanupSandboxView(StaffRequiredMixin, View):
         else:
             return JsonResponse(
                 {"status": "error", "error": result.get("error", "Unknown")}, status=500
+            )
+
+
+class ListConnectionRoomsView(StaffRequiredMixin, View):
+    """List rooms available for connection during promotion."""
+
+    def get(self, request, *args, **kwargs):
+        """
+        Return list of live world rooms (non-sandbox) that can be used as connection points.
+
+        For now, returns all non-sandbox rooms. Future enhancement could filter by
+        ownership or builder permissions.
+        """
+        from evennia.utils import search
+
+        # Search for all rooms
+        all_rooms = search.search_object(
+            "", typeclass="beckonmu.typeclasses.rooms.Room"
+        )
+
+        # Filter out sandbox rooms
+        connection_rooms = []
+        for room in all_rooms:
+            # Skip rooms tagged as sandbox
+            if room.tags.get("sandbox"):
+                continue
+
+            connection_rooms.append(
+                {
+                    "id": room.id,
+                    "name": room.name,
+                    "key": room.key,
+                    "description": room.db.desc or "",
+                }
+            )
+
+        # Sort by name for consistent ordering
+        connection_rooms.sort(key=lambda r: r["name"].lower())
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "rooms": connection_rooms,
+            }
+        )
+
+
+class PromoteProjectView(StaffRequiredMixin, View):
+    """Promote a built project from sandbox to live world."""
+
+    def post(self, request, pk, *args, **kwargs):
+        """
+        Promote a built project to live world.
+
+        Request body: {
+            "connection_room_id": int,
+            "connection_direction": string (n/s/e/w/ne/nw/se/sw/u/d)
+        }
+        """
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Check ownership - only owner can promote
+        if project.user != request.user:
+            return JsonResponse(
+                {"status": "error", "error": "Not authorized"}, status=403
+            )
+
+        # Check project is in built status
+        if project.status != "built":
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "error": f"Project must be in 'built' status (current: {project.status})",
+                },
+                status=400,
+            )
+
+        # Parse request body
+        try:
+            data = json.loads(request.body) if request.body else {}
+        except json.JSONDecodeError:
+            return JsonResponse(
+                {"status": "error", "error": "Invalid JSON"}, status=400
+            )
+
+        connection_room_id = data.get("connection_room_id")
+        connection_direction = data.get("connection_direction", "").lower()
+
+        # Validate required fields
+        if not connection_room_id:
+            return JsonResponse(
+                {"status": "error", "error": "connection_room_id is required"},
+                status=400,
+            )
+
+        if not connection_direction:
+            return JsonResponse(
+                {"status": "error", "error": "connection_direction is required"},
+                status=400,
+            )
+
+        # Validate direction is valid
+        valid_directions = ["n", "s", "e", "w", "ne", "nw", "se", "sw", "u", "d"]
+        if connection_direction not in valid_directions:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "error": f"Invalid direction. Valid directions: {', '.join(valid_directions)}",
+                },
+                status=400,
+            )
+
+        # Call promotion engine
+        success, result = promote_project_to_live(
+            project.id, connection_room_id, connection_direction
+        )
+
+        if success:
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Project promoted to live world successfully",
+                    "promoted_rooms": result.get("promoted_rooms", 0),
+                    "created_exits": result.get("created_exits", []),
+                    "entry_room_id": result.get("entry_room_id"),
+                    "project": {
+                        "id": project.id,
+                        "name": project.name,
+                        "status": "live",
+                    },
+                }
+            )
+        else:
+            return JsonResponse(
+                {"status": "error", "error": result.get("error", "Unknown error")},
+                status=500,
             )

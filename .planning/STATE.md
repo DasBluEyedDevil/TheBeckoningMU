@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-02-03)
 
 **Core value:** Players and builders can do complex, multi-step tasks (character creation and area building) through an intuitive web interface instead of memorizing text commands.
-**Current focus:** Phase 4 -- Builder Approval Workflow
+**Current focus:** Phase 5 -- Sandbox Building
 
 ## Current Position
 

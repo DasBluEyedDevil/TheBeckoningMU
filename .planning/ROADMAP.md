@@ -94,11 +94,11 @@ Plans:
   2. Builder can connect via MUD client and walk through the sandbox rooms, testing exits and room descriptions
   3. Sandbox rooms are isolated -- regular players cannot accidentally reach them from the live game world
   4. Builder or staff can tear down a sandbox, cleanly deleting all rooms and exits created for that project
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Bridge layer and sandbox room/exit creation
-- [ ] 05-02: Sandbox isolation, walkthrough, and cleanup
+- [ ] 05-01-PLAN.md — Bridge layer and sandbox room/exit creation: thread-safe Django-to-Evennia bridge, sandbox_builder for creating rooms/exits from map_data, BuildSandboxView API endpoint
+- [ ] 05-02-PLAN.md — Sandbox isolation, walkthrough, and cleanup: room access locks for isolation, @goto_sandbox/@cleanup_sandbox/@list_sandboxes commands, sandbox_cleanup module with web API
 
 ### Phase 6: Live Promotion
 **Goal**: Builders can promote a tested sandbox build into the live game world, automatically connecting it at a specified point

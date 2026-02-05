@@ -66,6 +66,16 @@ class BuildProject(models.Model):
     )
     # Link to in-game sandbox instance (if built)
     sandbox_room_id = models.IntegerField(null=True, blank=True)
+    # Connection point for promotion to live world
+    connection_room_id = models.IntegerField(
+        null=True, blank=True, help_text="Live room dbref to connect this build to"
+    )
+    connection_direction = models.CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+        help_text="Direction from live room into this build (n/s/e/w/ne/nw/se/sw/u/d)",
+    )
     # When promoted to live
     promoted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

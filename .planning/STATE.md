@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 3 of 7 (Builder UX)
-Plan: 0 of 2 in current phase
-Status: Ready to start
-Last activity: 2026-02-05 -- Completed Phase 2 (Character Approval Completion)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-05 -- Completed 03-01-PLAN.md (Compass rose and exit auto-naming)
 
-Progress: [#######_______] 50% (7/14 plans)
+Progress: [########______] 57% (8/14 plans)
 
 ## Performance Metrics
 
@@ -61,6 +61,9 @@ Recent decisions affecting current work:
 - [02-03]: Rejection modal uses Bootstrap 5 Modal API (vanilla JS, no jQuery)
 - [02-03]: Draft keyed by chargen_draft_<id> for edit, chargen_draft_new for create
 - [02-03]: Draft TTL is 7 days; edit mode loads from API not localStorage
+- [03-01]: Direction calculation uses 8-point compass with grid delta mapping
+- [03-01]: Exits auto-created bidirectionally with opposite directions
+- [03-01]: Direction labels use abbreviated forms (n, s, e, w, ne, nw, se, sw)
 
 ### Pending Todos
 
@@ -79,5 +82,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 02-04-PLAN.md (migration and verification) - Phase 2 Complete
+Stopped at: Completed 03-01-PLAN.md (Compass rose and exit auto-naming)
 Resume file: None

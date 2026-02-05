@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 4 of 7 (Builder Approval Workflow)
-Plan: 0 of 1 in current phase
-Status: Ready to start
-Last activity: 2026-02-05 -- Completed Phase 3 (Builder UX)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-02-05 -- Completed 04-01-PLAN.md (Builder Approval Workflow)
 
-Progress: [#########_____] 64% (9/14 plans)
+Progress: [##########____] 71% (10/14 plans)
 
 ## Performance Metrics
 
@@ -30,6 +30,7 @@ Progress: [#########_____] 64% (9/14 plans)
 | 01-review-and-hardening | 3/3 | 22 min | 7 min |
 | 02-character-approval-completion | 4/4 | 20 min | 5 min |
 | 03-builder-ux | 2/2 | 10 min | 5 min |
+| 04-builder-approval-workflow | 1/1 | 7 min | 7 min |
 
 **Recent Trend:**
 - Last 5 plans: 02-02 (5 min), 02-03 (8 min), 02-04 (3 min), 03-01 (2 min), 03-02 (8 min)
@@ -88,10 +89,15 @@ Recent decisions affecting current work:
 - [03-02]: Templates defined as Python dictionary (not database) for simplicity
 - [03-02]: Haven template includes default haven_ratings for convenience
 - [03-02]: Confirmation dialog only for rooms with existing V5 settings
+- [04-01]: Status choices use 5 states: draft/submitted/approved/built/live
+- [04-01]: Rejection returns to draft (not separate rejected state)
+- [04-01]: Map preview uses canvas with simple room/exit rendering
+- [04-01]: Rejection notes have 10 character minimum
 
 ### Pending Todos
 
 - Run `evennia migrate` to apply 0002_buildproject_version migration on deployment
+- Run `evennia migrate` to apply 0003_buildproject_status_fields migration on deployment
 - ~~Run `evennia migrate` to apply 0002_characterbio_status_background migration on deployment~~ (Applied during 02-04)
 
 ### Blockers/Concerns
@@ -106,5 +112,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 03-02-PLAN.md (V5 room templates) - Phase 3 Complete
+Stopped at: Completed 04-01-PLAN.md (Builder Approval Workflow) - Phase 4 Complete
 Resume file: None

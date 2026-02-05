@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Review & Hardening** - Verify and fix existing chargen, builder, and API code before building on it
 - [x] **Phase 2: Character Approval Completion** - Players can submit, get rejected, revise, and get approved with full workflow
 - [x] **Phase 3: Builder UX** - Compass rose navigation and V5 room templates enhance the grid editor
-- [ ] **Phase 4: Builder Approval Workflow** - Builders submit projects for staff review with state machine lifecycle
+- [x] **Phase 4: Builder Approval Workflow** - Builders submit projects for staff review with state machine lifecycle
 - [ ] **Phase 5: Sandbox Building** - Approved projects auto-build into isolated sandbox areas for testing
 - [ ] **Phase 6: Live Promotion** - Tested sandbox builds connect into the live game world
 - [ ] **Phase 7: Trigger System** - Rooms respond to events with entry/exit, timed, and interaction triggers
@@ -83,7 +83,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — State machine and submission/review workflow: BuildProject status field, builder submission from dashboard, staff review page with map preview and approve/reject actions
+- [x] 04-01-PLAN.md — State machine and submission/review workflow: BuildProject status field, builder submission from dashboard, staff review page with map preview and approve/reject actions
 
 ### Phase 5: Sandbox Building
 **Goal**: Approved builder projects automatically create real Evennia rooms and exits in an isolated sandbox area where builders can walk through and test their build
@@ -144,7 +144,7 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 | 1. Review & Hardening | 3/3 | Complete | 2026-02-03 |
 | 2. Character Approval Completion | 4/4 | Complete | 2026-02-05 |
 | 3. Builder UX | 2/2 | Complete | 2026-02-05 |
-| 4. Builder Approval Workflow | 0/1 | Not started | - |
+| 4. Builder Approval Workflow | 1/1 | Complete | 2026-02-05 |
 | 5. Sandbox Building | 0/2 | Not started | - |
 | 6. Live Promotion | 0/1 | Not started | - |
 | 7. Trigger System | 0/3 | Not started | - |

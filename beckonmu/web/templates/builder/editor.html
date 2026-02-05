@@ -112,6 +112,15 @@
         z-index: 1;
     }
 
+    .exit-label {
+        font-size: 10px;
+        fill: #ccc;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none;
+        font-family: monospace;
+    }
+
     /* Property Sections */
     .prop-section {
         margin-bottom: 15px;
@@ -822,6 +831,36 @@
             line.setAttribute('stroke-width', '2');
 
             svg.appendChild(line);
+
+            // Add direction label at midpoint
+            if (exit.direction) {
+                const midX = (x1 + x2) / 2;
+                const midY = (y1 + y2) / 2;
+
+                // Get abbreviation (first letter or two for diagonals)
+                const abbrev = exit.aliases && exit.aliases.length > 0 ? exit.aliases[0] : exit.direction.substring(0, 1);
+
+                // Create background rect for readability
+                const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                const textWidth = abbrev.length * 7;
+                bgRect.setAttribute('x', midX - textWidth / 2 - 2);
+                bgRect.setAttribute('y', midY - 7);
+                bgRect.setAttribute('width', textWidth + 4);
+                bgRect.setAttribute('height', 14);
+                bgRect.setAttribute('fill', 'var(--builder-bg)');
+                bgRect.setAttribute('rx', 2);
+                bgRect.setAttribute('opacity', '0.9');
+                svg.appendChild(bgRect);
+
+                // Create text label
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', midX);
+                text.setAttribute('y', midY);
+                text.setAttribute('class', 'exit-label');
+                text.textContent = abbrev;
+
+                svg.appendChild(text);
+            }
         }
     }
 

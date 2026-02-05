@@ -13,11 +13,11 @@
 
 ### Character Creation & Approval
 
-- [ ] **CHAR-01**: Player can view rejection notes and edit/resubmit a rejected character without starting over
-- [ ] **CHAR-02**: CharacterBio includes background text field for free-text backstory
-- [ ] **CHAR-03**: Approved character is auto-placed in the starting room
-- [ ] **CHAR-04**: Player receives in-game notification when character is approved or rejected
-- [ ] **CHAR-05**: Player can save partial chargen progress and resume later (draft save/resume)
+- [x] **CHAR-01**: Player can view rejection notes and edit/resubmit a rejected character without starting over
+- [x] **CHAR-02**: CharacterBio includes background text field for free-text backstory
+- [x] **CHAR-03**: Approved character is auto-placed in the starting room
+- [x] **CHAR-04**: Player receives in-game notification when character is approved or rejected
+- [x] **CHAR-05**: Player can save partial chargen progress and resume later (draft save/resume)
 
 ### Builder UX
 
@@ -86,11 +86,11 @@
 | REVW-01 | Phase 1: Review & Hardening | Complete |
 | REVW-02 | Phase 1: Review & Hardening | Complete |
 | REVW-03 | Phase 1: Review & Hardening | Complete |
-| CHAR-01 | Phase 2: Character Approval Completion | Pending |
-| CHAR-02 | Phase 2: Character Approval Completion | Pending |
-| CHAR-03 | Phase 2: Character Approval Completion | Pending |
-| CHAR-04 | Phase 2: Character Approval Completion | Pending |
-| CHAR-05 | Phase 2: Character Approval Completion | Pending |
+| CHAR-01 | Phase 2: Character Approval Completion | Complete |
+| CHAR-02 | Phase 2: Character Approval Completion | Complete |
+| CHAR-03 | Phase 2: Character Approval Completion | Complete |
+| CHAR-04 | Phase 2: Character Approval Completion | Complete |
+| CHAR-05 | Phase 2: Character Approval Completion | Complete |
 | BLDX-01 | Phase 3: Builder UX | Pending |
 | BLDX-02 | Phase 3: Builder UX | Pending |
 | BLDX-03 | Phase 3: Builder UX | Pending |
@@ -119,4 +119,4 @@
 
 ---
 *Requirements defined: 2026-02-03*
-*Last updated: 2026-02-03 after Phase 1 completion*
+*Last updated: 2026-02-05 after Phase 2 completion*

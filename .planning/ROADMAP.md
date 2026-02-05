@@ -13,7 +13,7 @@ This roadmap takes the existing Evennia-based web portal -- which already has wo
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Review & Hardening** - Verify and fix existing chargen, builder, and API code before building on it
-- [ ] **Phase 2: Character Approval Completion** - Players can submit, get rejected, revise, and get approved with full workflow
+- [x] **Phase 2: Character Approval Completion** - Players can submit, get rejected, revise, and get approved with full workflow
 - [ ] **Phase 3: Builder UX** - Compass rose navigation and V5 room templates enhance the grid editor
 - [ ] **Phase 4: Builder Approval Workflow** - Builders submit projects for staff review with state machine lifecycle
 - [ ] **Phase 5: Sandbox Building** - Approved projects auto-build into isolated sandbox areas for testing
@@ -52,10 +52,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Model extension: add status/background/rejection fields to CharacterBio, migrate from boolean, refactor all call sites
-- [ ] 02-02-PLAN.md -- New API endpoints (my-characters, for-edit, resubmit), auto-placement, notification helpers, chargen command updates
-- [ ] 02-03-PLAN.md -- Frontend: approval UI rejection modal + background display; creation UI edit mode + background field + draft save/resume
-- [ ] 02-04-PLAN.md -- Run migration and end-to-end verification (automated checks + human smoke test of full lifecycle)
+- [x] 02-01-PLAN.md -- Model extension: add status/background/rejection fields to CharacterBio, migrate from boolean, refactor all call sites
+- [x] 02-02-PLAN.md -- New API endpoints (my-characters, for-edit, resubmit), auto-placement, notification helpers, chargen command updates
+- [x] 02-03-PLAN.md -- Frontend: approval UI rejection modal + background display; creation UI edit mode + background field + draft save/resume
+- [x] 02-04-PLAN.md -- Run migration and end-to-end verification (automated checks + human smoke test of full lifecycle)
 
 ### Phase 3: Builder UX
 **Goal**: Builders can orient their maps spatially and apply V5 room presets, making the grid editor faster and more intuitive
@@ -142,7 +142,7 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
 | 1. Review & Hardening | 3/3 | Complete | 2026-02-03 |
-| 2. Character Approval Completion | 0/4 | Planned | - |
+| 2. Character Approval Completion | 4/4 | Complete | 2026-02-05 |
 | 3. Builder UX | 0/2 | Not started | - |
 | 4. Builder Approval Workflow | 0/1 | Not started | - |
 | 5. Sandbox Building | 0/2 | Not started | - |

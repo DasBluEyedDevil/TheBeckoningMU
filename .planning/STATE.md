@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 
 ## Current Position
 
-Phase: 7 of 7 (Trigger System) - **PLANNED**
-Plan: 0 of 3 in current phase
-Status: Ready for execution
-Last activity: 2026-02-05 -- Created 07-01, 07-02, 07-03 plans for Trigger System
+Phase: 7 of 7 (Trigger System) - **IN PROGRESS**
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-05 -- Completed 07-01-PLAN.md (Entry/exit trigger engine)
 
-Progress: [█████████████_] 93% (13/16 plans)
+Progress: [██████████████] 94% (14/16 plans)
 
 ## Performance Metrics
 
@@ -87,6 +87,10 @@ Recent decisions affecting current work:
 - [06-01]: Entry room selection uses lowest room ID as simple heuristic
 - [06-01]: Bidirectional exits created automatically with opposite direction mapping
 - [06-01]: run_in_main_thread import is from evennia.utils.utils (not evennia.server.sessionhandler in Evennia 5.0)
+- [07-01]: Only player characters trigger entry/exit (NPCs excluded via has_account check)
+- [07-01]: Trigger actions are pure functions with no eval/exec - security by design
+- [07-01]: Errors in triggers are logged but don't crash room movement
+- [07-01]: ACTION_REGISTRY pattern allows easy extension of whitelisted actions
 
 ### Pending Todos
 
@@ -105,5 +109,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Created Phase 7 plans (07-01, 07-02, 07-03) for Trigger System - Phase 7 Ready for Execution
+Stopped at: Completed 07-01-PLAN.md (Entry/exit trigger engine with whitelisted actions)
 Resume file: None

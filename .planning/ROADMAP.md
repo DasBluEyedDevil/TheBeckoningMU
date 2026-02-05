@@ -129,7 +129,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Entry/exit trigger engine and whitelisted actions: trigger_actions.py with safe actions, trigger_engine.py with validation and execution, Room hooks for at_object_receive/at_object_leave
+- [x] 07-01-PLAN.md — Entry/exit trigger engine and whitelisted actions: trigger_actions.py with safe actions, trigger_engine.py with validation and execution, Room hooks for at_object_receive/at_object_leave
 - [ ] 07-02-PLAN.md — Timed triggers via Evennia Scripts: RoomTriggerScript typeclass with at_repeat hook, trigger_scripts.py for script management, integration with sandbox building and cleanup
 - [ ] 07-03-PLAN.md — Interaction triggers, V5 conditions, and trigger editor UI: v5_conditions.py with clan/hunger/time checks, RoomTriggersAPI endpoints, trigger editor panel in builder HTML
 
@@ -147,4 +147,4 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 | 4. Builder Approval Workflow | 1/1 | Complete | 2026-02-05 |
 | 5. Sandbox Building | 2/2 | Complete | 2026-02-05 |
 | 6. Live Promotion | 1/1 | Complete | 2026-02-05 |
-| 7. Trigger System | 0/3 | Not started | - |
+| 7. Trigger System | 1/3 | In progress | - |

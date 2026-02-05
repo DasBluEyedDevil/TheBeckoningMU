@@ -11,6 +11,7 @@ import logging
 from typing import Dict, Any, Tuple, List, Optional
 
 from .trigger_actions import ACTION_REGISTRY
+from .v5_conditions import check_condition
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ class TriggerError(Exception):
 VALID_TRIGGER_TYPES = {"entry", "exit", "timed", "interaction"}
 
 
-def validate_trigger(trigger_data: Dict[str, Any]) -> Tuple[bool, str]:
+def validate_trigger(trigger_data: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
     """
     Validate trigger data structure.
 
@@ -32,8 +33,8 @@ def validate_trigger(trigger_data: Dict[str, Any]) -> Tuple[bool, str]:
         trigger_data: Dictionary containing trigger configuration
 
     Returns:
-        Tuple of (is_valid: bool, error_message: str)
-        If valid, error_message is empty string
+        Tuple of (is_valid: bool, error_message: Optional[str])
+        If valid, error_message is None
     """
     # Check required fields
     if not isinstance(trigger_data, dict):
@@ -73,7 +74,31 @@ def validate_trigger(trigger_data: Dict[str, Any]) -> Tuple[bool, str]:
     if not isinstance(enabled, bool):
         return False, "Enabled field must be a boolean"
 
-    return True, ""
+    # Validate conditions if present
+    conditions = trigger_data.get("conditions", [])
+    if conditions:
+        if not isinstance(conditions, list):
+            return False, "conditions must be a list"
+
+        from .v5_conditions import list_condition_types
+
+        valid_conditions = list_condition_types()
+
+        for condition in conditions:
+            if not isinstance(condition, dict):
+                return False, "each condition must be a dictionary"
+            if "type" not in condition:
+                return False, "condition missing 'type' field"
+            if condition["type"] not in valid_conditions:
+                return False, f"invalid condition type: {condition['type']}"
+
+    # Validate timed trigger has interval
+    if trigger_data.get("type") == "timed":
+        interval = trigger_data.get("interval")
+        if not interval or not isinstance(interval, int) or interval < 10:
+            return False, "timed triggers must have interval >= 10 seconds"
+
+    return True, None
 
 
 def execute_trigger(trigger_data: Dict[str, Any], room, character, **context) -> bool:
@@ -132,7 +157,7 @@ def execute_trigger(trigger_data: Dict[str, Any], room, character, **context) ->
             value = parameters.get("value")
 
             if attr_name:
-                if target == "character":
+                if target == "character" and character:
                     action_func(character, attr_name, value)
                 else:
                     action_func(room, attr_name, value)
@@ -155,7 +180,7 @@ def execute_trigger(trigger_data: Dict[str, Any], room, character, **context) ->
 
 
 def execute_triggers(
-    room, trigger_type: str, character, trigger_id: str = None, **context
+    room, trigger_type: str, character, trigger_id: Optional[str] = None, **context
 ) -> Tuple[int, int]:
     """
     Execute all triggers of a specific type for a room.
@@ -189,6 +214,22 @@ def execute_triggers(
 
         # Filter by trigger_id if specified (for timed triggers)
         if trigger_id and trigger_data.get("id") != trigger_id:
+            continue
+
+        # Check conditions
+        conditions = trigger_data.get("conditions", [])
+        conditions_met = True
+        for condition in conditions:
+            if not check_condition(
+                condition.get("type"),
+                condition.get("parameters", {}),
+                character=character,
+                room=room,
+            ):
+                conditions_met = False
+                break
+
+        if not conditions_met:
             continue
 
         # Execute the trigger

@@ -29,12 +29,12 @@
 
 ### Builder Workflow
 
-- [ ] **BLDW-01**: BuildProject has explicit status field (Draft, Submitted, Approved, Built, Live)
-- [ ] **BLDW-02**: Builder can submit project for staff review
-- [ ] **BLDW-03**: Staff review interface for builds (map preview + approve/reject with notes)
-- [ ] **BLDW-04**: Auto-sandbox creates rooms/exits in isolated sandbox area via Evennia API (not batch file)
-- [ ] **BLDW-05**: Builder can walk through sandbox to test their build in-game
-- [ ] **BLDW-06**: Sandbox cleanup deletes all sandbox rooms/exits tagged to a project
+- [x] **BLDW-01**: BuildProject has explicit status field (Draft, Submitted, Approved, Built, Live)
+- [x] **BLDW-02**: Builder can submit project for staff review
+- [x] **BLDW-03**: Staff review interface for builds (map preview + approve/reject with notes)
+- [x] **BLDW-04**: Auto-sandbox creates rooms/exits in isolated sandbox area via Evennia API (not batch file)
+- [x] **BLDW-05**: Builder can walk through sandbox to test their build in-game
+- [x] **BLDW-06**: Sandbox cleanup deletes all sandbox rooms/exits tagged to a project
 - [ ] **BLDW-07**: Builder specifies connection point for live promotion
 - [ ] **BLDW-08**: Promotion auto-links sandbox rooms into the live game world at the specified connection point
 
@@ -96,12 +96,12 @@
 | BLDX-03 | Phase 3: Builder UX | Complete |
 | BLDX-04 | Phase 3: Builder UX | Complete |
 | BLDX-05 | Phase 3: Builder UX | Complete |
-| BLDW-01 | Phase 4: Builder Approval Workflow | Pending |
-| BLDW-02 | Phase 4: Builder Approval Workflow | Pending |
-| BLDW-03 | Phase 4: Builder Approval Workflow | Pending |
-| BLDW-04 | Phase 5: Sandbox Building | Pending |
-| BLDW-05 | Phase 5: Sandbox Building | Pending |
-| BLDW-06 | Phase 5: Sandbox Building | Pending |
+| BLDW-01 | Phase 4: Builder Approval Workflow | Complete |
+| BLDW-02 | Phase 4: Builder Approval Workflow | Complete |
+| BLDW-03 | Phase 4: Builder Approval Workflow | Complete |
+| BLDW-04 | Phase 5: Sandbox Building | Complete |
+| BLDW-05 | Phase 5: Sandbox Building | Complete |
+| BLDW-06 | Phase 5: Sandbox Building | Complete |
 | BLDW-07 | Phase 6: Live Promotion | Pending |
 | BLDW-08 | Phase 6: Live Promotion | Pending |
 | TRIG-01 | Phase 7: Trigger System | Pending |
@@ -119,4 +119,4 @@
 
 ---
 *Requirements defined: 2026-02-03*
-*Last updated: 2026-02-05 after Phase 2 completion*
+*Last updated: 2026-02-05 after Phase 5 completion*

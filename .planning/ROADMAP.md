@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Character Approval Completion** - Players can submit, get rejected, revise, and get approved with full workflow
 - [x] **Phase 3: Builder UX** - Compass rose navigation and V5 room templates enhance the grid editor
 - [x] **Phase 4: Builder Approval Workflow** - Builders submit projects for staff review with state machine lifecycle
-- [ ] **Phase 5: Sandbox Building** - Approved projects auto-build into isolated sandbox areas for testing
+- [x] **Phase 5: Sandbox Building** - Approved projects auto-build into isolated sandbox areas for testing
 - [ ] **Phase 6: Live Promotion** - Tested sandbox builds connect into the live game world
 - [ ] **Phase 7: Trigger System** - Rooms respond to events with entry/exit, timed, and interaction triggers
 
@@ -98,7 +98,7 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md — Bridge layer and sandbox room/exit creation: thread-safe Django-to-Evennia bridge, sandbox_builder for creating rooms/exits from map_data, BuildSandboxView API endpoint
-- [ ] 05-02-PLAN.md — Sandbox isolation, walkthrough, and cleanup: room access locks for isolation, @goto_sandbox/@cleanup_sandbox/@list_sandboxes commands, sandbox_cleanup module with web API
+- [x] 05-02-PLAN.md — Sandbox isolation, walkthrough, and cleanup: room access locks for isolation, @goto_sandbox/@cleanup_sandbox/@list_sandboxes commands, sandbox_cleanup module with web API
 
 ### Phase 6: Live Promotion
 **Goal**: Builders can promote a tested sandbox build into the live game world, automatically connecting it at a specified point
@@ -145,6 +145,6 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 | 2. Character Approval Completion | 4/4 | Complete | 2026-02-05 |
 | 3. Builder UX | 2/2 | Complete | 2026-02-05 |
 | 4. Builder Approval Workflow | 1/1 | Complete | 2026-02-05 |
-| 5. Sandbox Building | 1/2 | In progress | 2026-02-05 |
+| 5. Sandbox Building | 2/2 | Complete | 2026-02-05 |
 | 6. Live Promotion | 0/1 | Not started | - |
 | 7. Trigger System | 0/3 | Not started | - |

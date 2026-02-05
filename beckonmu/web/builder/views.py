@@ -11,6 +11,98 @@ from .exporter import generate_batch_script
 from .validators import validate_project
 
 
+# V5 Room Template Presets
+V5_ROOM_TEMPLATES = {
+    "elysium": {
+        "name": "Elysium",
+        "description": "Neutral ground where violence is forbidden. A place of peace among Kindred.",
+        "v5": {
+            "location_type": "elysium",
+            "day_night": "always",
+            "danger_level": "safe",
+            "hunting_modifier": 0,
+        },
+    },
+    "haven": {
+        "name": "Haven",
+        "description": "A vampire's personal sanctuary and refuge from the outside world.",
+        "v5": {
+            "location_type": "haven",
+            "day_night": "restricted",
+            "danger_level": "low",
+            "hunting_modifier": 0,
+            "haven_ratings": {
+                "security": 3,
+                "size": 2,
+                "luxury": 2,
+                "warding": 1,
+                "location_hidden": False,
+            },
+        },
+    },
+    "rack": {
+        "name": "Rack (Feeding Ground)",
+        "description": "A hunting ground where Kindred feed on mortals. Often dangerous.",
+        "v5": {
+            "location_type": "rack",
+            "day_night": "night_only",
+            "danger_level": "moderate",
+            "hunting_modifier": 2,
+        },
+    },
+    "hostile_territory": {
+        "name": "Hostile Territory",
+        "description": "Dangerous area controlled by enemies or hostile forces.",
+        "v5": {
+            "location_type": "hostile",
+            "day_night": "restricted",
+            "danger_level": "high",
+            "hunting_modifier": -2,
+        },
+    },
+    "neutral_ground": {
+        "name": "Neutral Ground",
+        "description": "Public areas like streets and parks. Generally safe but exposed.",
+        "v5": {
+            "location_type": "neutral",
+            "day_night": "always",
+            "danger_level": "low",
+            "hunting_modifier": 0,
+        },
+    },
+    "mortal_establishment": {
+        "name": "Mortal Establishment",
+        "description": "Human businesses like bars, shops, or restaurants.",
+        "v5": {
+            "location_type": "mortal",
+            "day_night": "always",
+            "danger_level": "safe",
+            "hunting_modifier": 1,
+        },
+    },
+    "supernatural_site": {
+        "name": "Supernatural Site",
+        "description": "Places of mystical significance or supernatural importance.",
+        "v5": {
+            "location_type": "supernatural",
+            "day_night": "restricted",
+            "danger_level": "moderate",
+            "hunting_modifier": 0,
+        },
+    },
+    "clear": {
+        "name": "Clear Template",
+        "description": "Reset all V5 settings to defaults.",
+        "v5": {
+            "location_type": "",
+            "day_night": "always",
+            "danger_level": "safe",
+            "hunting_modifier": 0,
+        },
+    },
+}
+
+
 class StaffRequiredMixin(LoginRequiredMixin):
     """Mixin that requires user to be staff."""
 
@@ -25,6 +117,7 @@ class StaffRequiredMixin(LoginRequiredMixin):
 @method_decorator(staff_member_required, name="dispatch")
 class BuilderDashboardView(LoginRequiredMixin, TemplateView):
     """Dashboard showing all builder projects."""
+
     template_name = "builder/dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -32,15 +125,16 @@ class BuilderDashboardView(LoginRequiredMixin, TemplateView):
         # User's own projects
         ctx["my_projects"] = BuildProject.objects.filter(user=self.request.user)
         # Public projects from others
-        ctx["public_projects"] = BuildProject.objects.filter(
-            is_public=True
-        ).exclude(user=self.request.user)[:20]
+        ctx["public_projects"] = BuildProject.objects.filter(is_public=True).exclude(
+            user=self.request.user
+        )[:20]
         return ctx
 
 
 @method_decorator(staff_member_required, name="dispatch")
 class BuilderEditorView(LoginRequiredMixin, TemplateView):
     """Main editor interface."""
+
     template_name = "builder/editor.html"
 
     def get_context_data(self, **kwargs):
@@ -50,7 +144,7 @@ class BuilderEditorView(LoginRequiredMixin, TemplateView):
         if project_id:
             project = get_object_or_404(BuildProject, pk=project_id)
             # Check ownership for editing
-            ctx["can_edit"] = (project.user == self.request.user)
+            ctx["can_edit"] = project.user == self.request.user
             ctx["project"] = project
             ctx["project_data"] = json.dumps(project.map_data)
             ctx["project_id"] = project.id
@@ -73,7 +167,9 @@ class SaveProjectView(StaffRequiredMixin, View):
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
-            return JsonResponse({"status": "error", "error": "Invalid JSON"}, status=400)
+            return JsonResponse(
+                {"status": "error", "error": "Invalid JSON"}, status=400
+            )
 
         project_id = data.get("id")
         name = data.get("name", "Untitled Project")
@@ -87,18 +183,20 @@ class SaveProjectView(StaffRequiredMixin, View):
             project = get_object_or_404(BuildProject, pk=project_id)
             if project.user != request.user:
                 return JsonResponse(
-                    {"status": "error", "error": "Not authorized"},
-                    status=403
+                    {"status": "error", "error": "Not authorized"}, status=403
                 )
 
             # Optimistic concurrency check
             client_version = data.get("version")
             if client_version is not None and client_version != project.version:
-                return JsonResponse({
-                    "status": "error",
-                    "error": "Project was modified by another session. Reload and try again.",
-                    "server_version": project.version,
-                }, status=409)
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "error": "Project was modified by another session. Reload and try again.",
+                        "server_version": project.version,
+                    },
+                    status=409,
+                )
 
             project.name = name
             project.map_data = map_data
@@ -113,16 +211,18 @@ class SaveProjectView(StaffRequiredMixin, View):
                 version=1,
             )
 
-        return JsonResponse({
-            "status": "success",
-            "id": project.id,
-            "version": project.version,
-            "validation": {
-                "is_valid": is_valid,
-                "errors": errors,
-                "warnings": warnings
+        return JsonResponse(
+            {
+                "status": "success",
+                "id": project.id,
+                "version": project.version,
+                "validation": {
+                    "is_valid": is_valid,
+                    "errors": errors,
+                    "warnings": warnings,
+                },
             }
-        })
+        )
 
 
 class GetProjectView(StaffRequiredMixin, View):
@@ -134,24 +234,25 @@ class GetProjectView(StaffRequiredMixin, View):
         # Check visibility
         if not project.is_public and project.user != request.user:
             return JsonResponse(
-                {"status": "error", "error": "Not authorized"},
-                status=403
+                {"status": "error", "error": "Not authorized"}, status=403
             )
 
-        return JsonResponse({
-            "status": "success",
-            "project": {
-                "id": project.id,
-                "name": project.name,
-                "description": project.description,
-                "map_data": project.map_data,
-                "is_public": project.is_public,
-                "sandbox_room_id": project.sandbox_room_id,
-                "can_edit": project.user == request.user,
-                "created_at": project.created_at.isoformat(),
-                "updated_at": project.updated_at.isoformat(),
+        return JsonResponse(
+            {
+                "status": "success",
+                "project": {
+                    "id": project.id,
+                    "name": project.name,
+                    "description": project.description,
+                    "map_data": project.map_data,
+                    "is_public": project.is_public,
+                    "sandbox_room_id": project.sandbox_room_id,
+                    "can_edit": project.user == request.user,
+                    "created_at": project.created_at.isoformat(),
+                    "updated_at": project.updated_at.isoformat(),
+                },
             }
-        })
+        )
 
 
 class DeleteProjectView(StaffRequiredMixin, View):
@@ -162,8 +263,7 @@ class DeleteProjectView(StaffRequiredMixin, View):
 
         if project.user != request.user:
             return JsonResponse(
-                {"status": "error", "error": "Not authorized"},
-                status=403
+                {"status": "error", "error": "Not authorized"}, status=403
             )
 
         project.delete()
@@ -183,25 +283,29 @@ class BuildProjectView(StaffRequiredMixin, View):
         # Check ownership - only owner can build
         if project.user != request.user:
             return JsonResponse(
-                {"status": "error", "error": "Not authorized"},
-                status=403
+                {"status": "error", "error": "Not authorized"}, status=403
             )
 
         # Check if sandbox already exists
         if project.sandbox_room_id:
-            return JsonResponse({
-                "status": "error",
-                "error": "Sandbox already exists. Use @abandon in-game first.",
-                "sandbox_id": project.sandbox_room_id
-            }, status=400)
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "error": "Sandbox already exists. Use @abandon in-game first.",
+                    "sandbox_id": project.sandbox_room_id,
+                },
+                status=400,
+            )
 
         # For now, return manual_required status with download URL
         # Automatic execution requires more integration work
-        return JsonResponse({
-            "status": "manual_required",
-            "message": "Automatic execution not yet implemented. Download and run manually.",
-            "download_url": f"/builder/export/{pk}/"
-        })
+        return JsonResponse(
+            {
+                "status": "manual_required",
+                "message": "Automatic execution not yet implemented. Download and run manually.",
+                "download_url": f"/builder/export/{pk}/",
+            }
+        )
 
 
 class PrototypesView(StaffRequiredMixin, View):
@@ -211,7 +315,7 @@ class PrototypesView(StaffRequiredMixin, View):
 
 class TemplatesView(StaffRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        return JsonResponse({"status": "not_implemented"}, status=501)
+        return JsonResponse({"status": "success", "templates": V5_ROOM_TEMPLATES})
 
 
 class ExportProjectView(StaffRequiredMixin, View):
@@ -223,8 +327,7 @@ class ExportProjectView(StaffRequiredMixin, View):
         # Check visibility
         if not project.is_public and project.user != request.user:
             return JsonResponse(
-                {"status": "error", "error": "Not authorized"},
-                status=403
+                {"status": "error", "error": "Not authorized"}, status=403
             )
 
         # Generate script

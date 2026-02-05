@@ -694,17 +694,100 @@
         }
     }
 
+    // Direction calculation utility
+    function calculateDirectionFromGrid(sourceRoom, targetRoom) {
+        const deltaX = targetRoom.grid_x - sourceRoom.grid_x;
+        const deltaY = targetRoom.grid_y - sourceRoom.grid_y;
+
+        // Map deltas to direction names
+        const directionMap = {
+            '0,-1': { name: 'north', aliases: ['n'], direction: 'north' },
+            '0,1': { name: 'south', aliases: ['s'], direction: 'south' },
+            '1,0': { name: 'east', aliases: ['e'], direction: 'east' },
+            '-1,0': { name: 'west', aliases: ['w'], direction: 'west' },
+            '1,-1': { name: 'northeast', aliases: ['ne'], direction: 'northeast' },
+            '-1,-1': { name: 'northwest', aliases: ['nw'], direction: 'northwest' },
+            '1,1': { name: 'southeast', aliases: ['se'], direction: 'southeast' },
+            '-1,1': { name: 'southwest', aliases: ['sw'], direction: 'southwest' }
+        };
+
+        const key = `${deltaX},${deltaY}`;
+        if (directionMap[key]) {
+            return directionMap[key];
+        }
+
+        // For non-cardinal deltas, find closest match
+        if (deltaY < 0 && Math.abs(deltaY) > Math.abs(deltaX)) {
+            return { name: 'north', aliases: ['n'], direction: 'north' };
+        } else if (deltaY > 0 && Math.abs(deltaY) > Math.abs(deltaX)) {
+            return { name: 'south', aliases: ['s'], direction: 'south' };
+        } else if (deltaX > 0) {
+            return { name: 'east', aliases: ['e'], direction: 'east' };
+        } else if (deltaX < 0) {
+            return { name: 'west', aliases: ['w'], direction: 'west' };
+        }
+
+        // Fallback
+        return { name: 'exit', aliases: [], direction: 'unknown' };
+    }
+
+    // Reverse direction mapping for bidirectional exits
+    function getOppositeDirection(direction) {
+        const opposites = {
+            'north': 'south',
+            'south': 'north',
+            'east': 'west',
+            'west': 'east',
+            'northeast': 'southwest',
+            'southwest': 'northeast',
+            'northwest': 'southeast',
+            'southeast': 'northwest'
+        };
+        return opposites[direction] || 'exit';
+    }
+
     function createExit(sourceId, targetId) {
+        const sourceRoom = mapData.rooms[sourceId];
+        const targetRoom = mapData.rooms[targetId];
+
+        if (!sourceRoom || !targetRoom) return;
+
+        // Calculate direction from source to target
+        const dirInfo = calculateDirectionFromGrid(sourceRoom, targetRoom);
+
+        // Create forward exit
         const id = 'e' + (mapData.next_exit_id || 1);
         mapData.next_exit_id = (mapData.next_exit_id || 1) + 1;
 
         if (!mapData.exits) mapData.exits = {};
 
         mapData.exits[id] = {
-            name: 'exit',
-            aliases: [],
+            name: dirInfo.name,
+            aliases: dirInfo.aliases,
+            direction: dirInfo.direction,
             source: sourceId,
             target: targetId,
+            description: '',
+            locks: ''
+        };
+
+        // Create reverse exit (bidirectional)
+        const reverseDir = getOppositeDirection(dirInfo.direction);
+        const reverseAliases = {
+            'north': ['n'], 'south': ['s'], 'east': ['e'], 'west': ['w'],
+            'northeast': ['ne'], 'northwest': ['nw'],
+            'southeast': ['se'], 'southwest': ['sw']
+        };
+
+        const reverseId = 'e' + (mapData.next_exit_id || 1);
+        mapData.next_exit_id = (mapData.next_exit_id || 1) + 1;
+
+        mapData.exits[reverseId] = {
+            name: reverseDir,
+            aliases: reverseAliases[reverseDir] || [],
+            direction: reverseDir,
+            source: targetId,
+            target: sourceId,
             description: '',
             locks: ''
         };

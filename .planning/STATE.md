@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 
 ## Current Position
 
-Phase: 5 of 7 (Sandbox Building) - **IN PROGRESS**
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-05 -- Completed 05-01-PLAN.md (Bridge Layer and Sandbox Building)
+Phase: 5 of 7 (Sandbox Building) - **COMPLETE**
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-05 -- Completed 05-02-PLAN.md (Sandbox Isolation, Walkthrough, and Cleanup)
 
-Progress: [███████████___] 79% (11/14 plans)
+Progress: [████████████__] 86% (12/14 plans)
 
 ## Performance Metrics
 
@@ -31,7 +31,7 @@ Progress: [███████████___] 79% (11/14 plans)
 | 02-character-approval-completion | 4/4 | 20 min | 5 min |
 | 03-builder-ux | 2/2 | 10 min | 5 min |
 | 04-builder-approval-workflow | 1/1 | 7 min | 7 min |
-| 05-sandbox-building | 1/2 | 3 min | 3 min |
+| 05-sandbox-building | 2/2 | 8 min | 4 min |
 
 **Recent Trend:**
 - Last 5 plans: 03-01 (2 min), 03-02 (8 min), 04-01 (7 min), 05-01 (3 min)
@@ -78,6 +78,10 @@ Recent decisions affecting current work:
 - [05-01]: Continue building on per-room/per-exit errors for partial success
 - [05-01]: Sandbox container room created as entry point with _sandbox_{project_id} alias
 - [05-01]: Triple tagging (web_builder, project_{id}, sandbox) for flexible querying
+- [05-02]: Sandbox isolation uses Room.access() override checking 'sandbox' tag and project ownership
+- [05-02]: Builder commands package structure (beckonmu/commands/builder/ with submodules)
+- [05-02]: Cleanup deletes exits first, then objects, then rooms to avoid reference errors
+- [05-02]: Project status resets from 'built' to 'approved' after cleanup (not to 'draft')
 
 ### Pending Todos
 
@@ -97,5 +101,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 05-01-PLAN.md (Bridge Layer and Sandbox Building) - Phase 5 Plan 1 of 2 complete
+Stopped at: Completed 05-02-PLAN.md (Sandbox Isolation, Walkthrough, and Cleanup) - Phase 5 Complete - All 2 plans verified and committed
 Resume file: None

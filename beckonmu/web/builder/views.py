@@ -11,6 +11,9 @@ from .exporter import generate_batch_script
 from .validators import validate_project
 from .sandbox_bridge import create_sandbox_from_project
 from .promotion import promote_project_to_live
+from .trigger_engine import validate_trigger
+from .trigger_actions import ACTION_REGISTRY, list_actions
+from .v5_conditions import list_condition_types
 
 
 # V5 Room Template Presets
@@ -745,3 +748,145 @@ class PromoteProjectView(StaffRequiredMixin, View):
                 {"status": "error", "error": result.get("error", "Unknown error")},
                 status=500,
             )
+
+
+class RoomTriggersAPI(StaffRequiredMixin, View):
+    """
+    API for managing room triggers within a project.
+
+    GET /builder/api/projects/<project_id>/rooms/<room_id>/triggers/
+    POST /builder/api/projects/<project_id>/rooms/<room_id>/triggers/
+    DELETE /builder/api/projects/<project_id>/rooms/<room_id>/triggers/<trigger_id>/
+    """
+
+    def get(self, request, project_id, room_id):
+        """Get all triggers for a room."""
+        try:
+            project = BuildProject.objects.get(id=project_id, user=request.user)
+            map_data = project.map_data or {}
+            rooms = map_data.get("rooms", {})
+
+            if room_id not in rooms:
+                return JsonResponse({"error": "Room not found"}, status=404)
+
+            room_data = rooms[room_id]
+            triggers = room_data.get("triggers", [])
+
+            return JsonResponse({"triggers": triggers})
+        except BuildProject.DoesNotExist:
+            return JsonResponse({"error": "Project not found"}, status=404)
+
+    def post(self, request, project_id, room_id):
+        """Add or update a trigger for a room."""
+        try:
+            project = BuildProject.objects.get(id=project_id, user=request.user)
+            map_data = project.map_data or {}
+            rooms = map_data.get("rooms", {})
+
+            if room_id not in rooms:
+                return JsonResponse({"error": "Room not found"}, status=404)
+
+            # Parse trigger data
+            try:
+                trigger_data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+            # Validate trigger
+            is_valid, error = validate_trigger(trigger_data)
+            if not is_valid:
+                return JsonResponse({"error": error}, status=400)
+
+            # Get existing triggers
+            room_data = rooms[room_id]
+            triggers = room_data.get("triggers", [])
+
+            # Check for duplicate ID (update) or add new
+            trigger_id = trigger_data.get("id")
+            existing_idx = None
+            for i, t in enumerate(triggers):
+                if t.get("id") == trigger_id:
+                    existing_idx = i
+                    break
+
+            if existing_idx is not None:
+                triggers[existing_idx] = trigger_data
+            else:
+                triggers.append(trigger_data)
+
+            # Save back to room
+            room_data["triggers"] = triggers
+            rooms[room_id] = room_data
+            map_data["rooms"] = rooms
+            project.map_data = map_data
+            project.save()
+
+            return JsonResponse({"success": True, "trigger": trigger_data})
+
+        except BuildProject.DoesNotExist:
+            return JsonResponse({"error": "Project not found"}, status=404)
+
+    def delete(self, request, project_id, room_id, trigger_id=None):
+        """Delete a trigger from a room."""
+        if not trigger_id:
+            return JsonResponse({"error": "trigger_id required"}, status=400)
+
+        try:
+            project = BuildProject.objects.get(id=project_id, user=request.user)
+            map_data = project.map_data or {}
+            rooms = map_data.get("rooms", {})
+
+            if room_id not in rooms:
+                return JsonResponse({"error": "Room not found"}, status=404)
+
+            room_data = rooms[room_id]
+            triggers = room_data.get("triggers", [])
+
+            # Find and remove trigger
+            new_triggers = [t for t in triggers if t.get("id") != trigger_id]
+
+            if len(new_triggers) == len(triggers):
+                return JsonResponse({"error": "Trigger not found"}, status=404)
+
+            # Save back
+            room_data["triggers"] = new_triggers
+            rooms[room_id] = room_data
+            map_data["rooms"] = rooms
+            project.map_data = map_data
+            project.save()
+
+            return JsonResponse({"success": True})
+
+        except BuildProject.DoesNotExist:
+            return JsonResponse({"error": "Project not found"}, status=404)
+
+
+class TriggerActionsAPI(StaffRequiredMixin, View):
+    """
+    API to get available trigger actions and conditions.
+
+    GET /builder/api/trigger-metadata/
+    """
+
+    def get(self, request):
+        """Return available actions and condition types."""
+        # Build action metadata for UI
+        action_metadata = {}
+        for key in list_actions():
+            action_metadata[key] = {
+                "name": key.replace("_", " ").title(),
+                "description": self._get_action_description(key),
+            }
+
+        return JsonResponse(
+            {"actions": action_metadata, "conditions": list_condition_types()}
+        )
+
+    def _get_action_description(self, action_name):
+        """Get human-readable description for action."""
+        descriptions = {
+            "send_message": "Send a message to the triggering character",
+            "emit_message": "Emit a message to everyone in the room",
+            "set_attribute": "Set an attribute on the room or character",
+        }
+        return descriptions.get(action_name, action_name.replace("_", " ").title())

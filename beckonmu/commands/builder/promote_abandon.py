@@ -1,6 +1,7 @@
 """
 Builder commands for promoting and abandoning sandbox builds.
 """
+
 from evennia.commands.command import Command
 from evennia.utils.search import search_object
 from django.utils import timezone
@@ -16,6 +17,7 @@ class CmdPromote(Command):
     This moves all rooms from a builder sandbox to the specified
     destination container room.
     """
+
     key = "@promote"
     locks = "cmd:perm(Builder) or perm(Admin)"
     help_category = "Building"
@@ -58,11 +60,14 @@ class CmdPromote(Command):
         sandbox_name = sandbox.key
         sandbox.delete()
 
-        self.caller.msg(f"Promoted {moved_count} objects from '{sandbox_name}' to '{dest.key}'.")
+        self.caller.msg(
+            f"Promoted {moved_count} objects from '{sandbox_name}' to '{dest.key}'."
+        )
 
         # Try to update Django project record
         try:
             from beckonmu.web.builder.models import BuildProject
+
             # Find project by sandbox tag
             project_tag = [t for t in sandbox.tags.all() if t.startswith("project_")]
             if project_tag:
@@ -84,6 +89,7 @@ class CmdAbandon(Command):
 
     This deletes the sandbox and all rooms inside it.
     """
+
     key = "@abandon"
     locks = "cmd:perm(Builder) or perm(Admin)"
     help_category = "Building"
@@ -122,11 +128,14 @@ class CmdAbandon(Command):
 
         sandbox.delete()
 
-        self.caller.msg(f"Abandoned sandbox '{sandbox_name}' and deleted {content_count} objects.")
+        self.caller.msg(
+            f"Abandoned sandbox '{sandbox_name}' and deleted {content_count} objects."
+        )
 
         # Try to update Django project record
         try:
             from beckonmu.web.builder.models import BuildProject
+
             project_tag = [t for t in sandbox.tags.all() if t.startswith("project_")]
             if project_tag:
                 project_id = int(project_tag[0].replace("project_", ""))

@@ -9,6 +9,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from .models import BuildProject, RoomTemplate
 from .exporter import generate_batch_script
 from .validators import validate_project
+from .sandbox_bridge import create_sandbox_from_project
 
 
 # V5 Room Template Presets
@@ -516,3 +517,94 @@ class BuildReviewDashboardView(LoginRequiredMixin, TemplateView):
     """Staff review page template view."""
 
     template_name = "builder/review.html"
+
+
+class BuildSandboxView(StaffRequiredMixin, View):
+    """Build approved project to sandbox."""
+
+    def post(self, request, pk, *args, **kwargs):
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Check project is approved
+        if project.status != "approved":
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "error": f"Project must be approved (current: {project.status})",
+                },
+                status=400,
+            )
+
+        # Check if already built
+        if project.sandbox_room_id:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "error": "Sandbox already exists",
+                    "sandbox_id": project.sandbox_room_id,
+                },
+                status=400,
+            )
+
+        # Trigger sandbox creation
+        success, result = create_sandbox_from_project(pk)
+
+        if success:
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Sandbox created successfully",
+                    "sandbox_id": result["sandbox_room_id"],
+                    "room_count": result["room_count"],
+                    "exit_count": result["exit_count"],
+                    "project": {
+                        "id": project.id,
+                        "name": project.name,
+                        "status": project.status,
+                    },
+                }
+            )
+        else:
+            return JsonResponse(
+                {"status": "error", "error": result.get("error", "Unknown error")},
+                status=500,
+            )
+
+
+class CleanupSandboxView(StaffRequiredMixin, View):
+    """Clean up a sandbox via API."""
+
+    def post(self, request, pk, *args, **kwargs):
+        from .sandbox_cleanup import cleanup_sandbox_for_project
+
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Permission check
+        if not (request.user.is_staff or project.user == request.user):
+            return JsonResponse(
+                {"status": "error", "error": "Not authorized"}, status=403
+            )
+
+        if not project.sandbox_room_id:
+            return JsonResponse(
+                {"status": "error", "error": "No active sandbox"}, status=400
+            )
+
+        success, result = cleanup_sandbox_for_project(pk)
+
+        if success:
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Sandbox cleaned up",
+                    "deleted": {
+                        "rooms": result["deleted_rooms"],
+                        "exits": result["deleted_exits"],
+                        "objects": result["deleted_objects"],
+                    },
+                }
+            )
+        else:
+            return JsonResponse(
+                {"status": "error", "error": result.get("error", "Unknown")}, status=500
+            )

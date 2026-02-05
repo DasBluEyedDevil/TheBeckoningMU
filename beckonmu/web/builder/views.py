@@ -569,3 +569,42 @@ class BuildSandboxView(StaffRequiredMixin, View):
                 {"status": "error", "error": result.get("error", "Unknown error")},
                 status=500,
             )
+
+
+class CleanupSandboxView(StaffRequiredMixin, View):
+    """Clean up a sandbox via API."""
+
+    def post(self, request, pk, *args, **kwargs):
+        from .sandbox_cleanup import cleanup_sandbox_for_project
+
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Permission check
+        if not (request.user.is_staff or project.user == request.user):
+            return JsonResponse(
+                {"status": "error", "error": "Not authorized"}, status=403
+            )
+
+        if not project.sandbox_room_id:
+            return JsonResponse(
+                {"status": "error", "error": "No active sandbox"}, status=400
+            )
+
+        success, result = cleanup_sandbox_for_project(pk)
+
+        if success:
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Sandbox cleaned up",
+                    "deleted": {
+                        "rooms": result["deleted_rooms"],
+                        "exits": result["deleted_exits"],
+                        "objects": result["deleted_objects"],
+                    },
+                }
+            )
+        else:
+            return JsonResponse(
+                {"status": "error", "error": result.get("error", "Unknown")}, status=500
+            )

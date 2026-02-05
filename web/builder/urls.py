@@ -23,6 +23,16 @@ urlpatterns = [
         name="submit_project",
     ),
     path("api/build/<int:pk>/", views.BuildProjectView.as_view(), name="build_project"),
+    path(
+        "api/build/<int:pk>/build-sandbox/",
+        views.BuildSandboxView.as_view(),
+        name="build_sandbox",
+    ),
+    path(
+        "api/build/<int:pk>/cleanup/",
+        views.CleanupSandboxView.as_view(),
+        name="cleanup_sandbox",
+    ),
     path("api/prototypes/", views.PrototypesView.as_view(), name="prototypes"),
     path("api/templates/", views.TemplatesView.as_view(), name="templates"),
     # Review endpoints (staff only)

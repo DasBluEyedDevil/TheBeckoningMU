@@ -66,11 +66,11 @@ Plans:
   2. Creating an exit between two rooms auto-assigns a cardinal direction name and aliases based on grid position
   3. Builder can apply a V5 room template (Elysium, Haven, Rack, etc.) to a room, and it pre-fills all V5 settings
   4. Map canvas shows a north/south/east/west orientation indicator so builders know which direction is which
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Compass rose and exit auto-naming
-- [ ] 03-02: V5 room templates and template application
+- [ ] 03-01-PLAN.md — Compass rose overlay, exit auto-naming from grid position, and map orientation indicator
+- [ ] 03-02-PLAN.md — V5 room template presets (Elysium, Haven, Rack, etc.) with template dropdown and application
 
 ### Phase 4: Builder Approval Workflow
 **Goal**: Builder projects follow a gated lifecycle -- draft to submitted to approved -- with staff review before anything gets built in-game

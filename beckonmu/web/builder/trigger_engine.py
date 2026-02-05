@@ -154,7 +154,9 @@ def execute_trigger(trigger_data: Dict[str, Any], room, character, **context) ->
         return False
 
 
-def execute_triggers(room, trigger_type: str, character, **context) -> Tuple[int, int]:
+def execute_triggers(
+    room, trigger_type: str, character, trigger_id: str = None, **context
+) -> Tuple[int, int]:
     """
     Execute all triggers of a specific type for a room.
 
@@ -162,6 +164,7 @@ def execute_triggers(room, trigger_type: str, character, **context) -> Tuple[int
         room: The room where triggers should fire
         trigger_type: Type of trigger to execute ("entry", "exit", "timed", "interaction")
         character: The character who triggered the event
+        trigger_id: Optional specific trigger ID to execute (for timed triggers)
         **context: Additional context (e.g., target_location for exit triggers)
 
     Returns:
@@ -182,6 +185,10 @@ def execute_triggers(room, trigger_type: str, character, **context) -> Tuple[int
     for trigger_data in triggers:
         # Filter by trigger type
         if trigger_data.get("type") != trigger_type:
+            continue
+
+        # Filter by trigger_id if specified (for timed triggers)
+        if trigger_id and trigger_data.get("id") != trigger_id:
             continue
 
         # Execute the trigger

@@ -52,4 +52,15 @@ urlpatterns = [
     ),
     # Export
     path("export/<int:pk>/", views.ExportProjectView.as_view(), name="export_project"),
+    # Promotion endpoints
+    path(
+        "api/connection-rooms/",
+        views.ListConnectionRoomsView.as_view(),
+        name="connection_rooms",
+    ),
+    path(
+        "api/build/<int:pk>/promote/",
+        views.PromoteProjectView.as_view(),
+        name="promote_project",
+    ),
 ]

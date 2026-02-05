@@ -63,4 +63,20 @@ urlpatterns = [
         views.PromoteProjectView.as_view(),
         name="promote_project",
     ),
+    # Trigger endpoints
+    path(
+        "api/trigger-metadata/",
+        views.TriggerActionsAPI.as_view(),
+        name="trigger_metadata",
+    ),
+    path(
+        "api/projects/<int:project_id>/rooms/<str:room_id>/triggers/",
+        views.RoomTriggersAPI.as_view(),
+        name="room_triggers",
+    ),
+    path(
+        "api/projects/<int:project_id>/rooms/<str:room_id>/triggers/<str:trigger_id>/",
+        views.RoomTriggersAPI.as_view(),
+        name="room_trigger_detail",
+    ),
 ]

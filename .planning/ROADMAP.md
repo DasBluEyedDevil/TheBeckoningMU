@@ -112,7 +112,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md — Connection point selection and promotion engine: model fields, promotion.py engine, API endpoints, UI integration
+- [ ] 06-01-PLAN.md — Connection point selection and promotion engine: model fields for connection_room_id/direction, promotion.py engine with thread-safe room moving, API endpoints for room list and promotion trigger, UI integration with modal
 
 ### Phase 7: Trigger System
 **Goal**: Builders can add dynamic behavior to rooms -- atmospheric messages on entry, timed weather events, and responses to player actions -- all through the web editor

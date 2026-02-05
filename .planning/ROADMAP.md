@@ -80,10 +80,10 @@ Plans:
   1. BuildProject has an explicit status visible to the builder (Draft, Submitted, Approved, Built, Live) and only valid transitions are allowed
   2. Builder can submit a project for staff review from the builder dashboard
   3. Staff can view submitted projects with a map preview and approve or reject with notes
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: State machine and submission/review workflow
+- [ ] 04-01-PLAN.md — State machine and submission/review workflow: BuildProject status field, builder submission from dashboard, staff review page with map preview and approve/reject actions
 
 ### Phase 5: Sandbox Building
 **Goal**: Approved builder projects automatically create real Evennia rooms and exits in an isolated sandbox area where builders can walk through and test their build

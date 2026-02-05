@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 
 ## Current Position
 
-Phase: 4 of 7 (Builder Approval Workflow) - **COMPLETE**
-Plan: 1 of 1 in current phase - All plans complete
-Status: Phase complete
-Last activity: 2026-02-05 -- Completed 04-01-PLAN.md (Builder Approval Workflow)
+Phase: 5 of 7 (Sandbox Building) - **IN PROGRESS**
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-05 -- Completed 05-01-PLAN.md (Bridge Layer and Sandbox Building)
 
-Progress: [██████████____] 71% (10/14 plans)
+Progress: [███████████___] 79% (11/14 plans)
 
 ## Performance Metrics
 
@@ -31,9 +31,10 @@ Progress: [██████████____] 71% (10/14 plans)
 | 02-character-approval-completion | 4/4 | 20 min | 5 min |
 | 03-builder-ux | 2/2 | 10 min | 5 min |
 | 04-builder-approval-workflow | 1/1 | 7 min | 7 min |
+| 05-sandbox-building | 1/2 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (3 min), 03-01 (2 min), 03-02 (8 min), 04-01 (7 min)
+- Last 5 plans: 03-01 (2 min), 03-02 (8 min), 04-01 (7 min), 05-01 (3 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -73,6 +74,10 @@ Recent decisions affecting current work:
 - [04-01]: Rejection returns to draft (not separate rejected state)
 - [04-01]: Map preview uses canvas with simple room/exit rendering
 - [04-01]: Rejection notes have 10 character minimum
+- [05-01]: 30-second timeout for main thread operations prevents indefinite blocking
+- [05-01]: Continue building on per-room/per-exit errors for partial success
+- [05-01]: Sandbox container room created as entry point with _sandbox_{project_id} alias
+- [05-01]: Triple tagging (web_builder, project_{id}, sandbox) for flexible querying
 
 ### Pending Todos
 
@@ -92,5 +97,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 04-01-PLAN.md (Builder Approval Workflow) - Phase 4 Complete - All 5 tasks verified and committed
+Stopped at: Completed 05-01-PLAN.md (Bridge Layer and Sandbox Building) - Phase 5 Plan 1 of 2 complete
 Resume file: None

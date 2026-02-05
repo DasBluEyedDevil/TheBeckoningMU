@@ -109,10 +109,10 @@ Plans:
   2. Promoting a build moves rooms from sandbox into the live world with all exits correctly re-mapped
   3. Players in the live game world can walk into the promoted area through the connection point
   4. After successful promotion, sandbox copies are cleaned up
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: Connection point selection and promotion engine
+- [ ] 06-01-PLAN.md — Connection point selection and promotion engine: model fields, promotion.py engine, API endpoints, UI integration
 
 ### Phase 7: Trigger System
 **Goal**: Builders can add dynamic behavior to rooms -- atmospheric messages on entry, timed weather events, and responses to player actions -- all through the web editor

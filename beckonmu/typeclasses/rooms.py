@@ -11,6 +11,8 @@ from evennia.utils.ansi import ANSIString
 from evennia.utils.evtable import EvTable
 from .objects import ObjectParent
 
+from beckonmu.web.builder.trigger_engine import execute_triggers
+
 
 class Room(ObjectParent, DefaultRoom):
     """
@@ -273,4 +275,48 @@ class Room(ObjectParent, DefaultRoom):
             s
             for s in [header, title, desc, character_section, exit_section, footer]
             if s
+        )
+
+    def at_object_receive(self, moved_obj, source_location, move_type="move", **kwargs):
+        """
+        Hook called when an object enters this room.
+        Triggers entry triggers for player characters.
+        """
+        # Call parent first to preserve default behavior
+        super().at_object_receive(
+            moved_obj, source_location, move_type=move_type, **kwargs
+        )
+
+        # Only trigger for characters with accounts (player characters, not NPCs)
+        if hasattr(moved_obj, "has_account") and moved_obj.has_account:
+            try:
+                execute_triggers(self, "entry", moved_obj)
+            except Exception as e:
+                # Log error but don't crash the room
+                import logging
+
+                logger = logging.getLogger(__name__)
+                logger.exception(f"Error executing entry triggers in {self}: {e}")
+
+    def at_object_leave(self, moved_obj, target_location, move_type="move", **kwargs):
+        """
+        Hook called when an object leaves this room.
+        Triggers exit triggers for player characters.
+        """
+        # Only trigger for characters with accounts (player characters, not NPCs)
+        if hasattr(moved_obj, "has_account") and moved_obj.has_account:
+            try:
+                execute_triggers(
+                    self, "exit", moved_obj, target_location=target_location
+                )
+            except Exception as e:
+                # Log error but don't crash the room
+                import logging
+
+                logger = logging.getLogger(__name__)
+                logger.exception(f"Error executing exit triggers in {self}: {e}")
+
+        # Call parent after trigger execution
+        super().at_object_leave(
+            moved_obj, target_location, move_type=move_type, **kwargs
         )

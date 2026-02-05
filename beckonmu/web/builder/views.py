@@ -338,3 +338,181 @@ class ExportProjectView(StaffRequiredMixin, View):
         response = HttpResponse(script_content, content_type="text/plain")
         response["Content-Disposition"] = f'attachment; filename="{filename}"'
         return response
+
+
+# Approval Workflow Views
+
+
+class SubmitProjectView(StaffRequiredMixin, View):
+    """Submit a project for staff review."""
+
+    def post(self, request, pk, *args, **kwargs):
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Only owner can submit their own project
+        if project.user != request.user:
+            return JsonResponse(
+                {"status": "error", "error": "Not authorized"}, status=403
+            )
+
+        # Validate project is in draft status
+        if not project.can_transition_to("submitted"):
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "error": f"Cannot submit project in '{project.status}' status",
+                },
+                status=400,
+            )
+
+        # Parse optional notes from request body
+        try:
+            data = json.loads(request.body) if request.body else {}
+        except json.JSONDecodeError:
+            data = {}
+
+        notes = data.get("notes", "")
+        if notes:
+            project.submission_notes = notes
+
+        # Submit the project
+        try:
+            project.submit()
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Project submitted for review",
+                    "project": {
+                        "id": project.id,
+                        "name": project.name,
+                        "status": project.status,
+                    },
+                }
+            )
+        except ValueError as e:
+            return JsonResponse({"status": "error", "error": str(e)}, status=400)
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class BuildReviewView(View):
+    """Staff review interface - list submitted projects."""
+
+    def get(self, request, *args, **kwargs):
+        # Get all projects with submitted status
+        projects = BuildProject.objects.filter(status="submitted").select_related(
+            "user"
+        )
+
+        project_list = []
+        for project in projects:
+            map_data = project.map_data or {}
+            rooms = map_data.get("rooms", {})
+            exits = map_data.get("exits", {})
+
+            project_list.append(
+                {
+                    "id": project.id,
+                    "name": project.name,
+                    "description": project.description,
+                    "user": {
+                        "id": project.user.id,
+                        "username": project.user.username,
+                    },
+                    "submission_notes": project.submission_notes,
+                    "created_at": project.created_at.isoformat(),
+                    "updated_at": project.updated_at.isoformat(),
+                    "room_count": len(rooms),
+                    "exit_count": len(exits),
+                }
+            )
+
+        return JsonResponse({"status": "success", "projects": project_list})
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ApproveRejectProjectView(View):
+    """Approve or reject a submitted project."""
+
+    def post(self, request, pk, *args, **kwargs):
+        project = get_object_or_404(BuildProject, pk=pk)
+
+        # Determine action from URL path
+        path = request.path
+        is_approve = "/approve/" in path
+        is_reject = "/reject/" in path
+
+        if not is_approve and not is_reject:
+            return JsonResponse(
+                {"status": "error", "error": "Invalid action"}, status=400
+            )
+
+        # Check project is in submitted status
+        if project.status != "submitted":
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "error": f"Project is not in submitted status (current: {project.status})",
+                },
+                status=400,
+            )
+
+        if is_approve:
+            # Approve the project
+            try:
+                project.approve(request.user)
+                return JsonResponse(
+                    {
+                        "status": "success",
+                        "message": "Project approved",
+                        "project": {
+                            "id": project.id,
+                            "name": project.name,
+                            "status": project.status,
+                            "reviewed_by": request.user.username,
+                            "reviewed_at": project.reviewed_at.isoformat(),
+                        },
+                    }
+                )
+            except ValueError as e:
+                return JsonResponse({"status": "error", "error": str(e)}, status=400)
+
+        else:  # is_reject
+            # Parse rejection notes from request body
+            try:
+                data = json.loads(request.body) if request.body else {}
+            except json.JSONDecodeError:
+                return JsonResponse(
+                    {"status": "error", "error": "Invalid JSON"}, status=400
+                )
+
+            notes = data.get("notes", "").strip()
+            if not notes:
+                return JsonResponse(
+                    {"status": "error", "error": "Rejection notes are required"},
+                    status=400,
+                )
+
+            # Reject the project
+            try:
+                project.reject(request.user, notes)
+                return JsonResponse(
+                    {
+                        "status": "success",
+                        "message": "Project rejected with feedback",
+                        "project": {
+                            "id": project.id,
+                            "name": project.name,
+                            "status": project.status,
+                            "rejection_count": project.rejection_count,
+                        },
+                    }
+                )
+            except ValueError as e:
+                return JsonResponse({"status": "error", "error": str(e)}, status=400)
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class BuildReviewDashboardView(LoginRequiredMixin, TemplateView):
+    """Staff review page template view."""
+
+    template_name = "builder/review.html"

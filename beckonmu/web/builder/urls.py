@@ -12,10 +12,34 @@ urlpatterns = [
     # API endpoints
     path("api/save/", views.SaveProjectView.as_view(), name="save_project"),
     path("api/project/<int:pk>/", views.GetProjectView.as_view(), name="get_project"),
-    path("api/project/<int:pk>/delete/", views.DeleteProjectView.as_view(), name="delete_project"),
+    path(
+        "api/project/<int:pk>/delete/",
+        views.DeleteProjectView.as_view(),
+        name="delete_project",
+    ),
+    path(
+        "api/project/<int:pk>/submit/",
+        views.SubmitProjectView.as_view(),
+        name="submit_project",
+    ),
     path("api/build/<int:pk>/", views.BuildProjectView.as_view(), name="build_project"),
     path("api/prototypes/", views.PrototypesView.as_view(), name="prototypes"),
     path("api/templates/", views.TemplatesView.as_view(), name="templates"),
+    # Review endpoints (staff only)
+    path("review/", views.BuildReviewDashboardView.as_view(), name="build_review"),
+    path(
+        "api/review/projects/", views.BuildReviewView.as_view(), name="review_projects"
+    ),
+    path(
+        "api/review/<int:pk>/approve/",
+        views.ApproveRejectProjectView.as_view(),
+        name="approve_project",
+    ),
+    path(
+        "api/review/<int:pk>/reject/",
+        views.ApproveRejectProjectView.as_view(),
+        name="reject_project",
+    ),
     # Export
     path("export/<int:pk>/", views.ExportProjectView.as_view(), name="export_project"),
 ]

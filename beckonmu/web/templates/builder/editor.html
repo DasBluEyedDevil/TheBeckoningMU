@@ -121,6 +121,46 @@
         font-family: monospace;
     }
 
+    /* Orientation Widget (Compass Rose) */
+    .orientation-widget {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--builder-panel);
+        border: 1px solid var(--builder-border);
+        border-radius: 4px;
+        padding: 10px;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .compass-rose {
+        position: relative;
+        width: 60px;
+        height: 60px;
+    }
+
+    .compass-rose span {
+        position: absolute;
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--builder-text);
+    }
+
+    .compass-n { top: 0; left: 50%; transform: translateX(-50%); color: var(--builder-accent); }
+    .compass-s { bottom: 0; left: 50%; transform: translateX(-50%); }
+    .compass-e { right: 0; top: 50%; transform: translateY(-50%); }
+    .compass-w { left: 0; top: 50%; transform: translateY(-50%); }
+
+    .compass-indicator {
+        font-size: 10px;
+        color: var(--builder-muted);
+        margin-top: 5px;
+        text-align: center;
+    }
+
     /* Property Sections */
     .prop-section {
         margin-bottom: 15px;
@@ -427,6 +467,17 @@
         </div>
 
         <svg id="exit-lines" class="exit-line" style="width: 100%; height: 100%;"></svg>
+
+        <!-- Orientation Widget (Compass Rose) -->
+        <div class="orientation-widget">
+            <div class="compass-rose">
+                <span class="compass-n">N</span>
+                <span class="compass-s">S</span>
+                <span class="compass-e">E</span>
+                <span class="compass-w">W</span>
+            </div>
+            <div class="compass-indicator">North is up</div>
+        </div>
 
         <div class="status-bar">
             <span class="status-item">Rooms: <span id="room-count">0</span></span>

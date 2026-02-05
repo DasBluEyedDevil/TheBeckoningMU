@@ -112,6 +112,55 @@
         z-index: 1;
     }
 
+    .exit-label {
+        font-size: 10px;
+        fill: #ccc;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none;
+        font-family: monospace;
+    }
+
+    /* Orientation Widget (Compass Rose) */
+    .orientation-widget {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--builder-panel);
+        border: 1px solid var(--builder-border);
+        border-radius: 4px;
+        padding: 10px;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .compass-rose {
+        position: relative;
+        width: 60px;
+        height: 60px;
+    }
+
+    .compass-rose span {
+        position: absolute;
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--builder-text);
+    }
+
+    .compass-n { top: 0; left: 50%; transform: translateX(-50%); color: var(--builder-accent); }
+    .compass-s { bottom: 0; left: 50%; transform: translateX(-50%); }
+    .compass-e { right: 0; top: 50%; transform: translateY(-50%); }
+    .compass-w { left: 0; top: 50%; transform: translateY(-50%); }
+
+    .compass-indicator {
+        font-size: 10px;
+        color: var(--builder-muted);
+        margin-top: 5px;
+        text-align: center;
+    }
+
     /* Property Sections */
     .prop-section {
         margin-bottom: 15px;
@@ -230,6 +279,24 @@
         text-align: center;
         padding: 40px 20px;
     }
+
+    /* Template styles */
+    .template-select-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .template-select-row .builder-select {
+        flex: 1;
+    }
+
+    .template-desc {
+        font-size: 11px;
+        color: var(--builder-muted);
+        margin-top: 5px;
+        font-style: italic;
+        white-space: pre-line;
+    }
 </style>
 {% endblock %}
 
@@ -257,6 +324,23 @@
                         <span class="toggle-icon">-</span>
                     </div>
                     <div class="prop-section-content">
+                        <div class="form-group">
+                            <label class="builder-label">Room Template</label>
+                            <div class="template-select-row">
+                                <select id="room-template" class="builder-select">
+                                    <option value="">-- Select Template --</option>
+                                    <option value="elysium">Elysium</option>
+                                    <option value="haven">Haven</option>
+                                    <option value="rack">Rack (Feeding Ground)</option>
+                                    <option value="hostile_territory">Hostile Territory</option>
+                                    <option value="neutral_ground">Neutral Ground</option>
+                                    <option value="mortal_establishment">Mortal Establishment</option>
+                                    <option value="supernatural_site">Supernatural Site</option>
+                                    <option value="clear">-- Clear All Settings --</option>
+                                </select>
+                            </div>
+                            <div id="template-description" class="template-desc"></div>
+                        </div>
                         <div class="form-group">
                             <label class="builder-label">Name</label>
                             <input type="text" id="room-name" class="builder-input"
@@ -419,6 +503,17 @@
 
         <svg id="exit-lines" class="exit-line" style="width: 100%; height: 100%;"></svg>
 
+        <!-- Orientation Widget (Compass Rose) -->
+        <div class="orientation-widget">
+            <div class="compass-rose">
+                <span class="compass-n">N</span>
+                <span class="compass-s">S</span>
+                <span class="compass-e">E</span>
+                <span class="compass-w">W</span>
+            </div>
+            <div class="compass-indicator">North is up</div>
+        </div>
+
         <div class="status-bar">
             <span class="status-item">Rooms: <span id="room-count">0</span></span>
             <span class="status-item">Exits: <span id="exit-count">0</span></span>
@@ -444,10 +539,98 @@
     const ROOM_WIDTH = 80;
     const ROOM_HEIGHT = 60;
 
+    // Template storage
+    let roomTemplates = {};
+
+    // Load templates on page load
+    async function loadTemplates() {
+        try {
+            const response = await fetch("{% url 'builder:templates' %}");
+            const result = await response.json();
+            if (result.status === 'success') {
+                roomTemplates = result.templates;
+            }
+        } catch (err) {
+            console.error('Failed to load templates:', err);
+        }
+    }
+
+    // Show template preview with description and settings summary
+    function showTemplatePreview(templateKey) {
+        const template = roomTemplates[templateKey];
+        if (!template) return;
+
+        const descEl = document.getElementById('template-description');
+        let preview = template.description;
+
+        // Add settings summary
+        const v5 = template.v5;
+        preview += `\n\nSettings:\n`;
+        preview += `• Type: ${v5.location_type || 'None'}\n`;
+        preview += `• Access: ${v5.day_night.replace('_', ' ')}\n`;
+        preview += `• Danger: ${v5.danger_level}\n`;
+        if (v5.hunting_modifier !== 0) {
+            preview += `• Hunting: ${v5.hunting_modifier > 0 ? '+' : ''}${v5.hunting_modifier}\n`;
+        }
+
+        descEl.textContent = preview;
+    }
+
+    // Apply template to current room
+    function applyTemplate(templateKey) {
+        if (!selectedRoomId || !roomTemplates[templateKey]) return;
+
+        const template = roomTemplates[templateKey];
+        const room = mapData.rooms[selectedRoomId];
+
+        // Confirm before applying (unless it's a new room or clear template)
+        if (templateKey !== 'clear' && room.v5 && room.v5.location_type) {
+            if (!confirm(`Apply "${template.name}" template? This will overwrite current V5 settings.`)) {
+                document.getElementById('room-template').value = '';
+                document.getElementById('template-description').textContent = '';
+                return;
+            }
+        }
+
+        // Apply V5 settings
+        room.v5 = {...room.v5, ...template.v5};
+
+        // Update UI
+        document.getElementById('room-location-type').value = room.v5.location_type || '';
+        document.getElementById('room-day-night').value = room.v5.day_night || 'always';
+        document.getElementById('room-danger').value = room.v5.danger_level || 'safe';
+        document.getElementById('room-hunting').value = room.v5.hunting_modifier || 0;
+
+        // Update haven section visibility
+        toggleHavenSection(room.v5.location_type === 'haven');
+
+        // Apply haven ratings if present
+        if (room.v5.haven_ratings) {
+            document.getElementById('haven-security').value = room.v5.haven_ratings.security || 0;
+            document.getElementById('haven-size').value = room.v5.haven_ratings.size || 0;
+            document.getElementById('haven-luxury').value = room.v5.haven_ratings.luxury || 0;
+            document.getElementById('haven-warding').value = room.v5.haven_ratings.warding || 0;
+            document.getElementById('haven-hidden').checked = room.v5.haven_ratings.location_hidden || false;
+        }
+
+        // Show description
+        showTemplatePreview(templateKey);
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
         initMap();
         updateStatusBar();
+        loadTemplates();
+
+        // Bind template dropdown
+        document.getElementById('room-template').onchange = function(e) {
+            if (e.target.value) {
+                applyTemplate(e.target.value);
+            } else {
+                document.getElementById('template-description').textContent = '';
+            }
+        };
     });
 
     function initMap() {
@@ -526,6 +709,10 @@
 
         // Triggers
         updateTriggersDisplay(room.triggers || []);
+
+        // Reset template dropdown and description
+        document.getElementById('room-template').value = '';
+        document.getElementById('template-description').textContent = '';
 
         // Bind input handlers
         bindRoomInputs(id);
@@ -694,17 +881,100 @@
         }
     }
 
+    // Direction calculation utility
+    function calculateDirectionFromGrid(sourceRoom, targetRoom) {
+        const deltaX = targetRoom.grid_x - sourceRoom.grid_x;
+        const deltaY = targetRoom.grid_y - sourceRoom.grid_y;
+
+        // Map deltas to direction names
+        const directionMap = {
+            '0,-1': { name: 'north', aliases: ['n'], direction: 'north' },
+            '0,1': { name: 'south', aliases: ['s'], direction: 'south' },
+            '1,0': { name: 'east', aliases: ['e'], direction: 'east' },
+            '-1,0': { name: 'west', aliases: ['w'], direction: 'west' },
+            '1,-1': { name: 'northeast', aliases: ['ne'], direction: 'northeast' },
+            '-1,-1': { name: 'northwest', aliases: ['nw'], direction: 'northwest' },
+            '1,1': { name: 'southeast', aliases: ['se'], direction: 'southeast' },
+            '-1,1': { name: 'southwest', aliases: ['sw'], direction: 'southwest' }
+        };
+
+        const key = `${deltaX},${deltaY}`;
+        if (directionMap[key]) {
+            return directionMap[key];
+        }
+
+        // For non-cardinal deltas, find closest match
+        if (deltaY < 0 && Math.abs(deltaY) > Math.abs(deltaX)) {
+            return { name: 'north', aliases: ['n'], direction: 'north' };
+        } else if (deltaY > 0 && Math.abs(deltaY) > Math.abs(deltaX)) {
+            return { name: 'south', aliases: ['s'], direction: 'south' };
+        } else if (deltaX > 0) {
+            return { name: 'east', aliases: ['e'], direction: 'east' };
+        } else if (deltaX < 0) {
+            return { name: 'west', aliases: ['w'], direction: 'west' };
+        }
+
+        // Fallback
+        return { name: 'exit', aliases: [], direction: 'unknown' };
+    }
+
+    // Reverse direction mapping for bidirectional exits
+    function getOppositeDirection(direction) {
+        const opposites = {
+            'north': 'south',
+            'south': 'north',
+            'east': 'west',
+            'west': 'east',
+            'northeast': 'southwest',
+            'southwest': 'northeast',
+            'northwest': 'southeast',
+            'southeast': 'northwest'
+        };
+        return opposites[direction] || 'exit';
+    }
+
     function createExit(sourceId, targetId) {
+        const sourceRoom = mapData.rooms[sourceId];
+        const targetRoom = mapData.rooms[targetId];
+
+        if (!sourceRoom || !targetRoom) return;
+
+        // Calculate direction from source to target
+        const dirInfo = calculateDirectionFromGrid(sourceRoom, targetRoom);
+
+        // Create forward exit
         const id = 'e' + (mapData.next_exit_id || 1);
         mapData.next_exit_id = (mapData.next_exit_id || 1) + 1;
 
         if (!mapData.exits) mapData.exits = {};
 
         mapData.exits[id] = {
-            name: 'exit',
-            aliases: [],
+            name: dirInfo.name,
+            aliases: dirInfo.aliases,
+            direction: dirInfo.direction,
             source: sourceId,
             target: targetId,
+            description: '',
+            locks: ''
+        };
+
+        // Create reverse exit (bidirectional)
+        const reverseDir = getOppositeDirection(dirInfo.direction);
+        const reverseAliases = {
+            'north': ['n'], 'south': ['s'], 'east': ['e'], 'west': ['w'],
+            'northeast': ['ne'], 'northwest': ['nw'],
+            'southeast': ['se'], 'southwest': ['sw']
+        };
+
+        const reverseId = 'e' + (mapData.next_exit_id || 1);
+        mapData.next_exit_id = (mapData.next_exit_id || 1) + 1;
+
+        mapData.exits[reverseId] = {
+            name: reverseDir,
+            aliases: reverseAliases[reverseDir] || [],
+            direction: reverseDir,
+            source: targetId,
+            target: sourceId,
             description: '',
             locks: ''
         };
@@ -739,6 +1009,36 @@
             line.setAttribute('stroke-width', '2');
 
             svg.appendChild(line);
+
+            // Add direction label at midpoint
+            if (exit.direction) {
+                const midX = (x1 + x2) / 2;
+                const midY = (y1 + y2) / 2;
+
+                // Get abbreviation (first letter or two for diagonals)
+                const abbrev = exit.aliases && exit.aliases.length > 0 ? exit.aliases[0] : exit.direction.substring(0, 1);
+
+                // Create background rect for readability
+                const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                const textWidth = abbrev.length * 7;
+                bgRect.setAttribute('x', midX - textWidth / 2 - 2);
+                bgRect.setAttribute('y', midY - 7);
+                bgRect.setAttribute('width', textWidth + 4);
+                bgRect.setAttribute('height', 14);
+                bgRect.setAttribute('fill', 'var(--builder-bg)');
+                bgRect.setAttribute('rx', 2);
+                bgRect.setAttribute('opacity', '0.9');
+                svg.appendChild(bgRect);
+
+                // Create text label
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', midX);
+                text.setAttribute('y', midY);
+                text.setAttribute('class', 'exit-label');
+                text.textContent = abbrev;
+
+                svg.appendChild(text);
+            }
         }
     }
 

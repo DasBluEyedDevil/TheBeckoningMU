@@ -126,12 +126,12 @@ Plans:
   5. Builder can create and configure triggers through the web editor UI with type selector, conditions, and actions
   6. Trigger conditions can reference V5 game state (hunger level, clan, time-of-night, danger level)
   7. Only whitelisted trigger actions are available -- no arbitrary code execution is possible
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: Entry/exit trigger engine and room hooks
-- [ ] 07-02: Timed triggers via Evennia Scripts
-- [ ] 07-03: Interaction triggers, V5 conditions, and trigger editor UI
+- [ ] 07-01-PLAN.md — Entry/exit trigger engine and whitelisted actions: trigger_actions.py with safe actions, trigger_engine.py with validation and execution, Room hooks for at_object_receive/at_object_leave
+- [ ] 07-02-PLAN.md — Timed triggers via Evennia Scripts: RoomTriggerScript typeclass with at_repeat hook, trigger_scripts.py for script management, integration with sandbox building and cleanup
+- [ ] 07-03-PLAN.md — Interaction triggers, V5 conditions, and trigger editor UI: v5_conditions.py with clan/hunger/time checks, RoomTriggersAPI endpoints, trigger editor panel in builder HTML
 
 ## Progress
 

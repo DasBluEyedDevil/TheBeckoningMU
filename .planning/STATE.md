@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-03)
 ## Current Position
 
 Phase: 3 of 7 (Builder UX)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-05 -- Completed 03-01-PLAN.md (Compass rose and exit auto-naming)
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-05 -- Completed 03-02-PLAN.md (V5 room templates)
 
-Progress: [########______] 57% (8/14 plans)
+Progress: [#########_____] 64% (9/14 plans)
 
 ## Performance Metrics
 
@@ -64,6 +64,9 @@ Recent decisions affecting current work:
 - [03-01]: Direction calculation uses 8-point compass with grid delta mapping
 - [03-01]: Exits auto-created bidirectionally with opposite directions
 - [03-01]: Direction labels use abbreviated forms (n, s, e, w, ne, nw, se, sw)
+- [03-02]: Templates defined as Python dictionary (not database) for simplicity
+- [03-02]: Haven template includes default haven_ratings for convenience
+- [03-02]: Confirmation dialog only for rooms with existing V5 settings
 
 ### Pending Todos
 
@@ -82,5 +85,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 03-01-PLAN.md (Compass rose and exit auto-naming)
+Stopped at: Completed 03-02-PLAN.md (V5 room templates) - Phase 3 Complete
 Resume file: None

@@ -21,11 +21,11 @@
 
 ### Builder UX
 
-- [ ] **BLDX-01**: Compass rose overlay shows exit directions (N/S/E/W/NE/NW/SE/SW/U/D) on room nodes
-- [ ] **BLDX-02**: Exit auto-naming infers cardinal direction from grid position and sets exit name + aliases
-- [ ] **BLDX-03**: V5 room template presets (Elysium, Haven, Rack, etc.) that pre-fill V5 settings
-- [ ] **BLDX-04**: Template dropdown in editor to apply preset to new or existing room
-- [ ] **BLDX-05**: Map orientation indicator (N/S/E/W labels) on canvas corner
+- [x] **BLDX-01**: Compass rose overlay shows exit directions (N/S/E/W/NE/NW/SE/SW/U/D) on room nodes
+- [x] **BLDX-02**: Exit auto-naming infers cardinal direction from grid position and sets exit name + aliases
+- [x] **BLDX-03**: V5 room template presets (Elysium, Haven, Rack, etc.) that pre-fill V5 settings
+- [x] **BLDX-04**: Template dropdown in editor to apply preset to new or existing room
+- [x] **BLDX-05**: Map orientation indicator (N/S/E/W labels) on canvas corner
 
 ### Builder Workflow
 
@@ -91,11 +91,11 @@
 | CHAR-03 | Phase 2: Character Approval Completion | Complete |
 | CHAR-04 | Phase 2: Character Approval Completion | Complete |
 | CHAR-05 | Phase 2: Character Approval Completion | Complete |
-| BLDX-01 | Phase 3: Builder UX | Pending |
-| BLDX-02 | Phase 3: Builder UX | Pending |
-| BLDX-03 | Phase 3: Builder UX | Pending |
-| BLDX-04 | Phase 3: Builder UX | Pending |
-| BLDX-05 | Phase 3: Builder UX | Pending |
+| BLDX-01 | Phase 3: Builder UX | Complete |
+| BLDX-02 | Phase 3: Builder UX | Complete |
+| BLDX-03 | Phase 3: Builder UX | Complete |
+| BLDX-04 | Phase 3: Builder UX | Complete |
+| BLDX-05 | Phase 3: Builder UX | Complete |
 | BLDW-01 | Phase 4: Builder Approval Workflow | Pending |
 | BLDW-02 | Phase 4: Builder Approval Workflow | Pending |
 | BLDW-03 | Phase 4: Builder Approval Workflow | Pending |

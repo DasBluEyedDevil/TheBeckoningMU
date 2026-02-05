@@ -69,8 +69,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Compass rose overlay, exit auto-naming from grid position, and map orientation indicator
-- [ ] 03-02-PLAN.md — V5 room template presets (Elysium, Haven, Rack, etc.) with template dropdown and application
+- [x] 03-01-PLAN.md — Compass rose overlay, exit auto-naming from grid position, and map orientation indicator
+- [x] 03-02-PLAN.md — V5 room template presets (Elysium, Haven, Rack, etc.) with template dropdown and application
 
 ### Phase 4: Builder Approval Workflow
 **Goal**: Builder projects follow a gated lifecycle -- draft to submitted to approved -- with staff review before anything gets built in-game
@@ -143,7 +143,7 @@ Note: Phase 3 (Builder UX) can run in parallel with Phase 2 (Character Approval)
 |-------|---------------|--------|-----------|
 | 1. Review & Hardening | 3/3 | Complete | 2026-02-03 |
 | 2. Character Approval Completion | 4/4 | Complete | 2026-02-05 |
-| 3. Builder UX | 0/2 | Not started | - |
+| 3. Builder UX | 2/2 | Complete | 2026-02-05 |
 | 4. Builder Approval Workflow | 0/1 | Not started | - |
 | 5. Sandbox Building | 0/2 | Not started | - |
 | 6. Live Promotion | 0/1 | Not started | - |

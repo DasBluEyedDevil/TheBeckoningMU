@@ -23,7 +23,7 @@ MSSPTable = {
     "NAME": "Beckoning",
     # Generic
     "CRAWL DELAY": "-1",
-    "HOSTNAME": "",  # set to your domain once known
+    "HOSTNAME": "play.thebeckoning.net",
     "PORT": ["6660"],
     "CODEBASE": "Evennia",
     "CONTACT": "",  # email for contacting the mud
@@ -33,7 +33,7 @@ MSSPTable = {
     "LANGUAGE": "English",
     "LOCATION": "",
     "MINIMUM AGE": "18",
-    "WEBSITE": "",  # set to your domain once known
+    "WEBSITE": "https://thebeckoning.net",
     # Categorisation
     "FAMILY": "Custom",
     "GENRE": "Horror",

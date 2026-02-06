@@ -154,12 +154,20 @@ class BuilderEditorView(LoginRequiredMixin, TemplateView):
             ctx["project_data"] = json.dumps(project.map_data)
             ctx["project_id"] = project.id
             ctx["project_name"] = project.name
+            ctx["project_status"] = project.status
+            ctx["rejection_notes"] = project.rejection_notes or ""
+            ctx["rejection_count"] = project.rejection_count or 0
+            ctx["sandbox_room_id"] = project.sandbox_room_id
         else:
             ctx["can_edit"] = True
             ctx["project"] = None
             ctx["project_data"] = json.dumps(BuildProject().get_default_map_data())
             ctx["project_id"] = None
             ctx["project_name"] = "New Project"
+            ctx["project_status"] = "new"
+            ctx["rejection_notes"] = ""
+            ctx["rejection_count"] = 0
+            ctx["sandbox_room_id"] = None
 
         return ctx
 

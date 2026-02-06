@@ -1,191 +1,434 @@
 {% extends "builder/base.html" %}
 
-{% block title %}Web Builder - Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ── Project Cards Grid ─────────────────────── */
+    .project-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px;
+    }
+
+    .project-card {
+        background: var(--builder-card);
+        border: 1px solid var(--builder-border);
+        border-radius: 10px;
+        padding: 20px;
+        transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        cursor: pointer;
+        position: relative;
+    }
+    .project-card:hover {
+        border-color: var(--builder-border-hover);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        transform: translateY(-1px);
+    }
+    .project-card.card-accent:hover {
+        border-color: var(--builder-accent);
+        box-shadow: 0 4px 24px var(--builder-accent-glow);
+    }
+
+    .project-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .project-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--builder-text);
+        margin: 0;
+        line-height: 1.3;
+    }
+    .project-name a {
+        color: inherit;
+        text-decoration: none;
+    }
+    .project-name a:hover { color: var(--builder-accent-light); }
+
+    .project-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    .project-stat {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        color: var(--builder-muted);
+    }
+    .project-stat i { font-size: 13px; }
+
+    .project-actions {
+        display: flex;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 1px solid var(--builder-border);
+    }
+
+    .rejection-note {
+        background: rgba(212,160,23,0.08);
+        border: 1px solid rgba(212,160,23,0.2);
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 12px;
+        color: #d4a017;
+        margin-bottom: 14px;
+    }
+    .rejection-note i { margin-right: 4px; }
+
+    /* ── Stats Row ──────────────────────────────── */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 32px;
+    }
+    .stat-card {
+        background: var(--builder-card);
+        border: 1px solid var(--builder-border);
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+    }
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+    .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--builder-muted);
+    }
+
+    /* ── Section Headers ────────────────────────── */
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+    .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--builder-muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .section-count {
+        background: rgba(255,255,255,0.08);
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        color: var(--builder-muted);
+    }
+
+    /* ── New Project Card ──────────────────────── */
+    .new-project-card {
+        background: transparent;
+        border: 2px dashed var(--builder-border);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        min-height: 180px;
+    }
+    .new-project-card:hover {
+        border-color: var(--builder-accent);
+        background: rgba(139, 0, 0, 0.05);
+    }
+    .new-project-card i {
+        font-size: 28px;
+        color: var(--builder-muted);
+        margin-bottom: 8px;
+        transition: color 0.2s;
+    }
+    .new-project-card:hover i { color: var(--builder-accent-light); }
+    .new-project-card span {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--builder-muted);
+        transition: color 0.2s;
+    }
+    .new-project-card:hover span { color: var(--builder-text); }
+
+    /* ── Review Banner ──────────────────────────── */
+    .review-banner {
+        background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(212,160,23,0.02));
+        border: 1px solid rgba(212,160,23,0.2);
+        border-radius: 10px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+    .review-banner-text {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        color: #d4a017;
+    }
+    .review-banner-text i { font-size: 20px; }
+
+    /* ── Public Projects Table ──────────────────── */
+    .pub-table {
+        width: 100%;
+        font-size: 13px;
+    }
+    .pub-table th {
+        padding: 10px 16px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--builder-muted);
+        font-weight: 600;
+        border-bottom: 1px solid var(--builder-border);
+    }
+    .pub-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(46,46,54,0.5);
+        color: var(--builder-text);
+        vertical-align: middle;
+    }
+    .pub-table tr:last-child td { border-bottom: none; }
+    .pub-table tr:hover td { background: rgba(255,255,255,0.02); }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="text-light">Web Builder</h2>
-            <p class="text-muted">Create and manage building projects</p>
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h2>Dashboard</h2>
+            <p>Create and manage your building projects</p>
         </div>
-        <div class="col-auto">
-            <a href="{% url 'builder:create_project' %}" class="btn btn-danger">
-                + New Project
-            </a>
-        </div>
+        <a href="{% url 'builder:create_project' %}" class="btn-accent" style="text-decoration:none; white-space:nowrap;">
+            <i class="bi bi-plus-lg"></i> New Project
+        </a>
     </div>
 
-    <!-- Staff Review Link -->
     {% if user.is_staff %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <a href="{% url 'builder:build_review' %}" class="btn btn-warning">
-                Review Submissions
-                <span class="badge bg-dark ms-1" id="pending-count">-</span>
-            </a>
+    <!-- Staff Review Banner -->
+    <div class="review-banner">
+        <div class="review-banner-text">
+            <i class="bi bi-inbox"></i>
+            <span><strong id="pending-count">0</strong> projects awaiting review</span>
+        </div>
+        <a href="{% url 'builder:build_review' %}" class="btn-ghost" style="text-decoration:none; color: #d4a017; border-color: rgba(212,160,23,0.3);">
+            Review Submissions <i class="bi bi-arrow-right" style="font-size: 11px;"></i>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Stats Overview -->
+    {% if my_projects %}
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-value text-accent">{{ my_projects|length }}</div>
+            <div class="stat-label">Total Projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #3fb950;">
+                {% with live_count=0 %}
+                {% for p in my_projects %}{% if p.status == 'live' %}{{ forloop.counter }}{% endif %}{% endfor %}
+                {% endwith %}
+                {% widthratio 0 1 1 as zero %}
+                {% for p in my_projects %}{% if p.status == 'live' %}{% with found=True %}{% endwith %}{% endif %}{% endfor %}
+            </div>
+            <div class="stat-label">Live</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" style="color: #d4a017;">
+                {% for p in my_projects %}{% if p.status == 'submitted' %}{% with found=True %}{% endwith %}{% endif %}{% endfor %}
+            </div>
+            <div class="stat-label">In Review</div>
+        </div>
+        <div class="stat-card" id="total-rooms-stat">
+            <div class="stat-value" style="color: var(--builder-info);">-</div>
+            <div class="stat-label">Total Rooms</div>
         </div>
     </div>
     {% endif %}
 
     <!-- My Projects -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card bg-dark border-secondary">
-                <div class="card-header border-secondary">
-                    <h5 class="mb-0 text-light">My Projects</h5>
-                </div>
-                <div class="card-body">
-                    {% if my_projects %}
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Rooms</th>
-                                    <th>Status</th>
-                                    <th>Last Updated</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for project in my_projects %}
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'builder:edit_project' project.pk %}" class="text-danger">
-                                            {{ project.name }}
-                                        </a>
-                                    </td>
-                                    <td>{{ project.map_data.rooms|length|default:0 }}</td>
-                                    <td>
-                                        {% if project.status == 'draft' %}
-                                            <span class="badge bg-secondary">Draft</span>
-                                            {% if project.rejection_count > 0 %}
-                                            <br><small class="text-warning">
-                                                Rejected {{ project.rejection_count }} time(s)
-                                                <span class="ms-1" data-bs-toggle="tooltip" data-bs-placement="right"
-                                                      title="{{ project.rejection_notes|escapejs }}">
-                                                    <i class="bi bi-info-circle"></i>
-                                                </span>
-                                            </small>
-                                            {% endif %}
-                                        {% elif project.status == 'submitted' %}
-                                            <span class="badge bg-warning text-dark">Submitted</span>
-                                        {% elif project.status == 'approved' %}
-                                            <span class="badge bg-info">Approved</span>
-                                        {% elif project.status == 'built' %}
-                                            <span class="badge bg-primary">In Sandbox</span>
-                                        {% elif project.status == 'live' %}
-                                            <span class="badge bg-success">Live</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ project.updated_at|date:"M d, Y H:i" }}</td>
-                                    <td>
-                                        {% if project.status == 'draft' %}
-                                        <button class="btn btn-sm btn-outline-success"
-                                                onclick="submitProject({{ project.id }}, '{{ project.name|escapejs }}')">
-                                            Submit
-                                        </button>
-                                        {% endif %}
-                                        {% if project.status == 'built' %}
-                                        <button class="btn btn-sm btn-outline-success"
-                                                onclick="promoteProject({{ project.id }}, '{{ project.name|escapejs }}')">
-                                            Promote to Live
-                                        </button>
-                                        {% endif %}
-                                        <a href="{% url 'builder:edit_project' project.pk %}"
-                                           class="btn btn-sm btn-outline-light">Edit</a>
-                                        <a href="{% url 'builder:export_project' project.pk %}"
-                                           class="btn btn-sm btn-outline-secondary">Export</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% else %}
-                    <p class="text-muted mb-0">No projects yet. Create your first one!</p>
-                    {% endif %}
-                </div>
+    <div class="section-header">
+        <div class="section-title">
+            <i class="bi bi-folder2"></i> My Projects
+            <span class="section-count">{{ my_projects|length|default:0 }}</span>
+        </div>
+    </div>
+
+    <div class="project-grid" style="margin-bottom: 40px;">
+        {% for project in my_projects %}
+        <div class="project-card card-accent">
+            <div class="project-card-top">
+                <h3 class="project-name">
+                    <a href="{% url 'builder:edit_project' project.pk %}">{{ project.name }}</a>
+                </h3>
+                {% if project.status == 'draft' %}
+                    <span class="status-badge status-draft"><span class="status-dot"></span> Draft</span>
+                {% elif project.status == 'submitted' %}
+                    <span class="status-badge status-submitted"><span class="status-dot"></span> Submitted</span>
+                {% elif project.status == 'approved' %}
+                    <span class="status-badge status-approved"><span class="status-dot"></span> Approved</span>
+                {% elif project.status == 'built' %}
+                    <span class="status-badge status-built"><span class="status-dot"></span> Sandbox</span>
+                {% elif project.status == 'live' %}
+                    <span class="status-badge status-live"><span class="status-dot"></span> Live</span>
+                {% endif %}
+            </div>
+
+            <div class="project-meta">
+                <span class="project-stat">
+                    <i class="bi bi-grid-3x3"></i> {{ project.map_data.rooms|length|default:0 }} rooms
+                </span>
+                <span class="project-stat">
+                    <i class="bi bi-clock"></i> {{ project.updated_at|timesince }} ago
+                </span>
+            </div>
+
+            {% if project.rejection_count > 0 and project.status == 'draft' %}
+            <div class="rejection-note">
+                <i class="bi bi-exclamation-triangle"></i>
+                Returned {{ project.rejection_count }}x — {{ project.rejection_notes|truncatewords:20 }}
+            </div>
+            {% endif %}
+
+            <div class="project-actions">
+                <a href="{% url 'builder:edit_project' project.pk %}" class="btn-ghost" style="text-decoration:none; flex:1; text-align:center;">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+                {% if project.status == 'draft' %}
+                <button class="btn-accent" style="flex:1;"
+                        onclick="event.stopPropagation(); submitProject({{ project.id }}, '{{ project.name|escapejs }}')">
+                    <i class="bi bi-send"></i> Submit
+                </button>
+                {% elif project.status == 'built' %}
+                <button class="btn-accent" style="flex:1;"
+                        onclick="event.stopPropagation(); promoteProject({{ project.id }}, '{{ project.name|escapejs }}')">
+                    <i class="bi bi-rocket"></i> Promote
+                </button>
+                {% endif %}
+                <a href="{% url 'builder:export_project' project.pk %}" class="btn-ghost" style="text-decoration:none;"
+                   title="Export" onclick="event.stopPropagation();">
+                    <i class="bi bi-download"></i>
+                </a>
             </div>
         </div>
+        {% empty %}
+        <!-- New Project Prompt -->
+        <a href="{% url 'builder:create_project' %}" class="new-project-card">
+            <i class="bi bi-plus-circle"></i>
+            <span>Create your first project</span>
+        </a>
+        {% endfor %}
+
+        {% if my_projects %}
+        <!-- Always show the "new" card at the end -->
+        <a href="{% url 'builder:create_project' %}" class="new-project-card">
+            <i class="bi bi-plus-circle"></i>
+            <span>New Project</span>
+        </a>
+        {% endif %}
     </div>
 
     <!-- Public Projects -->
     {% if public_projects %}
-    <div class="row">
-        <div class="col-12">
-            <div class="card bg-dark border-secondary">
-                <div class="card-header border-secondary">
-                    <h5 class="mb-0 text-light">Public Projects (View Only)</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Author</th>
-                                    <th>Rooms</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for project in public_projects %}
-                                <tr>
-                                    <td>{{ project.name }}</td>
-                                    <td>{{ project.user.username }}</td>
-                                    <td>{{ project.map_data.rooms|length|default:0 }}</td>
-                                    <td>
-                                        {% if project.status == 'draft' %}
-                                            <span class="badge bg-secondary">Draft</span>
-                                        {% elif project.status == 'submitted' %}
-                                            <span class="badge bg-warning text-dark">Submitted</span>
-                                        {% elif project.status == 'approved' %}
-                                            <span class="badge bg-info">Approved</span>
-                                        {% elif project.status == 'built' %}
-                                            <span class="badge bg-primary">In Sandbox</span>
-                                        {% elif project.status == 'live' %}
-                                            <span class="badge bg-success">Live</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'builder:edit_project' project.pk %}"
-                                           class="btn btn-sm btn-outline-secondary">View</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <div class="section-header">
+        <div class="section-title">
+            <i class="bi bi-globe2"></i> Public Projects
+            <span class="section-count">{{ public_projects|length }}</span>
+        </div>
+    </div>
+
+    <div class="builder-card">
+        <div class="builder-card-body" style="padding: 0;">
+            <table class="pub-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Author</th>
+                        <th>Rooms</th>
+                        <th>Status</th>
+                        <th style="width: 80px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in public_projects %}
+                    <tr>
+                        <td>{{ project.name }}</td>
+                        <td style="color: var(--builder-muted);">{{ project.user.username }}</td>
+                        <td>{{ project.map_data.rooms|length|default:0 }}</td>
+                        <td>
+                            {% if project.status == 'draft' %}
+                                <span class="status-badge status-draft"><span class="status-dot"></span> Draft</span>
+                            {% elif project.status == 'submitted' %}
+                                <span class="status-badge status-submitted"><span class="status-dot"></span> Submitted</span>
+                            {% elif project.status == 'approved' %}
+                                <span class="status-badge status-approved"><span class="status-dot"></span> Approved</span>
+                            {% elif project.status == 'built' %}
+                                <span class="status-badge status-built"><span class="status-dot"></span> Sandbox</span>
+                            {% elif project.status == 'live' %}
+                                <span class="status-badge status-live"><span class="status-dot"></span> Live</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'builder:edit_project' project.pk %}" class="btn-ghost" style="text-decoration:none; padding: 4px 10px; font-size: 12px;">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
     {% endif %}
 </div>
 
-<!-- Submission Notes Modal -->
+<!-- Submit for Review Modal -->
 <div class="modal fade" id="submitModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark border-secondary">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title text-light">Submit Project for Review</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Submit for Review</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-light">Submit <strong id="submit-project-name"></strong> for staff review?</p>
-                <p class="text-muted small">You cannot edit while under review.</p>
+                <p>Submit <strong id="submit-project-name" class="text-accent"></strong> for staff review?</p>
+                <p class="text-builder-muted" style="font-size: 13px;">Your project will be locked while under review.</p>
                 <div class="mb-3">
-                    <label for="submission-notes" class="form-label text-light">Notes for staff (optional):</label>
-                    <textarea class="form-control bg-dark text-light border-secondary" id="submission-notes" rows="3"
-                              placeholder="Describe any special considerations or questions..."></textarea>
+                    <label for="submission-notes" class="form-label">Notes for staff <span class="text-builder-muted">(optional)</span></label>
+                    <textarea class="form-control" id="submission-notes" rows="3"
+                              placeholder="Describe any special considerations..."></textarea>
                 </div>
             </div>
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" id="confirm-submit">Submit for Review</button>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn-accent" id="confirm-submit">
+                    <i class="bi bi-send"></i> Submit
+                </button>
             </div>
         </div>
     </div>
@@ -193,27 +436,26 @@
 
 <!-- Promote to Live Modal -->
 <div class="modal fade" id="promoteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark border-secondary">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title text-light">Promote to Live World</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Promote to Live World</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-light">Promote <strong id="promote-project-name"></strong> to the live game world?</p>
-                <p class="text-muted small">This will connect your sandbox build to the live world.</p>
-                
+                <p>Promote <strong id="promote-project-name" class="text-accent"></strong> to the live game world?</p>
+
                 <div class="mb-3">
-                    <label for="connection-room" class="form-label text-light">Connect to Room:</label>
-                    <select class="form-select bg-dark text-light border-secondary" id="connection-room">
+                    <label for="connection-room" class="form-label">Connect to Room</label>
+                    <select class="form-select" id="connection-room">
                         <option value="">Loading rooms...</option>
                     </select>
-                    <div class="form-text text-muted">Select the live world room to connect your build to.</div>
+                    <div class="form-text">Select the live world room to connect your build to.</div>
                 </div>
-                
+
                 <div class="mb-3">
-                    <label for="connection-direction" class="form-label text-light">Direction from Live Room:</label>
-                    <select class="form-select bg-dark text-light border-secondary" id="connection-direction">
+                    <label for="connection-direction" class="form-label">Direction from Live Room</label>
+                    <select class="form-select" id="connection-direction">
                         <option value="n">North (n)</option>
                         <option value="s">South (s)</option>
                         <option value="e">East (e)</option>
@@ -225,22 +467,26 @@
                         <option value="u">Up (u)</option>
                         <option value="d">Down (d)</option>
                     </select>
-                    <div class="form-text text-muted">Players will use this direction to enter your build from the selected room.</div>
+                    <div class="form-text">Players will use this direction to enter your build.</div>
                 </div>
-                
-                <div class="alert alert-warning">
+
+                <div style="background: rgba(212,160,23,0.08); border: 1px solid rgba(212,160,23,0.2); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #d4a017;">
                     <i class="bi bi-exclamation-triangle"></i>
-                    <strong>Warning:</strong> This action cannot be undone. Make sure you have tested your build thoroughly in the sandbox.
+                    This action cannot be undone. Make sure you have tested thoroughly in the sandbox.
                 </div>
             </div>
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" id="confirm-promote">Promote to Live</button>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn-accent" id="confirm-promote">
+                    <i class="bi bi-rocket"></i> Promote to Live
+                </button>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
 // CSRF token helper
 function getCookie(name) {
@@ -260,7 +506,27 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 
-// Submission modal handling
+// ── Compute stats ──────────────────────────────────
+(function() {
+    let totalRooms = 0;
+    let liveCount = 0;
+    let submittedCount = 0;
+    {% for project in my_projects %}
+    totalRooms += {{ project.map_data.rooms|length|default:0 }};
+    {% if project.status == 'live' %}liveCount++;{% endif %}
+    {% if project.status == 'submitted' %}submittedCount++;{% endif %}
+    {% endfor %}
+
+    const roomStat = document.getElementById('total-rooms-stat');
+    if (roomStat) roomStat.querySelector('.stat-value').textContent = totalRooms;
+
+    // Fix the stat cards that couldn't be computed in Django templates easily
+    const statCards = document.querySelectorAll('.stat-card');
+    if (statCards[1]) statCards[1].querySelector('.stat-value').textContent = liveCount;
+    if (statCards[2]) statCards[2].querySelector('.stat-value').textContent = submittedCount;
+})();
+
+// ── Submit Modal ───────────────────────────────────
 let currentProjectId = null;
 const submitModal = new bootstrap.Modal(document.getElementById('submitModal'));
 
@@ -273,36 +539,37 @@ function submitProject(id, name) {
 
 document.getElementById('confirm-submit').addEventListener('click', async function() {
     if (!currentProjectId) return;
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Submitting...';
 
     const notes = document.getElementById('submission-notes').value;
 
     try {
         const response = await fetch(`/builder/api/project/${currentProjectId}/submit/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
             body: JSON.stringify({ notes: notes })
         });
-
         const data = await response.json();
-
         if (data.status === 'success') {
             submitModal.hide();
             window.location.reload();
         } else {
             alert('Error: ' + (data.error || 'Failed to submit project'));
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-send"></i> Submit';
         }
     } catch (error) {
         alert('Error submitting project: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send"></i> Submit';
     }
 });
 
-// Promotion modal handling
+// ── Promote Modal ──────────────────────────────────
 let promoteProjectId = null;
 const promoteModal = new bootstrap.Modal(document.getElementById('promoteModal'));
-let connectionRooms = [];
 
 function promoteProject(id, name) {
     promoteProjectId = id;
@@ -317,16 +584,14 @@ async function loadConnectionRooms() {
     try {
         const response = await fetch('/builder/api/connection-rooms/');
         const data = await response.json();
-        
+
         if (data.status === 'success') {
-            connectionRooms = data.rooms;
             const select = document.getElementById('connection-room');
             select.innerHTML = '';
-            
-            if (connectionRooms.length === 0) {
+            if (data.rooms.length === 0) {
                 select.innerHTML = '<option value="">No available rooms</option>';
             } else {
-                connectionRooms.forEach(room => {
+                data.rooms.forEach(room => {
                     const option = document.createElement('option');
                     option.value = room.id;
                     option.textContent = `${room.name} (#${room.id})`;
@@ -337,69 +602,58 @@ async function loadConnectionRooms() {
             document.getElementById('connection-room').innerHTML = '<option value="">Error loading rooms</option>';
         }
     } catch (error) {
-        console.error('Failed to load connection rooms:', error);
         document.getElementById('connection-room').innerHTML = '<option value="">Error loading rooms</option>';
     }
 }
 
 document.getElementById('confirm-promote').addEventListener('click', async function() {
     if (!promoteProjectId) return;
-    
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Promoting...';
+
     const roomId = document.getElementById('connection-room').value;
     const direction = document.getElementById('connection-direction').value;
-    
-    if (!roomId) {
-        alert('Please select a connection room');
-        return;
-    }
-    
+
+    if (!roomId) { alert('Please select a connection room'); btn.disabled = false; btn.innerHTML = '<i class="bi bi-rocket"></i> Promote to Live'; return; }
+
     try {
         const response = await fetch(`/builder/api/build/${promoteProjectId}/promote/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            body: JSON.stringify({ 
-                connection_room_id: parseInt(roomId),
-                connection_direction: direction
-            })
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            body: JSON.stringify({ connection_room_id: parseInt(roomId), connection_direction: direction })
         });
-        
         const data = await response.json();
-        
         if (data.status === 'success') {
             promoteModal.hide();
-            alert(`Project promoted successfully! ${data.promoted_rooms} rooms moved to live world.`);
+            alert(`Project promoted! ${data.promoted_rooms} rooms moved to live world.`);
             window.location.reload();
         } else {
             alert('Error: ' + (data.error || 'Failed to promote project'));
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-rocket"></i> Promote to Live';
         }
     } catch (error) {
         alert('Error promoting project: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-rocket"></i> Promote to Live';
     }
 });
 
-// Initialize toolips
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-});
+// ── Tooltips ───────────────────────────────────────
+document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-// Load pending count for staff
+// ── Staff: load pending count ──────────────────────
 {% if user.is_staff %}
-async function loadPendingCount() {
+(async function() {
     try {
         const response = await fetch('/builder/api/review/projects/');
         const data = await response.json();
         if (data.status === 'success') {
             document.getElementById('pending-count').textContent = data.projects.length;
         }
-    } catch (error) {
-        console.error('Failed to load pending count:', error);
-    }
-}
-loadPendingCount();
+    } catch (e) {}
+})();
 {% endif %}
 </script>
 {% endblock %}

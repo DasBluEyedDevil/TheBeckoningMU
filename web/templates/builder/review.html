@@ -1,59 +1,244 @@
 {% extends "builder/base.html" %}
 
-{% block title %}Build Review - Staff{% endblock %}
+{% block title %}Build Review{% endblock %}
+{% block nav_review %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ── Review Cards ───────────────────────────── */
+    .review-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 16px;
+    }
+
+    .review-card {
+        background: var(--builder-card);
+        border: 1px solid var(--builder-border);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .review-card:hover {
+        border-color: var(--builder-border-hover);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+
+    .review-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--builder-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .review-card-header h3 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 2px;
+        color: var(--builder-text);
+    }
+    .review-card-header .author {
+        font-size: 12px;
+        color: var(--builder-muted);
+    }
+
+    .review-card-body {
+        padding: 16px 20px;
+    }
+
+    .review-card-footer {
+        padding: 12px 20px;
+        border-top: 1px solid var(--builder-border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* ── Stats Strip ────────────────────────────── */
+    .review-stats {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 14px;
+    }
+    .review-stat {
+        text-align: center;
+    }
+    .review-stat-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--builder-text);
+        line-height: 1;
+    }
+    .review-stat-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--builder-muted);
+        margin-top: 2px;
+    }
+
+    /* ── Builder Notes ──────────────────────────── */
+    .builder-notes {
+        background: rgba(56,139,253,0.06);
+        border: 1px solid rgba(56,139,253,0.15);
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 12px;
+        color: #58a6ff;
+        margin-bottom: 14px;
+    }
+    .builder-notes strong {
+        color: #79b8ff;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    /* ── Map Preview ────────────────────────────── */
+    .map-preview {
+        background: var(--builder-panel);
+        border: 1px solid var(--builder-border);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .map-preview canvas {
+        display: block;
+        width: 100%;
+        height: 180px;
+    }
+
+    /* ── Description ────────────────────────────── */
+    .review-desc {
+        font-size: 13px;
+        color: var(--builder-muted);
+        margin-bottom: 14px;
+        line-height: 1.5;
+    }
+
+    /* ── Pending Counter ────────────────────────── */
+    .pending-pill {
+        background: rgba(212,160,23,0.15);
+        color: #d4a017;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 4px 14px;
+        border-radius: 20px;
+    }
+
+    /* ── Empty State ────────────────────────────── */
+    .review-empty {
+        text-align: center;
+        padding: 80px 20px;
+    }
+    .review-empty i {
+        font-size: 56px;
+        color: var(--builder-border);
+        margin-bottom: 20px;
+        display: block;
+    }
+    .review-empty h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    .review-empty p {
+        color: var(--builder-muted);
+        font-size: 14px;
+        max-width: 360px;
+        margin: 0 auto;
+    }
+
+    /* ── Loading Skeleton ───────────────────────── */
+    .skeleton-card {
+        background: var(--builder-card);
+        border: 1px solid var(--builder-border);
+        border-radius: 10px;
+        height: 340px;
+        position: relative;
+        overflow: hidden;
+    }
+    .skeleton-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+        animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="text-light">Submitted Build Projects</h2>
-            <p class="text-muted">Review and approve builder submissions</p>
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h2>Build Review</h2>
+            <p>Review and approve builder submissions</p>
         </div>
-        <div class="col-auto">
-            <span class="badge bg-warning text-dark fs-6" id="project-count">Loading...</span>
-        </div>
+        <span class="pending-pill" id="project-count">
+            <i class="bi bi-hourglass-split" style="font-size: 12px;"></i> Loading...
+        </span>
     </div>
 
     <!-- Projects Container -->
     <div id="projects-container">
-        <!-- Empty state -->
-        <div class="alert alert-info" id="empty-state" style="display: none;">
-            <h5 class="alert-heading">No projects awaiting review</h5>
-            <p class="mb-0">All submitted projects have been reviewed. Check back later for new submissions.</p>
+        <!-- Loading state -->
+        <div id="loading-state" class="review-grid">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
         </div>
 
-        <!-- Project cards will be inserted here -->
-        <div id="project-cards" class="row g-4"></div>
+        <!-- Empty state (hidden initially) -->
+        <div id="empty-state" style="display: none;">
+            <div class="review-empty">
+                <i class="bi bi-check2-all"></i>
+                <h4>All caught up</h4>
+                <p>No projects are waiting for review. New submissions will appear here automatically.</p>
+            </div>
+        </div>
+
+        <!-- Project cards -->
+        <div id="project-cards" class="review-grid"></div>
     </div>
 </div>
 
 <!-- Reject Modal -->
 <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark border-secondary">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title text-light">Reject Project</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reject Project</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-light">Reject <strong id="reject-project-name"></strong>?</p>
-                <p class="text-muted">Please provide feedback explaining why the project was rejected. This will be visible to the builder.</p>
+                <p>Reject <strong id="reject-project-name" class="text-accent"></strong>?</p>
+                <p class="text-builder-muted" style="font-size: 13px;">Provide feedback so the builder knows what to improve.</p>
                 <div class="mb-3">
-                    <label for="rejection-notes" class="form-label text-light">Rejection Notes <span class="text-danger">*</span></label>
-                    <textarea class="form-control bg-dark text-light border-secondary" id="rejection-notes" rows="4"
+                    <label for="rejection-notes" class="form-label">Feedback <span style="color: var(--builder-accent-light);">*</span></label>
+                    <textarea class="form-control" id="rejection-notes" rows="4"
                               placeholder="Explain what needs to be changed or improved..."
                               minlength="10"></textarea>
-                    <div class="form-text"><span id="char-count">0</span> characters (minimum 10)</div>
+                    <div class="form-text"><span id="char-count">0</span> / 10 minimum characters</div>
                 </div>
             </div>
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirm-reject" disabled>Submit Rejection</button>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn-accent" id="confirm-reject" disabled
+                        style="background: var(--builder-accent);">
+                    <i class="bi bi-x-lg"></i> Reject
+                </button>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
 // CSRF token helper
 function getCookie(name) {
@@ -73,7 +258,7 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 
-// Reject modal handling
+// ── Reject Modal ───────────────────────────────────
 let currentProjectId = null;
 const rejectModal = new bootstrap.Modal(document.getElementById('rejectModal'));
 const rejectionNotes = document.getElementById('rejection-notes');
@@ -97,53 +282,50 @@ function showRejectModal(id, name) {
 
 confirmReject.addEventListener('click', async function() {
     if (!currentProjectId) return;
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Rejecting...';
 
     const notes = rejectionNotes.value.trim();
     if (notes.length < 10) {
         alert('Please provide at least 10 characters of feedback');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-x-lg"></i> Reject';
         return;
     }
 
     try {
         const response = await fetch(`/builder/api/review/${currentProjectId}/reject/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
             body: JSON.stringify({ notes: notes })
         });
-
         const data = await response.json();
-
         if (data.status === 'success') {
             rejectModal.hide();
             loadProjects();
         } else {
             alert('Error: ' + (data.error || 'Failed to reject project'));
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-x-lg"></i> Reject';
         }
     } catch (error) {
         alert('Error rejecting project: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-x-lg"></i> Reject';
     }
 });
 
-// Approve project
+// ── Approve ────────────────────────────────────────
 async function approveProject(id, name) {
-    if (!confirm(`Approve project "${name}"?`)) {
-        return;
-    }
+    if (!confirm(`Approve "${name}"? This will allow the builder to proceed to sandbox testing.`)) return;
 
     try {
         const response = await fetch(`/builder/api/review/${id}/approve/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            }
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken }
         });
-
         const data = await response.json();
-
         if (data.status === 'success') {
             loadProjects();
         } else {
@@ -154,58 +336,56 @@ async function approveProject(id, name) {
     }
 }
 
-// Render mini map preview on canvas
+// ── Mini Map Renderer ──────────────────────────────
 function renderMiniMap(canvas, mapData) {
     const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    const width = rect.width;
+    const height = rect.height;
 
-    // Clear canvas
-    ctx.fillStyle = '#1a1a2e';
+    // Background
+    ctx.fillStyle = '#15151a';
     ctx.fillRect(0, 0, width, height);
 
     if (!mapData || !mapData.rooms) return;
-
     const rooms = Object.values(mapData.rooms);
     if (rooms.length === 0) return;
 
-    // Find bounds
+    // Bounds
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     rooms.forEach(room => {
-        const x = room.x || 0;
-        const y = room.y || 0;
-        minX = Math.min(minX, x);
-        minY = Math.min(minY, y);
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
+        minX = Math.min(minX, room.x || 0);
+        minY = Math.min(minY, room.y || 0);
+        maxX = Math.max(maxX, room.x || 0);
+        maxY = Math.max(maxY, room.y || 0);
     });
 
-    // Add padding
-    const padding = 20;
-    const mapWidth = maxX - minX + 120;  // Room width
-    const mapHeight = maxY - minY + 80;  // Room height
-
-    // Calculate scale to fit
+    const padding = 24;
+    const roomW = 80, roomH = 50;
+    const mapWidth = maxX - minX + roomW;
+    const mapHeight = maxY - minY + roomH;
     const scaleX = (width - padding * 2) / mapWidth;
     const scaleY = (height - padding * 2) / mapHeight;
     const scale = Math.min(scaleX, scaleY, 1);
-
-    // Center the map
     const offsetX = (width - mapWidth * scale) / 2 - minX * scale;
     const offsetY = (height - mapHeight * scale) / 2 - minY * scale;
 
-    // Draw exits first (lines)
+    // Draw exits
     if (mapData.exits) {
-        ctx.strokeStyle = '#4a4a6a';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#3a3a4a';
+        ctx.lineWidth = 1.5;
         Object.values(mapData.exits).forEach(exit => {
-            const sourceRoom = mapData.rooms[exit.source];
-            const targetRoom = mapData.rooms[exit.target];
-            if (sourceRoom && targetRoom) {
-                const x1 = (sourceRoom.x + 60) * scale + offsetX;
-                const y1 = (sourceRoom.y + 40) * scale + offsetY;
-                const x2 = (targetRoom.x + 60) * scale + offsetX;
-                const y2 = (targetRoom.y + 40) * scale + offsetY;
+            const src = mapData.rooms[exit.source];
+            const tgt = mapData.rooms[exit.target];
+            if (src && tgt) {
+                const x1 = ((src.x || 0) + roomW/2) * scale + offsetX;
+                const y1 = ((src.y || 0) + roomH/2) * scale + offsetY;
+                const x2 = ((tgt.x || 0) + roomW/2) * scale + offsetX;
+                const y2 = ((tgt.y || 0) + roomH/2) * scale + offsetY;
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
@@ -214,50 +394,59 @@ function renderMiniMap(canvas, mapData) {
         });
     }
 
-    // Draw rooms (rectangles)
+    // Draw rooms
     rooms.forEach(room => {
         const x = (room.x || 0) * scale + offsetX;
         const y = (room.y || 0) * scale + offsetY;
-        const w = 120 * scale;
-        const h = 80 * scale;
+        const w = roomW * scale;
+        const h = roomH * scale;
 
-        // Room background
-        ctx.fillStyle = '#2d2d44';
-        ctx.fillRect(x, y, w, h);
+        // Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.roundRect(x + 1, y + 1, w, h, 3 * scale);
+        ctx.fill();
+
+        // Room body
+        ctx.fillStyle = '#2a2a3a';
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, 3 * scale);
+        ctx.fill();
 
         // Room border
-        ctx.strokeStyle = '#4a4a6a';
+        ctx.strokeStyle = '#4a4a5a';
         ctx.lineWidth = 1;
-        ctx.strokeRect(x, y, w, h);
+        ctx.stroke();
 
-        // Room name (truncated)
-        ctx.fillStyle = '#ffffff';
-        ctx.font = `${Math.max(8, 10 * scale)}px sans-serif`;
+        // Room name
+        ctx.fillStyle = '#ccc';
+        ctx.font = `${Math.max(7, 9 * scale)}px -apple-system, sans-serif`;
         ctx.textAlign = 'center';
-        const name = (room.name || 'Unnamed').substring(0, 15);
+        const name = (room.name || 'Unnamed').substring(0, 12);
         ctx.fillText(name, x + w / 2, y + h / 2 + 3);
     });
 }
 
-// Load and render projects
+// ── Load Projects ──────────────────────────────────
 async function loadProjects() {
     const container = document.getElementById('project-cards');
     const emptyState = document.getElementById('empty-state');
+    const loadingState = document.getElementById('loading-state');
     const countBadge = document.getElementById('project-count');
-
-    container.innerHTML = '<div class="col-12 text-center text-muted"><p>Loading projects...</p></div>';
 
     try {
         const response = await fetch('/builder/api/review/projects/');
         const data = await response.json();
 
+        loadingState.style.display = 'none';
+
         if (data.status !== 'success') {
-            container.innerHTML = `<div class="col-12"><div class="alert alert-danger">Error loading projects: ${data.error || 'Unknown error'}</div></div>`;
+            container.innerHTML = `<div class="col-12" style="background: rgba(139,0,0,0.1); border: 1px solid rgba(139,0,0,0.3); border-radius: 8px; padding: 16px; color: var(--builder-accent-light);">Error loading projects: ${data.error || 'Unknown error'}</div>`;
             return;
         }
 
         const projects = data.projects || [];
-        countBadge.textContent = `${projects.length} pending`;
+        countBadge.innerHTML = `<i class="bi bi-inbox" style="font-size: 12px;"></i> ${projects.length} pending`;
 
         if (projects.length === 0) {
             container.innerHTML = '';
@@ -267,63 +456,69 @@ async function loadProjects() {
 
         emptyState.style.display = 'none';
 
-        container.innerHTML = projects.map(project => `
-            <div class="col-md-6 col-lg-4">
-                <div class="card bg-dark border-secondary h-100">
-                    <div class="card-header border-secondary d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="mb-0 text-light">${escapeHtml(project.name)}</h5>
-                            <small class="text-muted">by ${escapeHtml(project.user.username)}</small>
-                        </div>
-                        <span class="badge bg-warning text-dark">Submitted</span>
+        container.innerHTML = projects.map(project => {
+            const age = Math.ceil((new Date() - new Date(project.created_at)) / (1000 * 60 * 60 * 24));
+            return `
+            <div class="review-card">
+                <div class="review-card-header">
+                    <div>
+                        <h3>${escapeHtml(project.name)}</h3>
+                        <span class="author">by ${escapeHtml(project.user.username)}</span>
                     </div>
-                    <div class="card-body">
-                        <p class="text-light small">${escapeHtml(project.description || 'No description')}</p>
-                        <div class="row text-center mb-3">
-                            <div class="col-4">
-                                <div class="text-light fw-bold">${project.room_count}</div>
-                                <small class="text-muted">Rooms</small>
-                            </div>
-                            <div class="col-4">
-                                <div class="text-light fw-bold">${project.exit_count}</div>
-                                <small class="text-muted">Exits</small>
-                            </div>
-                            <div class="col-4">
-                                <div class="text-light fw-bold">${Math.ceil((new Date() - new Date(project.created_at)) / (1000 * 60 * 60 * 24))}d</div>
-                                <small class="text-muted">Age</small>
-                            </div>
+                    <span class="status-badge status-submitted">
+                        <span class="status-dot"></span> Submitted
+                    </span>
+                </div>
+                <div class="review-card-body">
+                    <p class="review-desc">${escapeHtml(project.description || 'No description provided')}</p>
+
+                    <div class="review-stats">
+                        <div class="review-stat">
+                            <div class="review-stat-value">${project.room_count}</div>
+                            <div class="review-stat-label">Rooms</div>
                         </div>
-                        ${project.submission_notes ? `
-                        <div class="alert alert-info py-2 small">
-                            <strong>Builder Notes:</strong> ${escapeHtml(project.submission_notes)}
+                        <div class="review-stat">
+                            <div class="review-stat-value">${project.exit_count}</div>
+                            <div class="review-stat-label">Exits</div>
                         </div>
-                        ` : ''}
-                        <div class="mb-2">
-                            <small class="text-muted">Map Preview:</small>
+                        <div class="review-stat">
+                            <div class="review-stat-value">${age}d</div>
+                            <div class="review-stat-label">Age</div>
                         </div>
-                        <canvas id="map-canvas-${project.id}" width="300" height="200" class="w-100 border border-secondary rounded"
-                                style="max-height: 200px;"></canvas>
                     </div>
-                    <div class="card-footer border-secondary">
-                        <button class="btn btn-success btn-sm" onclick="approveProject(${project.id}, '${escapeHtml(project.name)}')">
-                            <i class="bi bi-check-lg"></i> Approve
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="showRejectModal(${project.id}, '${escapeHtml(project.name)}')">
-                            <i class="bi bi-x-lg"></i> Reject
-                        </button>
-                        <a href="/builder/edit/${project.id}/" class="btn btn-outline-secondary btn-sm float-end" target="_blank">
-                            View Full Map
-                        </a>
+
+                    ${project.submission_notes ? `
+                    <div class="builder-notes">
+                        <strong>Builder Notes</strong><br>
+                        ${escapeHtml(project.submission_notes)}
+                    </div>
+                    ` : ''}
+
+                    <div class="map-preview">
+                        <canvas id="map-canvas-${project.id}"></canvas>
                     </div>
                 </div>
-            </div>
-        `).join('');
+                <div class="review-card-footer">
+                    <button class="btn-accent" style="flex: 1;"
+                            onclick="approveProject(${project.id}, '${escapeHtml(project.name)}')">
+                        <i class="bi bi-check-lg"></i> Approve
+                    </button>
+                    <button class="btn-ghost" style="flex: 1; color: var(--builder-accent-light); border-color: rgba(139,0,0,0.3);"
+                            onclick="showRejectModal(${project.id}, '${escapeHtml(project.name)}')">
+                        <i class="bi bi-x-lg"></i> Reject
+                    </button>
+                    <a href="/builder/edit/${project.id}/" class="btn-ghost" style="text-decoration:none;"
+                       target="_blank" title="View full map">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                </div>
+            </div>`;
+        }).join('');
 
         // Render map previews
         projects.forEach(project => {
             const canvas = document.getElementById(`map-canvas-${project.id}`);
             if (canvas) {
-                // Fetch full project data for map preview
                 fetch(`/builder/api/project/${project.id}/`)
                     .then(r => r.json())
                     .then(data => {
@@ -336,7 +531,8 @@ async function loadProjects() {
         });
 
     } catch (error) {
-        container.innerHTML = `<div class="col-12"><div class="alert alert-danger">Error loading projects: ${error.message}</div></div>`;
+        loadingState.style.display = 'none';
+        container.innerHTML = `<div style="background: rgba(139,0,0,0.1); border: 1px solid rgba(139,0,0,0.3); border-radius: 8px; padding: 16px; color: var(--builder-accent-light);">Error loading projects: ${error.message}</div>`;
     }
 }
 
@@ -348,7 +544,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Load projects on page load
 document.addEventListener('DOMContentLoaded', loadProjects);
 </script>
 {% endblock %}

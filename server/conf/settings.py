@@ -31,7 +31,7 @@ from evennia.settings_default import *
 import sys
 from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-BECKONMU_DIR = PROJECT_ROOT / "beckonmu"
+BECKONMU_DIR = PROJECT_ROOT / "TheBeckoningMU"
 if str(BECKONMU_DIR) not in sys.path:
     sys.path.insert(0, str(BECKONMU_DIR))
 
@@ -40,7 +40,7 @@ if str(BECKONMU_DIR) not in sys.path:
 ######################################################################
 
 # This is the name of your game. Make it catchy!
-SERVERNAME = "beckonmu"
+SERVERNAME = "TheBeckoningMU"
 
 # Add custom Django apps (BBS, Jobs, Status, Boons, Traits)
 INSTALLED_APPS += (
@@ -50,7 +50,12 @@ INSTALLED_APPS += (
     "boons",
     "traits",
 )
-
+# Port configurations for shared hosting
+TELNET_PORTS = [6660]
+WEBSERVER_PORTS = [(6665, 5001)]  # (external_port, internal_port)
+WEBSOCKET_CLIENT_PORT = 6662
+WEBSERVER_PROXY_PORT = 6661
+AMP_PORT = 6670  # Changed to 6670 to avoid conflicts
 ######################################################################
 # Help System Configuration
 ######################################################################

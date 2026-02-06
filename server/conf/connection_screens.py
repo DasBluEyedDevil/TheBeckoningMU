@@ -23,42 +23,48 @@ of the screen is done by the unlogged-in "look" command.
 from django.conf import settings
 
 from evennia import utils
-from world.ansi_theme import (
-    BLOOD_RED, DARK_RED, BONE_WHITE, SHADOW_GREY, PALE_IVORY, GOLD, RESET,
-    DBOX_H, DBOX_V, DBOX_TL, DBOX_TR, DBOX_BL, DBOX_BR
+
+CONNECTION_SCREEN = """                                                    
+
+=============================                                  
+=        ==  ================                                  
+====  =====  ================                                  
+====  =====  ================                                  
+====  =====  ======   =======                                  
+====  =====    ===  =  ======                                  
+====  =====  =  ==     ======                                  
+====  =====  =  ==  =========                                  
+====  =====  =  ==  =  ======                                  
+====  =====  =  ===   =======                                  
+=============================                                  
+===============================================================
+=      ==================  ====================================
+=  ===  =================  ====================================
+=  ====  ================  ====================================
+=  ===  ====   ====   ===  =  ===   ===  = ===  ==  = ====   ==
+=      ====  =  ==  =  ==    ===     ==     ======     ==  =  =
+=  ===  ===     ==  =====   ====  =  ==  =  ==  ==  =  ===    =
+=  ====  ==  =====  =====    ===  =  ==  =  ==  ==  =  =====  =
+=  ===  ===  =  ==  =  ==  =  ==  =  ==  =  ==  ==  =  ==  =  =
+=      =====   ====   ===  =  ===   ===  =  ==  ==  =  ===   ==
+===============================================================
+  _                         __                             
+ /_) _)_ ( _   _   _   _    )_)         )\ ) o  _ ( _  _)_ 
+/ /  (_   ) ) )_) ) ) (    /__) (_(    (  (  ( (_( ) ) (_  
+             (_       _)          _)             _)        
+
+    A World of Darkness MUSH                                                                                             
+
+    To connect, type '|wconnect <username> <password>|n'
+    to create,  type '|wcreate  <username> <password>|n'
+
+    If you have spaces in your username, enclose it in quotes.
+  
+    Enter |whelp|n for more info.
+
+    Original Work by lcanady (github/lcanady)
+    Modifications by Devil and erratic
+    Powered By Evennia v{}""".format(
+    utils.get_evennia_version("short")
 )
-
-CONNECTION_SCREEN = f"""{DARK_RED}
-╔════════════════════════════════════════════════════════════════════════════╗
-║                                                                            ║
-║                        {BONE_WHITE}THE BECKONING MUD{DARK_RED}                                 ║
-║                                                                            ║
-║             {SHADOW_GREY}[Vampire: The Masquerade 5th Edition]{DARK_RED}                      ║
-║                                                                            ║
-╚════════════════════════════════════════════════════════════════════════════╝{RESET}
-
-           {BLOOD_RED}
-                   .d:....:h.
-                .:!!!!!!!!!!!!:.
-           .::!!!!!!!!!!!!!!!!!!!!::.
-    ..::!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!::..
-{RESET}
-  {SHADOW_GREY}The night calls. The Beast stirs. The Camarilla gathers.{RESET}
-
-{SHADOW_GREY}════════════════════════════════════════════════════════════════════════════════{RESET}
-
-  {GOLD}→{RESET} To connect: {BONE_WHITE}connect <username> <password>{RESET}
-  {GOLD}→{RESET} To create:  {BONE_WHITE}create <username> <password>{RESET}
-  {GOLD}→{RESET} For help:   {BONE_WHITE}help{RESET}
-
-  {SHADOW_GREY}If you have spaces in your username, enclose it in quotes.{RESET}
-
-{SHADOW_GREY}════════════════════════════════════════════════════════════════════════════════{RESET}
-
-  {BLOOD_RED}⚜{RESET} {PALE_IVORY}Original Work by lcanady (github/lcanady){RESET}
-  {SHADOW_GREY}Modifications by Devil and erratic{RESET}
-  {SHADOW_GREY}Powered By Evennia v{utils.get_evennia_version("short")}{RESET}
-
-{DARK_RED}╚════════════════════════════════════════════════════════════════════════════════╝{RESET}
-"""
 

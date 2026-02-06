@@ -14,6 +14,7 @@ from beckonmu.traits.utils import (
     validate_trait_for_character,
     enhanced_import_character_from_json
 )
+from beckonmu.traits.api import place_approved_character, notify_account
 from evennia.utils.search import object_search
 from evennia.utils import evtable
 from django.utils import timezone
@@ -29,22 +30,21 @@ import json
 import os
 from django.conf import settings
 
+# Import trait constants from v5_data - single source of truth
+from world.v5_data import CLANS, ATTRIBUTES, SKILLS
 
-VALID_CLANS = [
-    'Banu Haqim', 'Brujah', 'Gangrel', 'Hecata', 'Lasombra', 'Malkavian',
-    'Ministry', 'Nosferatu', 'Ravnos', 'Salubri', 'Toreador', 'Tremere',
-    'Tzimisce', 'Ventrue', 'Caitiff', 'Thin-Blood'
-]
+# Derive lists from v5_data constants for backward compatibility
+VALID_CLANS = list(CLANS.keys())
 
-# Attributes
-PHYSICAL_ATTRIBUTES = ['strength', 'dexterity', 'stamina']
-SOCIAL_ATTRIBUTES = ['charisma', 'manipulation', 'composure']
-MENTAL_ATTRIBUTES = ['intelligence', 'wits', 'resolve']
+# Attributes - derive from ATTRIBUTES dict (lowercase for consistency)
+PHYSICAL_ATTRIBUTES = [attr.lower() for attr in ATTRIBUTES['Physical']]
+SOCIAL_ATTRIBUTES = [attr.lower() for attr in ATTRIBUTES['Social']]
+MENTAL_ATTRIBUTES = [attr.lower() for attr in ATTRIBUTES['Mental']]
 
-# Skills
-PHYSICAL_SKILLS = ['athletics', 'brawl', 'craft', 'drive', 'firearms', 'larceny', 'melee', 'stealth', 'survival']
-SOCIAL_SKILLS = ['animal ken', 'etiquette', 'insight', 'intimidation', 'leadership', 'performance', 'persuasion', 'streetwise', 'subterfuge']
-MENTAL_SKILLS = ['academics', 'awareness', 'finance', 'investigation', 'medicine', 'occult', 'politics', 'science', 'technology']
+# Skills - derive from SKILLS dict (lowercase for consistency)
+PHYSICAL_SKILLS = [skill.lower() for skill in SKILLS['Physical']]
+SOCIAL_SKILLS = [skill.lower() for skill in SKILLS['Social']]
+MENTAL_SKILLS = [skill.lower() for skill in SKILLS['Mental']]
 
 
 class CmdPending(Command):
@@ -66,8 +66,10 @@ class CmdPending(Command):
 
     def func(self):
         """List pending characters."""
-        # Get all characters with CharacterBio that are not approved
-        pending_bios = CharacterBio.objects.filter(approved=False).select_related('character')
+        # Get all characters with CharacterBio that are submitted or rejected
+        pending_bios = CharacterBio.objects.filter(
+            status__in=['submitted', 'rejected']
+        ).select_related('character')
 
         if not pending_bios:
             self.caller.msg("|yNo characters currently pending approval.|n")
@@ -445,31 +447,29 @@ class CmdApprove(Command):
         # Get or create bio
         bio, created = CharacterBio.objects.get_or_create(character=character)
 
-        if bio.approved:
+        if bio.status == 'approved':
             self.caller.msg(f"|yCharacter '{character.key}' is already approved.|n")
             return
 
         # Approve the character
-        bio.approved = True
+        bio.status = 'approved'
         bio.approved_by = self.caller.key
         bio.approved_at = timezone.now()
         bio.save()
 
+        # Auto-place approved character in starting room
+        place_approved_character(character)
+
         # Notify staff
         self.caller.msg(f"|gCharacter '{character.key}' has been approved!|n")
+        self.caller.msg(f"|gCharacter placed in starting room.|n")
 
-        # Notify player
+        # Notify player (stores for offline delivery and sends immediately if online)
         if character.account:
-            notification = f"|w{'=' * 78}|n\n"
-            notification += f"|gYour character '{character.key}' has been APPROVED by {self.caller.key}!|n\n"
-            notification += "|gYou may now begin playing.|n\n"
-            
+            msg = f"Your character '{character.key}' has been APPROVED by {self.caller.key}!\nYou may now begin playing."
             if message:
-                notification += f"\n|wStaff message:|n {message}\n"
-            
-            notification += f"|w{'=' * 78}|n"
-            
-            character.account.msg(notification)
+                msg += f"\nStaff message: {message}"
+            notify_account(character.account, msg, notification_type="approval")
 
         # Log the approval
         if not hasattr(character.db, 'staff_actions'):
@@ -500,7 +500,7 @@ class CmdApprove(Command):
                     Comment.objects.create(
                         job=job,
                         author=self.caller.account,
-                        text=comment_text
+                        content=comment_text
                     )
 
                     # Close the job
@@ -570,19 +570,21 @@ class CmdReject(Command):
         # Get or create bio
         bio, created = CharacterBio.objects.get_or_create(character=character)
 
+        # Update status and rejection tracking on the model
+        bio.status = 'rejected'
+        bio.rejection_notes = reason
+        bio.rejection_count += 1
+        bio.save()
+
         # Notify staff
         self.caller.msg(f"|yCharacter '{character.key}' has been rejected.|n")
 
-        # Notify player
+        # Notify player (stores for offline delivery and sends immediately if online)
         if character.account:
-            notification = f"|w{'=' * 78}|n\n"
-            notification += f"|rYour character '{character.key}' requires revisions.|n\n"
-            notification += f"|wStaff member {self.caller.key} has provided the following feedback:|n\n"
-            notification += f"{reason}\n\n"
-            notification += "|wPlease make the necessary changes and resubmit your character.|n\n"
-            notification += f"|w{'=' * 78}|n"
-            
-            character.account.msg(notification)
+            msg = f"Your character '{character.key}' requires revisions.\n"
+            msg += f"Staff feedback from {self.caller.key}:\n{reason}\n"
+            msg += "Please edit and resubmit via the character creation page."
+            notify_account(character.account, msg, notification_type="rejection")
 
         # Log the rejection
         if not hasattr(character.db, 'staff_actions'):
@@ -611,7 +613,7 @@ class CmdReject(Command):
                     Comment.objects.create(
                         job=job,
                         author=self.caller.account,
-                        text=comment_text
+                        content=comment_text
                     )
 
                     # Keep job OPEN for resubmission

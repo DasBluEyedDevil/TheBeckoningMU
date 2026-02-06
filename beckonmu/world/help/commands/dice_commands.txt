@@ -1,0 +1,108 @@
+|[R+===================================================================+
+|W|                     DICE ROLLING COMMANDS                        |
+|[R+===================================================================+|n
+
+Commands for rolling V5 dice pools.
+
+|WBASIC ROLLING:|n
+
+|yroll <pool> [<hunger>] [vs <difficulty>]|n
+|yr <pool> [<hunger>] [vs <difficulty>]|n
+  Roll a V5 dice pool with optional Hunger dice.
+
+|yExamples:|n
+  roll 7                         # Roll 7 dice
+  roll 5 2 vs 3                  # 5 dice, Hunger 2, difficulty 3
+  roll 6 vs 2                    # 6 dice vs difficulty 2
+
+|ySwitches:|n
+  /willpower - Offer Willpower reroll on failure
+  /secret - Only show result to you (no room broadcast)
+
+|yExamples:|n
+  roll/willpower 4 3             # With Willpower option
+  roll/secret 6 vs 2             # Secret roll
+
+|WDISCIPLINE POWER ROLLS:|n
+
+|ypower <power name> [vs <difficulty>]|n
+|ydiscipline <power name> [vs <difficulty>]|n
+  Roll a discipline power automatically.
+
+|yExamples:|n
+  power Corrosive Vitae          # Auto-calculate pool
+  power Corrosive Vitae vs 3     # vs difficulty 3
+  power/norouse Heightened Senses # Skip Rouse check
+
+The system automatically:
+  - Looks up the discipline power
+  - Calculates dice pool from your traits
+  - Applies Blood Potency bonuses
+  - Performs Rouse check (unless /norouse)
+  - Rolls with your current Hunger
+
+|WROUSE CHECKS:|n
+
+|yrouse [<reason>]|n
+  Perform a Rouse check.
+
+|yExamples:|n
+  rouse                          # Basic Rouse check
+  rouse Blood Surge              # Rouse with reason
+
+Rouse checks are made when using vampiric powers, healing,
+or performing blood-powered actions. On failure (1-5),
+Hunger increases by 1.
+
+|WDICE MECHANICS REFERENCE:|n
+
+|yshowdice|n
+|yshowdice hunger|n
+|yshowdice criticals|n
+|yshowdice bestial|n
+  Display V5 dice mechanics reference.
+
+Shows information about:
+  - Success thresholds
+  - Critical wins
+  - Hunger dice mechanics
+  - Messy Criticals
+  - Bestial Failures
+
+|WV5 DICE RULES:|n
+
+|ySuccess:|n
+  - Each die is d10 (1-10)
+  - |g6-9|n = 1 success
+  - |y10|n = 2 successes (critical)
+  - 1-5 = no success
+
+|yCritical Win:|n
+  - Pair of 10s = Critical Success
+  - Each pair adds 4 total successes
+
+|yHunger Dice:|n
+  - Replace regular dice (not added)
+  - Number equals current Hunger level
+  - |r1|n on Hunger die can cause Bestial Failure
+  - |r10|n on Hunger die can cause Messy Critical
+
+|yMessy Critical:|n
+  - Critical win with at least one Hunger 10
+  - You succeed, but the Beast influences outcome
+  - Gain a Stain on Humanity
+
+|yBestial Failure:|n
+  - Failed roll with Hunger dice showing 1s
+  - The Beast seizes control
+  - Clan Compulsion may activate
+
+|yWillpower Reroll:|n
+  - Spend 1 Willpower to reroll up to 3 failed dice
+  - Cannot reroll Hunger dice
+
+|WRELATED TOPICS:|n
+
+|ySee also:|n help roll, help hunger, help disciplines, help rouse
+
+|[r+===================================================================+|n

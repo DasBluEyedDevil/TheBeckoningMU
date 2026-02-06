@@ -14,7 +14,10 @@ from .api import (
     CharacterCreateAPI,
     PendingCharactersAPI,
     CharacterDetailAPI,
-    CharacterApprovalAPI
+    CharacterApprovalAPI,
+    MyCharactersAPI,
+    CharacterEditDataAPI,
+    CharacterResubmitAPI,
 )
 
 app_name = 'traits'
@@ -36,4 +39,9 @@ urlpatterns = [
     path('pending-characters/', PendingCharactersAPI.as_view(), name='pending_characters'),
     path('character/<int:character_id>/detail/', CharacterDetailAPI.as_view(), name='character_detail'),
     path('character/<int:character_id>/approval/', CharacterApprovalAPI.as_view(), name='character_approval'),
+
+    # Player character management endpoints
+    path('my-characters/', MyCharactersAPI.as_view(), name='my_characters'),
+    path('character/<int:character_id>/for-edit/', CharacterEditDataAPI.as_view(), name='character_for_edit'),
+    path('character/<int:character_id>/resubmit/', CharacterResubmitAPI.as_view(), name='character_resubmit'),
 ]

@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Web Builder - Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-light">Web Builder</h2>
+            <p class="text-muted">Create and manage building projects</p>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'builder:create_project' %}" class="btn btn-danger">
+                + New Project
+            </a>
+        </div>
+    </div>
+
+    <!-- Staff Review Link -->
+    {% if user.is_staff %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{% url 'builder:build_review' %}" class="btn btn-warning">
+                Review Submissions
+                <span class="badge bg-dark ms-1" id="pending-count">-</span>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- My Projects -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header border-secondary">
+                    <h5 class="mb-0 text-light">My Projects</h5>
+                </div>
+                <div class="card-body">
+                    {% if my_projects %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Rooms</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in my_projects %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'builder:edit_project' project.pk %}" class="text-danger">
+                                            {{ project.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ project.map_data.rooms|length|default:0 }}</td>
+                                    <td>
+                                        {% if project.status == 'draft' %}
+                                            <span class="badge bg-secondary">Draft</span>
+                                            {% if project.rejection_count > 0 %}
+                                            <br><small class="text-warning">
+                                                Rejected {{ project.rejection_count }} time(s)
+                                                <span class="ms-1" data-bs-toggle="tooltip" data-bs-placement="right"
+                                                      title="{{ project.rejection_notes|escapejs }}">
+                                                    <i class="bi bi-info-circle"></i>
+                                                </span>
+                                            </small>
+                                            {% endif %}
+                                        {% elif project.status == 'submitted' %}
+                                            <span class="badge bg-warning text-dark">Submitted</span>
+                                        {% elif project.status == 'approved' %}
+                                            <span class="badge bg-info">Approved</span>
+                                        {% elif project.status == 'built' %}
+                                            <span class="badge bg-primary">In Sandbox</span>
+                                        {% elif project.status == 'live' %}
+                                            <span class="badge bg-success">Live</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ project.updated_at|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        {% if project.status == 'draft' %}
+                                        <button class="btn btn-sm btn-outline-success"
+                                                onclick="submitProject({{ project.id }}, '{{ project.name|escapejs }}')">
+                                            Submit
+                                        </button>
+                                        {% endif %}
+                                        {% if project.status == 'built' %}
+                                        <button class="btn btn-sm btn-outline-success"
+                                                onclick="promoteProject({{ project.id }}, '{{ project.name|escapejs }}')">
+                                            Promote to Live
+                                        </button>
+                                        {% endif %}
+                                        <a href="{% url 'builder:edit_project' project.pk %}"
+                                           class="btn btn-sm btn-outline-light">Edit</a>
+                                        <a href="{% url 'builder:export_project' project.pk %}"
+                                           class="btn btn-sm btn-outline-secondary">Export</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No projects yet. Create your first one!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Public Projects -->
+    {% if public_projects %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header border-secondary">
+                    <h5 class="mb-0 text-light">Public Projects (View Only)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Author</th>
+                                    <th>Rooms</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in public_projects %}
+                                <tr>
+                                    <td>{{ project.name }}</td>
+                                    <td>{{ project.user.username }}</td>
+                                    <td>{{ project.map_data.rooms|length|default:0 }}</td>
+                                    <td>
+                                        {% if project.status == 'draft' %}
+                                            <span class="badge bg-secondary">Draft</span>
+                                        {% elif project.status == 'submitted' %}
+                                            <span class="badge bg-warning text-dark">Submitted</span>
+                                        {% elif project.status == 'approved' %}
+                                            <span class="badge bg-info">Approved</span>
+                                        {% elif project.status == 'built' %}
+                                            <span class="badge bg-primary">In Sandbox</span>
+                                        {% elif project.status == 'live' %}
+                                            <span class="badge bg-success">Live</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'builder:edit_project' project.pk %}"
+                                           class="btn btn-sm btn-outline-secondary">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Submission Notes Modal -->
+<div class="modal fade" id="submitModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light">Submit Project for Review</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-light">Submit <strong id="submit-project-name"></strong> for staff review?</p>
+                <p class="text-muted small">You cannot edit while under review.</p>
+                <div class="mb-3">
+                    <label for="submission-notes" class="form-label text-light">Notes for staff (optional):</label>
+                    <textarea class="form-control bg-dark text-light border-secondary" id="submission-notes" rows="3"
+                              placeholder="Describe any special considerations or questions..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="confirm-submit">Submit for Review</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Promote to Live Modal -->
+<div class="modal fade" id="promoteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light">Promote to Live World</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-light">Promote <strong id="promote-project-name"></strong> to the live game world?</p>
+                <p class="text-muted small">This will connect your sandbox build to the live world.</p>
+                
+                <div class="mb-3">
+                    <label for="connection-room" class="form-label text-light">Connect to Room:</label>
+                    <select class="form-select bg-dark text-light border-secondary" id="connection-room">
+                        <option value="">Loading rooms...</option>
+                    </select>
+                    <div class="form-text text-muted">Select the live world room to connect your build to.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="connection-direction" class="form-label text-light">Direction from Live Room:</label>
+                    <select class="form-select bg-dark text-light border-secondary" id="connection-direction">
+                        <option value="n">North (n)</option>
+                        <option value="s">South (s)</option>
+                        <option value="e">East (e)</option>
+                        <option value="w">West (w)</option>
+                        <option value="ne">Northeast (ne)</option>
+                        <option value="nw">Northwest (nw)</option>
+                        <option value="se">Southeast (se)</option>
+                        <option value="sw">Southwest (sw)</option>
+                        <option value="u">Up (u)</option>
+                        <option value="d">Down (d)</option>
+                    </select>
+                    <div class="form-text text-muted">Players will use this direction to enter your build from the selected room.</div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Warning:</strong> This action cannot be undone. Make sure you have tested your build thoroughly in the sandbox.
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="confirm-promote">Promote to Live</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// CSRF token helper
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// Submission modal handling
+let currentProjectId = null;
+const submitModal = new bootstrap.Modal(document.getElementById('submitModal'));
+
+function submitProject(id, name) {
+    currentProjectId = id;
+    document.getElementById('submit-project-name').textContent = name;
+    document.getElementById('submission-notes').value = '';
+    submitModal.show();
+}
+
+document.getElementById('confirm-submit').addEventListener('click', async function() {
+    if (!currentProjectId) return;
+
+    const notes = document.getElementById('submission-notes').value;
+
+    try {
+        const response = await fetch(`/builder/api/project/${currentProjectId}/submit/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ notes: notes })
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            submitModal.hide();
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to submit project'));
+        }
+    } catch (error) {
+        alert('Error submitting project: ' + error.message);
+    }
+});
+
+// Promotion modal handling
+let promoteProjectId = null;
+const promoteModal = new bootstrap.Modal(document.getElementById('promoteModal'));
+let connectionRooms = [];
+
+function promoteProject(id, name) {
+    promoteProjectId = id;
+    document.getElementById('promote-project-name').textContent = name;
+    document.getElementById('connection-room').innerHTML = '<option value="">Loading rooms...</option>';
+    document.getElementById('connection-direction').value = 'n';
+    promoteModal.show();
+    loadConnectionRooms();
+}
+
+async function loadConnectionRooms() {
+    try {
+        const response = await fetch('/builder/api/connection-rooms/');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            connectionRooms = data.rooms;
+            const select = document.getElementById('connection-room');
+            select.innerHTML = '';
+            
+            if (connectionRooms.length === 0) {
+                select.innerHTML = '<option value="">No available rooms</option>';
+            } else {
+                connectionRooms.forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.id;
+                    option.textContent = `${room.name} (#${room.id})`;
+                    select.appendChild(option);
+                });
+            }
+        } else {
+            document.getElementById('connection-room').innerHTML = '<option value="">Error loading rooms</option>';
+        }
+    } catch (error) {
+        console.error('Failed to load connection rooms:', error);
+        document.getElementById('connection-room').innerHTML = '<option value="">Error loading rooms</option>';
+    }
+}
+
+document.getElementById('confirm-promote').addEventListener('click', async function() {
+    if (!promoteProjectId) return;
+    
+    const roomId = document.getElementById('connection-room').value;
+    const direction = document.getElementById('connection-direction').value;
+    
+    if (!roomId) {
+        alert('Please select a connection room');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/builder/api/build/${promoteProjectId}/promote/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ 
+                connection_room_id: parseInt(roomId),
+                connection_direction: direction
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            promoteModal.hide();
+            alert(`Project promoted successfully! ${data.promoted_rooms} rooms moved to live world.`);
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to promote project'));
+        }
+    } catch (error) {
+        alert('Error promoting project: ' + error.message);
+    }
+});
+
+// Initialize toolips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+});
+
+// Load pending count for staff
+{% if user.is_staff %}
+async function loadPendingCount() {
+    try {
+        const response = await fetch('/builder/api/review/projects/');
+        const data = await response.json();
+        if (data.status === 'success') {
+            document.getElementById('pending-count').textContent = data.projects.length;
+        }
+    } catch (error) {
+        console.error('Failed to load pending count:', error);
+    }
+}
+loadPendingCount();
+{% endif %}
+</script>
+{% endblock %}

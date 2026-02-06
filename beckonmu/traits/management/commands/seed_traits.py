@@ -16,6 +16,9 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from beckonmu.traits.models import TraitCategory, Trait, DisciplinePower
 
+# Import trait constants from v5_data - single source of truth
+from beckonmu.world.v5_data import ATTRIBUTES, SKILLS, DISCIPLINES
+
 
 class Command(BaseCommand):
     """Seed VtM 5e trait definitions from V5_MECHANICS.md reference."""
@@ -88,178 +91,133 @@ class Command(BaseCommand):
         return categories
 
     def _create_attributes(self, category):
-        """Create all V5 attributes."""
-        attributes_data = [
-            # Physical Attributes
-            {'name': 'Strength', 'sort_order': 1,
-             'description': 'Physical power, muscle, brute force'},
-            {'name': 'Dexterity', 'sort_order': 2,
-             'description': 'Agility, grace, reflexes, fine motor control'},
-            {'name': 'Stamina', 'sort_order': 3,
-             'description': 'Endurance, resilience, toughness, constitution'},
+        """Create all V5 attributes from v5_data constants."""
+        # Descriptions for each attribute (could also be moved to v5_data in future)
+        attribute_descriptions = {
+            'Strength': 'Physical power, muscle, brute force',
+            'Dexterity': 'Agility, grace, reflexes, fine motor control',
+            'Stamina': 'Endurance, resilience, toughness, constitution',
+            'Charisma': 'Charm, magnetism, ability to inspire',
+            'Manipulation': 'Ability to deceive, influence, control',
+            'Composure': 'Self-control, grace under pressure, emotional regulation',
+            'Intelligence': 'Reasoning, memory, analytical capability',
+            'Wits': 'Cunning, quick thinking, situational awareness',
+            'Resolve': 'Determination, focus, mental fortitude',
+        }
 
-            # Social Attributes
-            {'name': 'Charisma', 'sort_order': 4,
-             'description': 'Charm, magnetism, ability to inspire'},
-            {'name': 'Manipulation', 'sort_order': 5,
-             'description': 'Ability to deceive, influence, control'},
-            {'name': 'Composure', 'sort_order': 6,
-             'description': 'Self-control, grace under pressure, emotional regulation'},
-
-            # Mental Attributes
-            {'name': 'Intelligence', 'sort_order': 7,
-             'description': 'Reasoning, memory, analytical capability'},
-            {'name': 'Wits', 'sort_order': 8,
-             'description': 'Cunning, quick thinking, situational awareness'},
-            {'name': 'Resolve', 'sort_order': 9,
-             'description': 'Determination, focus, mental fortitude'},
-        ]
-
+        # Build attributes list from v5_data ATTRIBUTES constant
+        # Order: Physical (1-3), Social (4-6), Mental (7-9)
+        sort_order = 0
         count = 0
-        for attr_data in attributes_data:
-            _, created = Trait.objects.get_or_create(
-                name=attr_data['name'],
-                category=category,
-                defaults={
-                    'description': attr_data['description'],
-                    'sort_order': attr_data['sort_order'],
-                    'min_value': 1,  # All vampires have at least 1 in each attribute
-                    'max_value': 5,
-                    'has_specialties': False,
-                    'is_instanced': False,
-                }
-            )
-            if created:
-                count += 1
+
+        for category_name in ['Physical', 'Social', 'Mental']:
+            for attr_name in ATTRIBUTES[category_name]:
+                sort_order += 1
+                _, created = Trait.objects.get_or_create(
+                    name=attr_name,
+                    category=category,
+                    defaults={
+                        'description': attribute_descriptions.get(attr_name, ''),
+                        'sort_order': sort_order,
+                        'min_value': 1,  # All vampires have at least 1 in each attribute
+                        'max_value': 5,
+                        'has_specialties': False,
+                        'is_instanced': False,
+                    }
+                )
+                if created:
+                    count += 1
 
         return count
 
     def _create_skills(self, category):
-        """Create all V5 skills."""
-        skills_data = [
-            # Physical Skills (1-9)
-            {'name': 'Athletics', 'sort_order': 1,
-             'description': 'Running, jumping, climbing, swimming, parkour'},
-            {'name': 'Brawl', 'sort_order': 2,
-             'description': 'Unarmed combat, grappling, martial arts'},
-            {'name': 'Craft', 'sort_order': 3,
-             'description': 'Creating and repairing physical objects'},
-            {'name': 'Drive', 'sort_order': 4,
-             'description': 'Operating vehicles'},
-            {'name': 'Firearms', 'sort_order': 5,
-             'description': 'Shooting guns of all types'},
-            {'name': 'Larceny', 'sort_order': 6,
-             'description': 'Lock picking, pickpocketing, security'},
-            {'name': 'Melee', 'sort_order': 7,
-             'description': 'Armed combat with melee weapons'},
-            {'name': 'Stealth', 'sort_order': 8,
-             'description': 'Moving unseen and unheard'},
-            {'name': 'Survival', 'sort_order': 9,
-             'description': 'Wilderness skills, tracking, foraging'},
+        """Create all V5 skills from v5_data constants."""
+        # Descriptions for each skill (could also be moved to v5_data in future)
+        skill_descriptions = {
+            # Physical Skills
+            'Athletics': 'Running, jumping, climbing, swimming, parkour',
+            'Brawl': 'Unarmed combat, grappling, martial arts',
+            'Craft': 'Creating and repairing physical objects',
+            'Drive': 'Operating vehicles',
+            'Firearms': 'Shooting guns of all types',
+            'Larceny': 'Lock picking, pickpocketing, security',
+            'Melee': 'Armed combat with melee weapons',
+            'Stealth': 'Moving unseen and unheard',
+            'Survival': 'Wilderness skills, tracking, foraging',
+            # Social Skills
+            'Animal Ken': 'Understanding and influencing animals',
+            'Etiquette': 'Social graces, protocol, proper behavior',
+            'Insight': 'Reading people, detecting lies, empathy',
+            'Intimidation': 'Coercion through fear or threat',
+            'Leadership': 'Inspiring and directing others',
+            'Performance': 'Artistic expression, entertainment',
+            'Persuasion': 'Convincing others through reason or charm',
+            'Streetwise': 'Urban survival, criminal knowledge',
+            'Subterfuge': 'Lying, disguise, misdirection',
+            # Mental Skills
+            'Academics': 'Scholarly knowledge, research, humanities',
+            'Awareness': 'Noticing details, perception, alertness',
+            'Finance': 'Money management, economics, business',
+            'Investigation': 'Solving mysteries, gathering evidence',
+            'Medicine': 'Medical knowledge, first aid, anatomy',
+            'Occult': 'Supernatural lore, mysticism, rituals',
+            'Politics': 'Government, power structures, diplomacy',
+            'Science': 'Natural sciences, chemistry, biology',
+            'Technology': 'Computers, electronics, modern tech',
+        }
 
-            # Social Skills (10-18)
-            {'name': 'Animal Ken', 'sort_order': 10,
-             'description': 'Understanding and influencing animals'},
-            {'name': 'Etiquette', 'sort_order': 11,
-             'description': 'Social graces, protocol, proper behavior'},
-            {'name': 'Insight', 'sort_order': 12,
-             'description': 'Reading people, detecting lies, empathy'},
-            {'name': 'Intimidation', 'sort_order': 13,
-             'description': 'Coercion through fear or threat'},
-            {'name': 'Leadership', 'sort_order': 14,
-             'description': 'Inspiring and directing others'},
-            {'name': 'Performance', 'sort_order': 15,
-             'description': 'Artistic expression, entertainment'},
-            {'name': 'Persuasion', 'sort_order': 16,
-             'description': 'Convincing others through reason or charm'},
-            {'name': 'Streetwise', 'sort_order': 17,
-             'description': 'Urban survival, criminal knowledge'},
-            {'name': 'Subterfuge', 'sort_order': 18,
-             'description': 'Lying, disguise, misdirection'},
-
-            # Mental Skills (19-27)
-            {'name': 'Academics', 'sort_order': 19,
-             'description': 'Scholarly knowledge, research, humanities'},
-            {'name': 'Awareness', 'sort_order': 20,
-             'description': 'Noticing details, perception, alertness'},
-            {'name': 'Finance', 'sort_order': 21,
-             'description': 'Money management, economics, business'},
-            {'name': 'Investigation', 'sort_order': 22,
-             'description': 'Solving mysteries, gathering evidence'},
-            {'name': 'Medicine', 'sort_order': 23,
-             'description': 'Medical knowledge, first aid, anatomy'},
-            {'name': 'Occult', 'sort_order': 24,
-             'description': 'Supernatural lore, mysticism, rituals'},
-            {'name': 'Politics', 'sort_order': 25,
-             'description': 'Government, power structures, diplomacy'},
-            {'name': 'Science', 'sort_order': 26,
-             'description': 'Natural sciences, chemistry, biology'},
-            {'name': 'Technology', 'sort_order': 27,
-             'description': 'Computers, electronics, modern tech'},
-        ]
-
+        # Build skills list from v5_data SKILLS constant
+        # Order: Physical (1-9), Social (10-18), Mental (19-27)
+        sort_order = 0
         count = 0
-        for skill_data in skills_data:
-            _, created = Trait.objects.get_or_create(
-                name=skill_data['name'],
-                category=category,
-                defaults={
-                    'description': skill_data['description'],
-                    'sort_order': skill_data['sort_order'],
-                    'min_value': 0,  # Skills can be untrained
-                    'max_value': 5,
-                    'has_specialties': True,  # All skills can have specialties
-                    'is_instanced': False,
-                }
-            )
-            if created:
-                count += 1
+
+        for category_name in ['Physical', 'Social', 'Mental']:
+            for skill_name in SKILLS[category_name]:
+                sort_order += 1
+                _, created = Trait.objects.get_or_create(
+                    name=skill_name,
+                    category=category,
+                    defaults={
+                        'description': skill_descriptions.get(skill_name, ''),
+                        'sort_order': sort_order,
+                        'min_value': 0,  # Skills can be untrained
+                        'max_value': 5,
+                        'has_specialties': True,  # All skills can have specialties
+                        'is_instanced': False,
+                    }
+                )
+                if created:
+                    count += 1
 
         return count
 
     def _create_disciplines(self, category):
-        """Create all V5 disciplines."""
-        disciplines_data = [
-            {'name': 'Animalism', 'sort_order': 1,
-             'description': 'Command over beasts and bestial nature'},
-            {'name': 'Auspex', 'sort_order': 2,
-             'description': 'Supernatural senses and perception'},
-            {'name': 'Blood Sorcery', 'sort_order': 3,
-             'description': 'Rituals and blood magic'},
-            {'name': 'Celerity', 'sort_order': 4,
-             'description': 'Supernatural speed'},
-            {'name': 'Dominate', 'sort_order': 5,
-             'description': 'Mind control and mental manipulation'},
-            {'name': 'Fortitude', 'sort_order': 6,
-             'description': 'Supernatural resilience and endurance'},
-            {'name': 'Obfuscate', 'sort_order': 7,
-             'description': 'Supernatural stealth, illusion, and invisibility'},
-            {'name': 'Oblivion', 'sort_order': 8,
-             'description': 'Death, shadows, necromancy'},
-            {'name': 'Potence', 'sort_order': 9,
-             'description': 'Supernatural strength'},
-            {'name': 'Presence', 'sort_order': 10,
-             'description': 'Supernatural charisma and emotional manipulation'},
-            {'name': 'Protean', 'sort_order': 11,
-             'description': 'Shapeshifting and bestial transformation'},
-            {'name': 'Thin-Blood Alchemy', 'sort_order': 12,
-             'description': 'Limited supernatural chemistry (Thin-Bloods only)',
-             'splat_restriction': 'thin-blood'},
-        ]
-
+        """Create all V5 disciplines from v5_data constants."""
+        # Build disciplines from v5_data DISCIPLINES constant
+        # Sort alphabetically for consistent ordering
         count = 0
-        for disc_data in disciplines_data:
+        sort_order = 0
+
+        for disc_name in sorted(DISCIPLINES.keys()):
+            disc_data = DISCIPLINES[disc_name]
+            sort_order += 1
+
+            # Determine splat restriction (Thin-Blood Alchemy is thin-blood only)
+            splat_restriction = None
+            if disc_data.get('type') == 'thin-blood':
+                splat_restriction = 'thin-blood'
+
             defaults = {
-                'description': disc_data['description'],
-                'sort_order': disc_data['sort_order'],
+                'description': disc_data.get('description', ''),
+                'sort_order': sort_order,
                 'min_value': 0,
                 'max_value': 5,
                 'has_specialties': False,
                 'is_instanced': False,
-                'splat_restriction': disc_data.get('splat_restriction'),
+                'splat_restriction': splat_restriction,
             }
             _, created = Trait.objects.get_or_create(
-                name=disc_data['name'],
+                name=disc_name,
                 category=category,
                 defaults=defaults
             )

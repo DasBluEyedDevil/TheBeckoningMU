@@ -305,6 +305,14 @@
                     <textarea class="form-control" id="desire" rows="2"></textarea>
                     <div class="help-text">Your character's short-term want</div>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="background">Background / Backstory</label>
+                    <textarea class="form-control" id="background" name="background" rows="6"
+                              placeholder="Write your character's backstory here. This is free-text and will be reviewed by staff."
+                              maxlength="5000"></textarea>
+                    <div class="help-text">Optional but recommended. Tell us about your character's history, personality, and motivations.</div>
+                </div>
             </div>
 
             <!-- Attributes Section -->
@@ -632,6 +640,10 @@
     <script>
         const CSRF_TOKEN = '{{ csrf_token }}';
 
+        // Edit mode: Django template variable injection
+        const editCharacterId = {{ edit_character_id|default:"null" }};
+        let isEditMode = false;
+
         // Clan data
         const CLANS = {
             "Banu Haqim": {
@@ -726,6 +738,28 @@
             setupFormSubmit();
             loadTraitData();
             setupPrioritySelectors();
+
+            // Draft system: offer to resume saved draft (only for new characters)
+            if (!editCharacterId) {
+                loadDraft();
+            }
+
+            // Edit mode: load character data for editing after rejection
+            if (editCharacterId) {
+                isEditMode = true;
+                loadCharacterForEdit(editCharacterId);
+            }
+
+            // Auto-save draft every 30 seconds
+            setInterval(saveDraft, 30000);
+
+            // Save draft on blur of key text fields
+            ['full_name', 'concept', 'sire', 'ambition', 'desire', 'background'].forEach(function(fieldId) {
+                const el = document.getElementById(fieldId);
+                if (el) {
+                    el.addEventListener('blur', saveDraft);
+                }
+            });
         });
 
         function initializeDots() {
@@ -1338,6 +1372,7 @@
                     predator_type: document.getElementById('predator_type').value,
                     ambition: document.getElementById('ambition').value,
                     desire: document.getElementById('desire').value,
+                    background: document.getElementById('background').value,
                     splat: 'vampire'
                 };
 
@@ -1405,7 +1440,19 @@
                 console.log('Submitting character:', payload);
 
                 try {
-                    const response = await fetch('/api/traits/character/create/', {
+                    let url, successMsg;
+
+                    if (isEditMode && editCharacterId) {
+                        // Resubmit to the resubmit endpoint
+                        url = `/api/traits/character/${editCharacterId}/resubmit/`;
+                        successMsg = 'Character resubmitted for approval!';
+                    } else {
+                        // Original create flow
+                        url = '/api/traits/character/create/';
+                        successMsg = 'Character submitted for approval!';
+                    }
+
+                    const response = await fetch(url, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1422,9 +1469,12 @@
                     const data = await response.json();
                     console.log('Success response:', data);
 
-                    showToast('Character submitted for approval!', 'success');
+                    // Clear draft on successful submission
+                    clearDraft();
 
-                    // Clear form or redirect
+                    showToast(successMsg, 'success');
+
+                    // Redirect after success
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 2000);
@@ -1435,6 +1485,340 @@
                 }
             });
         }
+
+        // ============================================================
+        // Edit Mode Functions (CHAR-01: rejection resubmission)
+        // ============================================================
+
+        async function loadCharacterForEdit(charId) {
+            try {
+                const response = await fetch(`/api/traits/character/${charId}/for-edit/`, {
+                    headers: {
+                        'X-CSRFToken': CSRF_TOKEN
+                    }
+                });
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({}));
+                    alert('Cannot edit: ' + (err.error || 'Unknown error'));
+                    return;
+                }
+                const data = await response.json();
+
+                // Show rejection notes banner
+                if (data.rejection_notes) {
+                    showRejectionBanner(data.rejection_notes, data.rejection_count);
+                }
+
+                // Populate form with existing data
+                populateFormFromCharacterData(data.character_data);
+
+                // Change submit button text
+                const submitBtn = document.getElementById('submit-button');
+                if (submitBtn) {
+                    submitBtn.textContent = 'Resubmit Character';
+                }
+
+                // Update page title
+                const titleEl = document.querySelector('.header h1');
+                if (titleEl) {
+                    titleEl.textContent = 'Edit & Resubmit Character';
+                }
+            } catch (err) {
+                console.error('Error loading character for edit:', err);
+                alert('Failed to load character data.');
+            }
+        }
+
+        function showRejectionBanner(notes, count) {
+            const banner = document.createElement('div');
+            banner.className = 'alert alert-danger mb-4';
+            banner.id = 'rejection-banner';
+            banner.innerHTML =
+                '<h5 class="alert-heading">Character Requires Revisions</h5>' +
+                '<p><strong>Staff feedback:</strong></p>' +
+                '<p style="white-space: pre-wrap;">' + escapeHtml(notes) + '</p>' +
+                '<hr>' +
+                '<small>This character has been rejected ' + count + ' time(s). Please address the feedback and resubmit.</small>';
+            // Insert at the top of the form
+            const form = document.getElementById('character-form');
+            if (form) {
+                form.insertBefore(banner, form.firstChild);
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function populateFormFromCharacterData(data) {
+            // Set simple bio fields
+            if (data.full_name) document.getElementById('full_name').value = data.full_name;
+            if (data.concept) document.getElementById('concept').value = data.concept;
+            if (data.ambition) document.getElementById('ambition').value = data.ambition;
+            if (data.desire) document.getElementById('desire').value = data.desire;
+            if (data.background) document.getElementById('background').value = data.background;
+            if (data.sire) document.getElementById('sire').value = data.sire;
+
+            // Set select fields
+            if (data.clan) {
+                document.getElementById('clan').value = data.clan;
+                // Trigger clan change event to update disciplines display
+                document.getElementById('clan').dispatchEvent(new Event('change'));
+            }
+            if (data.generation) {
+                document.getElementById('generation').value = String(data.generation);
+            }
+            if (data.predator_type) {
+                document.getElementById('predator_type').value = data.predator_type;
+            }
+
+            // Set attributes from export format (data.attributes = {strength: 3, ...})
+            // The export uses category codes as keys
+            const attrMap = data.attributes || {};
+            for (const [traitName, rating] of Object.entries(attrMap)) {
+                const lowerName = traitName.toLowerCase();
+                if (traitValues.hasOwnProperty(lowerName)) {
+                    traitValues[lowerName] = rating;
+                    const dotsContainer = document.querySelector(`.trait-dots[data-trait="${lowerName}"]`);
+                    if (dotsContainer) {
+                        updateDots(dotsContainer, rating);
+                    }
+                }
+            }
+
+            // Set skills from export format (data.skills = {athletics: 2, ...})
+            const skillMap = data.skills || {};
+            for (const [traitName, rating] of Object.entries(skillMap)) {
+                const lowerName = traitName.toLowerCase();
+                if (traitValues.hasOwnProperty(lowerName)) {
+                    traitValues[lowerName] = rating;
+                    const dotsContainer = document.querySelector(`.trait-dots[data-trait="${lowerName}"]`);
+                    if (dotsContainer) {
+                        updateDots(dotsContainer, rating);
+                    }
+                }
+            }
+
+            // Set disciplines from export format (data.disciplines = {Potence: 2, ...})
+            const discMap = data.disciplines || {};
+            for (const [discName, rating] of Object.entries(discMap)) {
+                disciplineValues[discName] = rating;
+            }
+
+            // Set advantages from export format (data.advantages = {Ally_john: 3, ...})
+            const advMap = data.advantages || {};
+            for (const [advName, rating] of Object.entries(advMap)) {
+                if (typeof rating === 'number') {
+                    advantageValues[advName] = { value: rating };
+                } else if (typeof rating === 'object' && rating.value !== undefined) {
+                    advantageValues[advName] = rating;
+                }
+            }
+
+            // Set flaws from export format (data.flaws = {Enemy_rival: 2, ...})
+            const flawMap = data.flaws || {};
+            for (const [flawName, rating] of Object.entries(flawMap)) {
+                if (typeof rating === 'number') {
+                    flawValues[flawName] = { value: rating };
+                } else if (typeof rating === 'object' && rating.value !== undefined) {
+                    flawValues[flawName] = rating;
+                }
+            }
+
+            // Re-render dynamic sections so dots update
+            // Disciplines, advantages, flaws are rendered after API load --
+            // they will pick up values from the state objects when re-rendered.
+            // For already-rendered sections, update dots now:
+            document.querySelectorAll('#disciplines-container .trait-dots').forEach(function(dotsContainer) {
+                const trait = dotsContainer.dataset.trait;
+                if (disciplineValues[trait]) {
+                    updateDots(dotsContainer, disciplineValues[trait]);
+                }
+            });
+            document.querySelectorAll('#advantages-container .trait-dots').forEach(function(dotsContainer) {
+                const trait = dotsContainer.dataset.trait;
+                if (advantageValues[trait]) {
+                    updateDots(dotsContainer, advantageValues[trait].value);
+                }
+            });
+            document.querySelectorAll('#flaws-container .trait-dots').forEach(function(dotsContainer) {
+                const trait = dotsContainer.dataset.trait;
+                if (flawValues[trait]) {
+                    updateDots(dotsContainer, flawValues[trait].value);
+                }
+            });
+
+            // Update points display and validation
+            updatePointsDisplay();
+            validateForm();
+        }
+
+        // ============================================================
+        // Draft Save/Resume Functions (CHAR-05: localStorage persistence)
+        // ============================================================
+
+        function getDraftKey() {
+            return isEditMode ? 'chargen_draft_' + editCharacterId : 'chargen_draft_new';
+        }
+
+        function saveDraft() {
+            try {
+                const draft = {
+                    full_name: document.getElementById('full_name').value,
+                    concept: document.getElementById('concept').value,
+                    clan: document.getElementById('clan').value,
+                    sire: document.getElementById('sire').value,
+                    generation: document.getElementById('generation').value,
+                    predator_type: document.getElementById('predator_type').value,
+                    ambition: document.getElementById('ambition').value,
+                    desire: document.getElementById('desire').value,
+                    background: document.getElementById('background').value,
+                    traitValues: Object.assign({}, traitValues),
+                    disciplineValues: Object.assign({}, disciplineValues),
+                    advantageValues: JSON.parse(JSON.stringify(advantageValues)),
+                    flawValues: JSON.parse(JSON.stringify(flawValues)),
+                    attributePriorities: Object.assign({}, attributePriorities),
+                    skillPriorities: Object.assign({}, skillPriorities),
+                    savedAt: new Date().toISOString()
+                };
+                localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+            } catch (e) {
+                console.warn('Draft save failed:', e);
+            }
+        }
+
+        function loadDraft() {
+            try {
+                const saved = localStorage.getItem(getDraftKey());
+                if (!saved) return;
+                const draft = JSON.parse(saved);
+                const savedDate = new Date(draft.savedAt);
+                const ageMinutes = (Date.now() - savedDate.getTime()) / 60000;
+                // Don't offer drafts older than 7 days
+                if (ageMinutes > 10080) {
+                    localStorage.removeItem(getDraftKey());
+                    return;
+                }
+                if (confirm('Resume draft from ' + savedDate.toLocaleString() + '?')) {
+                    applyDraftToForm(draft);
+                } else {
+                    localStorage.removeItem(getDraftKey());
+                }
+            } catch (e) {
+                console.warn('Draft load failed:', e);
+            }
+        }
+
+        function applyDraftToForm(draft) {
+            // Restore simple form fields
+            if (draft.full_name) document.getElementById('full_name').value = draft.full_name;
+            if (draft.concept) document.getElementById('concept').value = draft.concept;
+            if (draft.sire) document.getElementById('sire').value = draft.sire;
+            if (draft.ambition) document.getElementById('ambition').value = draft.ambition;
+            if (draft.desire) document.getElementById('desire').value = draft.desire;
+            if (draft.background) document.getElementById('background').value = draft.background;
+
+            // Restore selects
+            if (draft.clan) {
+                document.getElementById('clan').value = draft.clan;
+                document.getElementById('clan').dispatchEvent(new Event('change'));
+            }
+            if (draft.generation) {
+                document.getElementById('generation').value = draft.generation;
+            }
+            if (draft.predator_type) {
+                document.getElementById('predator_type').value = draft.predator_type;
+            }
+
+            // Restore priorities
+            if (draft.attributePriorities) {
+                ['primary', 'secondary', 'tertiary'].forEach(function(level) {
+                    if (draft.attributePriorities[level]) {
+                        attributePriorities[level] = draft.attributePriorities[level];
+                        document.getElementById('attr-priority-' + level).value = draft.attributePriorities[level];
+                    }
+                });
+                validatePrioritySelections('attr');
+                updateAttributeMaxValues();
+            }
+            if (draft.skillPriorities) {
+                ['primary', 'secondary', 'tertiary'].forEach(function(level) {
+                    if (draft.skillPriorities[level]) {
+                        skillPriorities[level] = draft.skillPriorities[level];
+                        document.getElementById('skill-priority-' + level).value = draft.skillPriorities[level];
+                    }
+                });
+                validatePrioritySelections('skill');
+                updateSkillMaxValues();
+            }
+
+            // Restore trait values (attributes and skills)
+            if (draft.traitValues) {
+                for (const [trait, value] of Object.entries(draft.traitValues)) {
+                    traitValues[trait] = value;
+                    const dotsContainer = document.querySelector('.trait-dots[data-trait="' + trait + '"]');
+                    if (dotsContainer) {
+                        updateDots(dotsContainer, value);
+                    }
+                }
+            }
+
+            // Restore discipline values
+            if (draft.disciplineValues) {
+                for (const [disc, value] of Object.entries(draft.disciplineValues)) {
+                    disciplineValues[disc] = value;
+                }
+                // Update dots if already rendered
+                document.querySelectorAll('#disciplines-container .trait-dots').forEach(function(dotsContainer) {
+                    const trait = dotsContainer.dataset.trait;
+                    if (disciplineValues[trait]) {
+                        updateDots(dotsContainer, disciplineValues[trait]);
+                    }
+                });
+            }
+
+            // Restore advantage values
+            if (draft.advantageValues) {
+                for (const [adv, data] of Object.entries(draft.advantageValues)) {
+                    advantageValues[adv] = data;
+                }
+                document.querySelectorAll('#advantages-container .trait-dots').forEach(function(dotsContainer) {
+                    const trait = dotsContainer.dataset.trait;
+                    if (advantageValues[trait]) {
+                        updateDots(dotsContainer, advantageValues[trait].value);
+                    }
+                });
+            }
+
+            // Restore flaw values
+            if (draft.flawValues) {
+                for (const [flaw, data] of Object.entries(draft.flawValues)) {
+                    flawValues[flaw] = data;
+                }
+                document.querySelectorAll('#flaws-container .trait-dots').forEach(function(dotsContainer) {
+                    const trait = dotsContainer.dataset.trait;
+                    if (flawValues[trait]) {
+                        updateDots(dotsContainer, flawValues[trait].value);
+                    }
+                });
+            }
+
+            updatePointsDisplay();
+            validateForm();
+        }
+
+        function clearDraft() {
+            try {
+                localStorage.removeItem(getDraftKey());
+            } catch (e) {
+                console.warn('Draft clear failed:', e);
+            }
+        }
+
+        // ============================================================
 
         function showToast(message, type = 'info') {
             const toastHTML = `

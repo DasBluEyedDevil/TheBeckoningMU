@@ -11,6 +11,8 @@ from evennia.utils.ansi import ANSIString
 from evennia.utils.evtable import EvTable
 from .objects import ObjectParent
 
+from beckonmu.web.builder.trigger_engine import execute_triggers
+
 
 class Room(ObjectParent, DefaultRoom):
     """
@@ -72,7 +74,6 @@ class Room(ObjectParent, DefaultRoom):
         The values are the text to display when that tag is present on the object
         """
         return {"ooc": "OOC Area"}
-
 
     def get_display_desc(self, looker, **kwargs):
         """
@@ -156,7 +157,7 @@ class Room(ObjectParent, DefaultRoom):
         ]
         for i in range(0, len(exits), self.exits_per_row):
             table.add_row(
-                *exits[i: i + self.exits_per_row],
+                *exits[i : i + self.exits_per_row],
                 **{
                     **self.styles["section_contents"],
                     **self.styles["exit_section_contents"],
@@ -176,23 +177,23 @@ class Room(ObjectParent, DefaultRoom):
         # So the "title" IS the header line in that implementation.
         # But `return_appearance` ALSO calls `header = self.get_display_header(looker, **kwargs)` separately.
         # If I look at the reference `type` output again...
-        
+
         # Ah, I see. `return_appearance` calls:
         # header = self.get_display_header(looker, **kwargs)
         # title = ...
         # ...
         # return ANSIString("\n\n").join(s for s in [header, title, ...] if s)
-        
+
         # If `get_display_header` was missing in the file I `type`d, maybe it's inherited?
         # But `ObjectParent` didn't have it. `DefaultRoom` doesn't have it.
         # Maybe I missed it in the output?
         # Or maybe the reference code relies on it returning None/Empty string by default if not present?
         # But if I call it and it doesn't exist -> AttributeError.
-        
+
         # Let's check the `type` output for `rooms.py` again very carefully.
         # I scrolled up. I see `get_display_tag_mapping`. I see `get_display_desc`.
         # It seems `get_display_header` IS MISSING from the file content I got.
-        
+
         # Wait, I might have just missed it or the `type` command truncated?
         # The output ends with `return_appearance`.
         # Let's assume `get_display_header` returns an empty string or similar if I can't find it.
@@ -202,9 +203,9 @@ class Room(ObjectParent, DefaultRoom):
         # This looks like the `title` variable in `return_appearance`.
         # So `header` might be something above it?
         # Or maybe `header` is just an empty hook for customization.
-        
+
         # I will define `get_display_header` to return "" for now to avoid AttributeError.
-        
+
         return ""
 
     def get_display_footer(self, looker, **kwargs):
@@ -215,6 +216,41 @@ class Room(ObjectParent, DefaultRoom):
         width = looker.get_min_client_width()
         return styles["fill_char"] * width
 
+    def access(self, accessing_obj, access_type="view", default=False, **kwargs):
+        """
+        Override access to implement sandbox isolation.
+        Sandbox rooms can only be entered by:
+        - The builder who owns the sandbox
+        - Staff members
+        """
+        if access_type == "traverse" and self.tags.get("sandbox"):
+            # Check if accessing_obj is the sandbox owner
+            # Sandbox rooms are tagged with project_{id}
+            project_tags = [t for t in self.tags.all() if t.startswith("project_")]
+            if project_tags:
+                from beckonmu.web.builder.models import BuildProject
+
+                try:
+                    project_id = int(project_tags[0].split("_")[1])
+                    project = BuildProject.objects.get(id=project_id)
+
+                    # Allow if owner or staff
+                    if (
+                        hasattr(accessing_obj, "account")
+                        and accessing_obj.account == project.user
+                    ):
+                        return True
+                    if accessing_obj.check_permstring("Admin"):
+                        return True
+
+                    # Deny regular players
+                    return False
+                except (ValueError, BuildProject.DoesNotExist):
+                    pass
+
+        # Default access for non-sandbox or other access types
+        return super().access(accessing_obj, access_type, default, **kwargs)
+
     def return_appearance(self, looker, **kwargs):
         """
         This is the hook for returning the appearance of the room.
@@ -224,7 +260,8 @@ class Room(ObjectParent, DefaultRoom):
         name = self.get_display_name(looker, **kwargs)
 
         title = ANSIString(f"|Y[|n {name} |Y]|n").center(
-            looker.get_min_client_width(), self.styles["title"]["fill_char"])
+            looker.get_min_client_width(), self.styles["title"]["fill_char"]
+        )
 
         desc = self.get_display_desc(looker, **kwargs)
 
@@ -238,4 +275,48 @@ class Room(ObjectParent, DefaultRoom):
             s
             for s in [header, title, desc, character_section, exit_section, footer]
             if s
+        )
+
+    def at_object_receive(self, moved_obj, source_location, move_type="move", **kwargs):
+        """
+        Hook called when an object enters this room.
+        Triggers entry triggers for player characters.
+        """
+        # Call parent first to preserve default behavior
+        super().at_object_receive(
+            moved_obj, source_location, move_type=move_type, **kwargs
+        )
+
+        # Only trigger for characters with accounts (player characters, not NPCs)
+        if hasattr(moved_obj, "has_account") and moved_obj.has_account:
+            try:
+                execute_triggers(self, "entry", moved_obj)
+            except Exception as e:
+                # Log error but don't crash the room
+                import logging
+
+                logger = logging.getLogger(__name__)
+                logger.exception(f"Error executing entry triggers in {self}: {e}")
+
+    def at_object_leave(self, moved_obj, target_location, move_type="move", **kwargs):
+        """
+        Hook called when an object leaves this room.
+        Triggers exit triggers for player characters.
+        """
+        # Only trigger for characters with accounts (player characters, not NPCs)
+        if hasattr(moved_obj, "has_account") and moved_obj.has_account:
+            try:
+                execute_triggers(
+                    self, "exit", moved_obj, target_location=target_location
+                )
+            except Exception as e:
+                # Log error but don't crash the room
+                import logging
+
+                logger = logging.getLogger(__name__)
+                logger.exception(f"Error executing exit triggers in {self}: {e}")
+
+        # Call parent after trigger execution
+        super().at_object_leave(
+            moved_obj, target_location, move_type=move_type, **kwargs
         )

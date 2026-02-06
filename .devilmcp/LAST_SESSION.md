@@ -1,141 +1,83 @@
 # Last Session Summary
 
-**Date:** 2025-11-13
-**Session:** 18 - Emergency Fixes: Missing Imports (humanity.py + connection_screens.py)
+**Date:** 2026-01-09
+**Session:** 19 - Codebase Health Fixes from Gemini Audit
 
 ## What Was Done
 
-**User Report:** "no commands are working" → escalated to "server won't start"
+Executed a comprehensive codebase health improvement plan based on Gemini audit findings. Used Subagent-Driven Development pattern with two-stage reviews (spec compliance + code quality) for each task.
 
-### Issue #1: Missing default_cmds Import
-**Error:** `NameError: name 'default_cmds' is not defined` in `beckonmu/commands/v5/humanity.py:20`
-**Fix:** Added `from evennia import default_cmds` to humanity.py:8
-**Result:** ✅ Commands loaded successfully, server reload worked
+### Task 1: Remove Duplicate Monkey-Patching (HIGH)
+**Commit:** 87fd0f9
+- Removed `_patch_command_error_messages()` function from `at_server_startstop.py`
+- Added `CMDHANDLER_MODULE` setting to `settings.py`
+- Keeps `cmdhandler.py` as the single source for command error styling
 
-### Issue #2: Missing FLEUR_DE_LIS Symbol
-**Error:** `ImportError: cannot import name 'FLEUR_DE_LIS' from 'world.ansi_theme'` in `server/conf/connection_screens.py:28`
-**Fix:**
-- Removed FLEUR_DE_LIS from import (line 28)
-- Replaced `{FLEUR_DE_LIS}` with hardcoded '⚜' symbol (line 58)
-**Result:** ✅ Server starts successfully
+### Task 2: Consolidate Trait Constants (HIGH - DRY)
+**Commit:** f68e116
+- Made `beckonmu/world/v5_data.py` the single source of truth for traits
+- Updated `chargen.py` to import CLANS, ATTRIBUTES, SKILLS from v5_data
+- Updated `seed_traits.py` to use v5_data constants
+- Added missing "Hecata" clan to v5_data.py
+
+### Task 3: Improve Exception Handling (MEDIUM)
+**Commit:** 9b37e4c
+- Replaced broad `except Exception` catches with specific types:
+  - `bbs/commands.py`: IntegrityError, ValidationError, OperationalError
+  - `traits/api.py`: ValueError, KeyError, ObjectDoesNotExist
+  - `dice/commands.py`: ValueError, AttributeError, KeyError
+- Fixed bare `except:` clauses to use `except Exception:`
+
+### Task 4: Strengthen Web Builder Sanitization (MEDIUM)
+**Commit:** ea3785e
+- Replaced blacklist regex with whitelist approach in `sanitize_string()`
+- Added `sanitize_alias()` for alias-specific sanitization
+- Added `sanitize_lock()` for lock string sanitization
+- Added `sanitize_typeclass()` for typeclass path validation
+- Fixed all injection vectors in `generate_batch_script()`
 
 ## Files Modified
 
-1. **beckonmu/commands/v5/humanity.py**
-   - Added line 8: `from evennia import default_cmds`
-
-2. **server/conf/connection_screens.py**
-   - Line 28: Removed FLEUR_DE_LIS from import list
-   - Line 58: Changed `{BLOOD_RED}{FLEUR_DE_LIS}{RESET}` to `{BLOOD_RED}⚜{RESET}`
-
-## Root Cause Analysis
-
-Both issues trace back to Session 17's comprehensive cleanup:
-- All Unicode symbols (DIAMOND, FLEUR_DE_LIS, CIRCLE_FILLED, CIRCLE_EMPTY, DIAMOND_EMPTY) were removed from ansi_theme.py
-- Connection screens file wasn't updated during that cleanup
-- Humanity.py import may have been lost during line ending changes (all those "M" files in git status)
-
-## Verification
-
-**Manual grep search confirmed:**
-- ✅ No remaining references to FLEUR_DE_LIS
-- ✅ No remaining references to CIRCLE_FILLED
-- ✅ No remaining references to CIRCLE_EMPTY
-- ✅ No remaining references to DIAMOND_EMPTY
-- ✅ No import statements for removed symbols
-
-**Server testing:**
-- ✅ `evennia start` successful
-- ✅ `evennia reload` successful
-- ✅ No errors in startup logs
-- ✅ All ports operational (telnet:4000, web:4001, websocket:4002)
-
-## Commands Ready to Test
-
-All custom commands should now work:
-- `+sheet` / `sheet` - Character sheet
-- `+humanity` - Humanity tracking
-- `+stain` - Add stains
-- `+remorse` - Remorse rolls
-- `+frenzy` - Frenzy checks
-- `+roll` - Dice rolling
-- `+hunt` - Feeding
-- `+bbs` - Bulletin boards
-- `+boon` - Boon tracking
-- `+status` - Status system
-- `+coterie` - Coterie management
-
-## Quadrumvirate Pattern Usage
-
-**Claude Code** (Orchestration):
-- Followed systematic-debugging skill for both issues
-- Applied targeted fixes (total 3 line changes)
-- Verified with server start/reload
-- Session tokens: ~12k (very efficient)
-
-**Grep Tool** (Verification):
-- Searched entire codebase for removed symbols
-- Confirmed no remaining references
-- Fast, accurate verification
-
-**Gemini CLI** (Comprehensive Analysis - attempted):
-- Delegated full codebase symbol search
-- Process took too long, killed after grep confirmed clean
-- Pattern: Use grep for simple searches, Gemini for complex analysis
+1. `beckonmu/server/conf/at_server_startstop.py` - Removed monkey-patching
+2. `server/conf/settings.py` - Added CMDHANDLER_MODULE
+3. `beckonmu/commands/chargen.py` - Import from v5_data
+4. `beckonmu/traits/management/commands/seed_traits.py` - Use v5_data constants
+5. `beckonmu/world/v5_data.py` - Added Hecata clan
+6. `beckonmu/bbs/commands.py` - Specific exception handling
+7. `beckonmu/traits/api.py` - Specific exception handling + cleanup
+8. `beckonmu/dice/commands.py` - Specific exception handling
+9. `beckonmu/web/builder/exporter.py` - Whitelist sanitization
 
 ## Git Status
 
-Branch: main
-Modified files: 2
-- beckonmu/commands/v5/humanity.py (1 line added)
-- server/conf/connection_screens.py (2 lines modified)
+Branch: builder
+Commits: 4 new (ahead of origin/builder by 4)
+Status: Clean working tree (untracked: .daem0nmcp/)
 
-Status: Server verified working
-Suggested commit: "fix: Missing imports - default_cmds in humanity.py and FLEUR_DE_LIS in connection_screens.py"
+## Verification
 
-## Lessons Learned
+- All files compile without syntax errors
+- All commits properly formatted with Co-Authored-By
+- Two-stage review passed for each task (spec + quality)
 
-1. **Symbol removal requires codebase-wide verification**
-   - Session 17 removed symbols from ansi_theme.py
-   - Didn't check server/conf/ directory for usage
-   - Should have used grep/Gemini to find ALL references
+## Development Pattern Used
 
-2. **server/ directory is part of the codebase**
-   - Not just beckonmu/ - server/conf/ has critical files
-   - Connection screens, settings, etc. import from beckonmu/world/
-   - Need to check both directories for impact
-
-3. **Systematic debugging works for cascading errors**
-   - First error (humanity.py) fixed → revealed second error
-   - Each error addressed systematically
-   - Total time: ~10 minutes for both fixes
-
-4. **Grep is faster than Gemini for simple searches**
-   - Grep completed in seconds
-   - Gemini still loading after 30+ seconds
-   - Use right tool for the job
-
-## Metrics
-
-**Session Duration:** ~10 minutes
-**Claude Tokens:** ~12k (efficient)
-**Files Modified:** 2
-**Lines Changed:** 3 (1 added, 2 modified)
-**Server Restarts:** 1 start + 1 reload (both successful)
-**Errors Fixed:** 2 critical import errors
-**Codebase Health:** ✅ FULLY OPERATIONAL
+**Subagent-Driven Development:**
+- Fresh implementer subagent per task
+- Spec compliance reviewer after implementation
+- Code quality reviewer after spec approval
+- Fix loops until both reviewers approve
 
 ## Next Steps
 
-1. **User**: Test commands in-game to verify functionality
-2. **User**: Report any other command failures
-3. **Optional**: Commit fixes to version control
-4. **Recommended**: Before future symbol removals, use grep to find all references first
+1. **Testing**: Run `evennia reload` to verify changes work
+2. **Push**: Consider pushing to origin/builder
+3. **Server Testing**: Test commands in-game
 
-## Session Notes
+## Session Metrics
 
-- Fast turnaround on critical errors
-- Systematic debugging prevented thrashing
-- Server now starts and reloads cleanly
-- All custom commands should be operational
-- Connection screen displays properly with fleur-de-lis symbol
+- Tasks Completed: 4 of 4
+- Commits Created: 4
+- Files Modified: 9
+- Review Cycles: 6 (some tasks needed fixes)
+- Pattern: Subagent-Driven Development

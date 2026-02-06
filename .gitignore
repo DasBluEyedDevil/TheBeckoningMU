@@ -89,3 +89,9 @@ poetry.lock
 /.skills/
 /.devilmcp/
 /cursor-agent-wrapper.sh
+/.claude/
+/.daem0nmcp/
+/.devilmcp/
+/.planning/
+/.skills/
+/.tasks/

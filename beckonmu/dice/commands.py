@@ -90,7 +90,7 @@ class CmdRoll(default_cmds.MuxCommand):
                 message += f"\n\n|r*** MESSY CRITICAL ***|n"
                 message += f"\n|yYour Beast influenced your success!|n"
                 message += f"\n{stain_result['message']}"
-            except Exception as e:
+            except (ValueError, AttributeError, KeyError) as e:
                 # Don't block the roll if stain addition fails
                 message += f"\n\n|r*** MESSY CRITICAL ***|n"
                 message += f"\n|yYour Beast influenced your success! (Stain addition failed: {e})|n"
@@ -268,11 +268,8 @@ class CmdRollPower(default_cmds.MuxCommand):
                 difficulty=difficulty,
                 with_rouse=with_rouse
             )
-        except ValueError as e:
+        except (ValueError, AttributeError, KeyError) as e:
             self.caller.msg(f"|rError:|n {e}")
-            return
-        except Exception as e:
-            self.caller.msg(f"|rUnexpected error:|n {e}")
             return
 
         # Display result (pre-formatted by discipline_roller)
@@ -287,7 +284,7 @@ class CmdRollPower(default_cmds.MuxCommand):
                 self.caller.msg(f"\n|r*** MESSY CRITICAL ***|n")
                 self.caller.msg(f"|yYour Beast influenced your power!|n")
                 self.caller.msg(f"{stain_result['message']}")
-            except Exception as e:
+            except (ValueError, AttributeError, KeyError) as e:
                 # Don't block the roll if stain addition fails
                 self.caller.msg(f"\n|r*** MESSY CRITICAL ***|n")
                 self.caller.msg(f"|yYour Beast influenced your power! (Stain addition failed: {e})|n")
@@ -353,8 +350,8 @@ class CmdRouse(Command):
                 reason=reason,
                 power_level=1  # Default to level 1 for manual checks
             )
-        except Exception as e:
-            self.caller.msg(f"|rError performing Rouse check:|n {e}")
+        except (ValueError, AttributeError, KeyError) as e:
+            self.caller.msg(f"|rError:|n {e}")
             return
 
         # Display result (pre-formatted by rouse_checker)

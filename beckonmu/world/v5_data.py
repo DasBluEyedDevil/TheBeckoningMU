@@ -76,6 +76,11 @@ CLANS = {
         "bane": "Bestial Features: Animal features emerge when Hunger 4+",
         "compulsion": "Feral Impulses: Must avoid civilization or lose 1 die from Mental/Social pools"
     },
+    "Hecata": {
+        "disciplines": ["Auspex", "Fortitude", "Oblivion"],
+        "bane": "Painful Kiss: Feeding causes intense pain to mortal victims, making it impossible to feed discreetly",
+        "compulsion": "Morbidity: Must witness or cause death, or engage with death-related activities, or lose 2 dice from pools"
+    },
     "Malkavian": {
         "disciplines": ["Auspex", "Dominate", "Obfuscate"],
         "bane": "Fractured Perspective: Must have at least one mental derangement",

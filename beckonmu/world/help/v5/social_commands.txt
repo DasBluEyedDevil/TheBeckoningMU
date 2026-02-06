@@ -1,0 +1,129 @@
+|[R+===================================================================+
+|W|                   SOCIAL & COTERIE COMMANDS                      |
+|[R+===================================================================+|n
+
+Commands for managing coteries (vampire groups) and viewing
+social standing in Kindred society.
+
+|WCOTERIE OVERVIEW:|n
+
+Coteries are groups of vampires who band together for mutual
+benefit. They share resources and work toward common goals.
+
+|WVIEWING COTERIE:|n
+
+|y+coterie|n
+  View your current coterie information.
+
+|y+coterie/resources|n
+  View coterie resources (domain, haven, herd, contacts).
+
+|WCREATING A COTERIE:|n
+
+|y+coterie/create <name>=<description>|n
+  Create a new coterie (you become the leader).
+
+|yExample:|n
+  +coterie/create Night Watch=Protectors of the Elysium
+
+|WMEMBERSHIP MANAGEMENT:|n
+
+|y+coterie/invite <character>|n
+  Invite someone to join your coterie.
+
+|y+coterie/join <leader>|n
+  Accept an invitation to join a coterie.
+
+|y+coterie/leave|n
+  Leave your current coterie.
+
+|yExamples:|n
+  +coterie/invite Bob
+  +coterie/join Alice
+
+|WLEADERSHIP COMMANDS:|n (Coterie leader only)
+
+|y+coterie/promote <character>|n
+  Promote a member to lieutenant rank.
+
+|y+coterie/demote <character>|n
+  Demote a lieutenant to regular member.
+
+|y+coterie/kick <character>|n
+  Remove a member from the coterie.
+
+|y+coterie/disband|n
+  Disband the entire coterie (cannot be undone).
+
+|yExamples:|n
+  +coterie/promote Alice
+  +coterie/kick Bob
+
+|WCOTERIE RESOURCES:|n (Leader only)
+
+|y+coterie/resource <type>=<value>|n
+  Set a coterie resource value (0-5).
+
+|yResource Types:|n
+  - |ydomain|n - Territory controlled by the coterie
+  - |yhaven|n - Shared haven quality
+  - |yherd|n - Shared feeding sources
+  - |ycontacts|n - Shared information network
+
+|yExample:|n
+  +coterie/resource domain=3
+  +coterie/resource haven=2
+
+|WCOTERIE RANKS:|n
+
+|yLeader|n
+  - Created the coterie or was promoted
+  - Can invite/kick members
+  - Can promote/demote members
+  - Can set resources
+  - Can disband coterie
+
+|yLieutenant|n
+  - Trusted members
+  - May have special privileges (per ST)
+
+|yMember|n
+  - Standard membership
+  - Benefits from shared resources
+
+|WSOCIAL STANDING:|n
+
+|y+social|n
+|y+social <character>|n
+  View comprehensive social standing.
+
+Shows in one view:
+  - Status (political standing in sect)
+  - Boons (favors owed and held)
+  - Coterie membership
+
+|yExamples:|n
+  +social              # View your own social standing
+  +social Alice        # View Alice's public social info
+
+|WSOCIAL MECHANICS:|n
+
+Social standing in V5 is determined by:
+
+|yStatus|n
+  Political power within your sect (Camarilla, Anarch, etc.)
+  Gained through positions, actions, and recognition.
+
+|yBoons|n
+  Favors owed to or held over other Kindred.
+  See |yhelp boons|n for details on the boon system.
+
+|yCoterie|n
+  Strength in numbers - coterie resources can supplement
+  individual weaknesses.
+
+|WRELATED TOPICS:|n
+
+|ySee also:|n help coteries, help status, help boons, help v5
+
+|[r+===================================================================+|n

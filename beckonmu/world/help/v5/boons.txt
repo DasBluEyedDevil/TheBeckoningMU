@@ -98,13 +98,17 @@ The |yHarpy|n maintains the boon ledger:
 |wMajor:|n "Vote for my candidate at Primogen Council"
 |wLife:|n "I saved you from SI raid"
 
-|WCOMMANDS:|n
+|WQUICK COMMANDS:|n
 
-|y+boons|n - View boons you owe and are owed
-|y+boons <name>|n - View someone's boons
-|y+boons/grant <name>=<type>|n - Grant a boon (Harpy records)
-|y+boons/call <name>=<boon ID>|n - Call in a boon owed to you
-|y+boons/trade <from>/<to>=<boon ID>|n - Transfer boon to third party
+|y+boon|n - View your boon ledger
+|y+boon <name>|n - View boons with someone
+|y+boon/pending|n - View boons requiring action
+|y+boongive <name> <type> = <reason>|n - Offer a boon
+|y+boonaccept <#>|n - Accept a boon offer
+|y+booncall <#> = <request>|n - Call in a boon
+|y+boonfulfill <#> = <description>|n - Mark boon fulfilled
+
+|ySee |Whelp boon_commands|y for detailed command syntax.|n
 
 |WPOLITICAL IMPORTANCE:|n
 

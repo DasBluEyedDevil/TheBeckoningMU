@@ -15,6 +15,96 @@ just overloads its hooks to have it perform its function.
 from evennia.scripts.scripts import DefaultScript
 
 
+class RoomTriggerScript(DefaultScript):
+    """
+    Script for timed room triggers.
+
+    Attached to a room, fires at configured intervals to execute
+    trigger actions like atmospheric messages or weather effects.
+    """
+
+    # Script properties
+    desc = "Timed trigger script for room effects"
+
+    # Default interval (can be overridden per instance)
+    interval = 300  # 5 minutes default
+
+    # Start immediately, don't wait for first interval
+    start_delay = False
+
+    # Run forever (0 = infinite repeats)
+    repeats = 0
+
+    # Survive server restarts
+    persistent = True
+
+    def at_script_creation(self):
+        """
+        Called when script is first created.
+        Store trigger configuration in db attributes.
+        """
+        # These will be set by trigger_scripts.py when creating
+        self.db.trigger_id = None
+        self.db.trigger_action = None
+        self.db.trigger_parameters = {}
+
+    def at_start(self, **kwargs):
+        """Called when script starts (after server reload too)."""
+        pass
+
+    def at_repeat(self, **kwargs):
+        """
+        Called every self.interval seconds.
+        Execute the configured trigger action.
+        """
+        if not self.obj:
+            # No room attached, stop the script
+            self.stop()
+            return
+
+        # Import here to avoid circular imports
+        from beckonmu.web.builder.trigger_engine import execute_triggers
+
+        # Execute as a "timed" trigger type
+        # The engine will filter by trigger_id to find this specific trigger
+        execute_triggers(
+            room=self.obj,
+            trigger_type="timed",
+            character=None,  # Timed triggers don't have a character
+            trigger_id=self.db.trigger_id,
+        )
+
+    def at_stop(self, **kwargs):
+        """Called when script is stopped."""
+        pass
+
+    def is_valid(self, **kwargs) -> bool:
+        """
+        Check if script should continue running.
+        Stop if room no longer exists or trigger is disabled.
+        """
+        if not self.obj:
+            return False
+
+        # Check if trigger still exists and is enabled
+        triggers = self.obj.db.triggers or []
+        for trigger in triggers:
+            if trigger.get("id") == self.db.trigger_id:
+                return trigger.get("enabled", True)
+
+        # Trigger not found, stop the script
+        return False
+
+        # Check if trigger still exists and is enabled
+        triggers = self.obj.db.triggers or []
+        for trigger in triggers:
+            if trigger.get("id") == self.db.trigger_id:
+                return trigger.get("enabled", True)
+
+        # Trigger not found, stop the script
+        return False
+
+
 class Script(DefaultScript):
     """
     This is the base TypeClass for all Scripts. Scripts describe

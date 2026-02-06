@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Build Review - Staff{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-light">Submitted Build Projects</h2>
+            <p class="text-muted">Review and approve builder submissions</p>
+        </div>
+        <div class="col-auto">
+            <span class="badge bg-warning text-dark fs-6" id="project-count">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Projects Container -->
+    <div id="projects-container">
+        <!-- Empty state -->
+        <div class="alert alert-info" id="empty-state" style="display: none;">
+            <h5 class="alert-heading">No projects awaiting review</h5>
+            <p class="mb-0">All submitted projects have been reviewed. Check back later for new submissions.</p>
+        </div>
+
+        <!-- Project cards will be inserted here -->
+        <div id="project-cards" class="row g-4"></div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary"
+                <h5 class="modal-title text-light">Reject Project</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-light">Reject <strong id="reject-project-name"></strong>?</p>
+                <p class="text-muted">Please provide feedback explaining why the project was rejected. This will be visible to the builder.</p>
+                <div class="mb-3">
+                    <label for="rejection-notes" class="form-label text-light">Rejection Notes <span class="text-danger">*</span></label>
+                    <textarea class="form-control bg-dark text-light border-secondary" id="rejection-notes" rows="4"
+                              placeholder="Explain what needs to be changed or improved..."
+                              minlength="10"></textarea>
+                    <div class="form-text"><span id="char-count">0</span> characters (minimum 10)</div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-reject" disabled>Submit Rejection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// CSRF token helper
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// Reject modal handling
+let currentProjectId = null;
+const rejectModal = new bootstrap.Modal(document.getElementById('rejectModal'));
+const rejectionNotes = document.getElementById('rejection-notes');
+const charCount = document.getElementById('char-count');
+const confirmReject = document.getElementById('confirm-reject');
+
+rejectionNotes.addEventListener('input', function() {
+    const len = this.value.length;
+    charCount.textContent = len;
+    confirmReject.disabled = len < 10;
+});
+
+function showRejectModal(id, name) {
+    currentProjectId = id;
+    document.getElementById('reject-project-name').textContent = name;
+    rejectionNotes.value = '';
+    charCount.textContent = '0';
+    confirmReject.disabled = true;
+    rejectModal.show();
+}
+
+confirmReject.addEventListener('click', async function() {
+    if (!currentProjectId) return;
+
+    const notes = rejectionNotes.value.trim();
+    if (notes.length < 10) {
+        alert('Please provide at least 10 characters of feedback');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/builder/api/review/${currentProjectId}/reject/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ notes: notes })
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            rejectModal.hide();
+            loadProjects();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to reject project'));
+        }
+    } catch (error) {
+        alert('Error rejecting project: ' + error.message);
+    }
+});
+
+// Approve project
+async function approveProject(id, name) {
+    if (!confirm(`Approve project "${name}"?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/builder/api/review/${id}/approve/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'success') {
+            loadProjects();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to approve project'));
+        }
+    } catch (error) {
+        alert('Error approving project: ' + error.message);
+    }
+}
+
+// Render mini map preview on canvas
+function renderMiniMap(canvas, mapData) {
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Clear canvas
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, width, height);
+
+    if (!mapData || !mapData.rooms) return;
+
+    const rooms = Object.values(mapData.rooms);
+    if (rooms.length === 0) return;
+
+    // Find bounds
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    rooms.forEach(room => {
+        const x = room.x || 0;
+        const y = room.y || 0;
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+    });
+
+    // Add padding
+    const padding = 20;
+    const mapWidth = maxX - minX + 120;  // Room width
+    const mapHeight = maxY - minY + 80;  // Room height
+
+    // Calculate scale to fit
+    const scaleX = (width - padding * 2) / mapWidth;
+    const scaleY = (height - padding * 2) / mapHeight;
+    const scale = Math.min(scaleX, scaleY, 1);
+
+    // Center the map
+    const offsetX = (width - mapWidth * scale) / 2 - minX * scale;
+    const offsetY = (height - mapHeight * scale) / 2 - minY * scale;
+
+    // Draw exits first (lines)
+    if (mapData.exits) {
+        ctx.strokeStyle = '#4a4a6a';
+        ctx.lineWidth = 2;
+        Object.values(mapData.exits).forEach(exit => {
+            const sourceRoom = mapData.rooms[exit.source];
+            const targetRoom = mapData.rooms[exit.target];
+            if (sourceRoom && targetRoom) {
+                const x1 = (sourceRoom.x + 60) * scale + offsetX;
+                const y1 = (sourceRoom.y + 40) * scale + offsetY;
+                const x2 = (targetRoom.x + 60) * scale + offsetX;
+                const y2 = (targetRoom.y + 40) * scale + offsetY;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+        });
+    }
+
+    // Draw rooms (rectangles)
+    rooms.forEach(room => {
+        const x = (room.x || 0) * scale + offsetX;
+        const y = (room.y || 0) * scale + offsetY;
+        const w = 120 * scale;
+        const h = 80 * scale;
+
+        // Room background
+        ctx.fillStyle = '#2d2d44';
+        ctx.fillRect(x, y, w, h);
+
+        // Room border
+        ctx.strokeStyle = '#4a4a6a';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, w, h);
+
+        // Room name (truncated)
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `${Math.max(8, 10 * scale)}px sans-serif`;
+        ctx.textAlign = 'center';
+        const name = (room.name || 'Unnamed').substring(0, 15);
+        ctx.fillText(name, x + w / 2, y + h / 2 + 3);
+    });
+}
+
+// Load and render projects
+async function loadProjects() {
+    const container = document.getElementById('project-cards');
+    const emptyState = document.getElementById('empty-state');
+    const countBadge = document.getElementById('project-count');
+
+    container.innerHTML = '<div class="col-12 text-center text-muted"><p>Loading projects...</p></div>';
+
+    try {
+        const response = await fetch('/builder/api/review/projects/');
+        const data = await response.json();
+
+        if (data.status !== 'success') {
+            container.innerHTML = `<div class="col-12"><div class="alert alert-danger">Error loading projects: ${data.error || 'Unknown error'}</div></div>`;
+            return;
+        }
+
+        const projects = data.projects || [];
+        countBadge.textContent = `${projects.length} pending`;
+
+        if (projects.length === 0) {
+            container.innerHTML = '';
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+
+        container.innerHTML = projects.map(project => `
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0 text-light">${escapeHtml(project.name)}</h5>
+                            <small class="text-muted">by ${escapeHtml(project.user.username)}</small>
+                        </div>
+                        <span class="badge bg-warning text-dark">Submitted</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-light small">${escapeHtml(project.description || 'No description')}</p>
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <div class="text-light fw-bold">${project.room_count}</div>
+                                <small class="text-muted">Rooms</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-light fw-bold">${project.exit_count}</div>
+                                <small class="text-muted">Exits</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-light fw-bold">${Math.ceil((new Date() - new Date(project.created_at)) / (1000 * 60 * 60 * 24))}d</div>
+                                <small class="text-muted">Age</small>
+                            </div>
+                        </div>
+                        ${project.submission_notes ? `
+                        <div class="alert alert-info py-2 small">
+                            <strong>Builder Notes:</strong> ${escapeHtml(project.submission_notes)}
+                        </div>
+                        ` : ''}
+                        <div class="mb-2">
+                            <small class="text-muted">Map Preview:</small>
+                        </div>
+                        <canvas id="map-canvas-${project.id}" width="300" height="200" class="w-100 border border-secondary rounded"
+                                style="max-height: 200px;"></canvas>
+                    </div>
+                    <div class="card-footer border-secondary">
+                        <button class="btn btn-success btn-sm" onclick="approveProject(${project.id}, '${escapeHtml(project.name)}')">
+                            <i class="bi bi-check-lg"></i> Approve
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="showRejectModal(${project.id}, '${escapeHtml(project.name)}')">
+                            <i class="bi bi-x-lg"></i> Reject
+                        </button>
+                        <a href="/builder/edit/${project.id}/" class="btn btn-outline-secondary btn-sm float-end" target="_blank">
+                            View Full Map
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        // Render map previews
+        projects.forEach(project => {
+            const canvas = document.getElementById(`map-canvas-${project.id}`);
+            if (canvas) {
+                // Fetch full project data for map preview
+                fetch(`/builder/api/project/${project.id}/`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.status === 'success' && data.project.map_data) {
+                            renderMiniMap(canvas, data.project.map_data);
+                        }
+                    })
+                    .catch(err => console.error('Failed to load map data:', err));
+            }
+        });
+
+    } catch (error) {
+        container.innerHTML = `<div class="col-12"><div class="alert alert-danger">Error loading projects: ${error.message}</div></div>`;
+    }
+}
+
+// XSS protection
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Load projects on page load
+document.addEventListener('DOMContentLoaded', loadProjects);
+</script>
+{% endblock %}

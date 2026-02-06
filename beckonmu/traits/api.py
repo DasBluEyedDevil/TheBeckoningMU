@@ -4,9 +4,7 @@ Provides JSON-based endpoints for web-based character applications.
 """
 
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
 from django.views import View
 from django.db import models
 from evennia.objects.models import ObjectDB
@@ -21,6 +19,45 @@ from .utils import (
 )
 from .models import TraitCategory, Trait, DisciplinePower, CharacterBio, CharacterTrait, CharacterPower
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
+
+
+def notify_account(account, message, notification_type="info"):
+    """Store a notification for delivery on next login, and try immediate delivery."""
+    from django.utils import timezone as tz
+    if not account.db.pending_notifications:
+        account.db.pending_notifications = []
+    account.db.pending_notifications.append({
+        'message': message,
+        'type': notification_type,
+        'timestamp': tz.now().isoformat(),
+        'read': False,
+    })
+    # Try immediate delivery if player is online
+    if account.sessions.count():
+        account.msg(message)
+
+
+def place_approved_character(character):
+    """Move an approved character to the starting room. Sets home and location."""
+    from django.conf import settings as django_settings
+    from evennia.objects.models import ObjectDB
+
+    start_location = getattr(django_settings, 'START_LOCATION', '#2')
+    try:
+        if isinstance(start_location, str):
+            room_id = int(start_location.strip('#'))
+        else:
+            room_id = int(start_location)
+        start_room = ObjectDB.objects.get(id=room_id)
+    except (ValueError, ObjectDB.DoesNotExist):
+        # Fallback to Limbo (#2)
+        start_room = ObjectDB.objects.get(id=2)
+
+    character.home = start_room
+    character.save()
+    # Use quiet=True to suppress room announcements (safe from web context)
+    character.move_to(start_room, quiet=True)
 
 
 class BaseAPIView(View):
@@ -39,12 +76,14 @@ class BaseAPIView(View):
         return super().dispatch(request, *args, **kwargs)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class TraitCategoriesAPI(BaseAPIView):
     """API endpoint for trait categories."""
 
     def get(self, request):
         """Get all trait categories."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         categories = TraitCategory.objects.all()
         data = []
 
@@ -60,12 +99,14 @@ class TraitCategoriesAPI(BaseAPIView):
         return JsonResponse({'categories': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class TraitsAPI(BaseAPIView):
     """API endpoint for traits."""
 
     def get(self, request):
         """Get traits, optionally filtered by category or splat."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         category_code = request.GET.get('category')
         splat = request.GET.get('splat', 'mortal')
 
@@ -102,12 +143,14 @@ class TraitsAPI(BaseAPIView):
         return JsonResponse({'traits': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class DisciplinePowersAPI(BaseAPIView):
     """API endpoint for discipline powers."""
 
     def get(self, request):
         """Get discipline powers, optionally filtered by discipline."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         discipline_name = request.GET.get('discipline')
         level = request.GET.get('level')
 
@@ -145,12 +188,14 @@ class DisciplinePowersAPI(BaseAPIView):
         return JsonResponse({'powers': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterValidationAPI(BaseAPIView):
     """API endpoint for character validation."""
 
     def post(self, request):
         """Validate character data without creating the character."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         character_data = request.json
 
         if not character_data:
@@ -175,12 +220,16 @@ class CharacterValidationAPI(BaseAPIView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterImportAPI(BaseAPIView):
     """API endpoint for character import."""
 
     def post(self, request):
         """Import character data to an existing character."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+        if not request.user.is_staff:
+            return JsonResponse({'error': 'Staff permissions required'}, status=403)
+
         character_name = request.json.get('character_name')
         character_data = request.json.get('character_data')
         account_name = request.json.get('account_name')
@@ -202,9 +251,9 @@ class CharacterImportAPI(BaseAPIView):
             )
 
         except AccountDB.DoesNotExist:
-            return JsonResponse({'error': f'Account {account_name} not found'}, status=404)
+            return JsonResponse({'error': 'Account not found'}, status=404)
         except ObjectDB.DoesNotExist:
-            return JsonResponse({'error': f'Character {character_name} not found for account {account_name}'}, status=404)
+            return JsonResponse({'error': 'Character not found'}, status=404)
 
         # Import the character data
         results = enhanced_import_character_from_json(character, character_data)
@@ -222,16 +271,22 @@ class CharacterImportAPI(BaseAPIView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterExportAPI(BaseAPIView):
     """API endpoint for character export."""
 
     def get(self, request, character_id):
         """Export character data to JSON format."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         try:
             character = ObjectDB.objects.get(id=character_id, db_typeclass_path__contains='characters')
         except ObjectDB.DoesNotExist:
             return JsonResponse({'error': 'Character not found'}, status=404)
+
+        # Enforce ownership: only the character's owner or staff can export
+        if character.db_account != request.user and not request.user.is_staff:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
 
         include_powers = request.GET.get('include_powers', 'true').lower() == 'true'
 
@@ -244,16 +299,22 @@ class CharacterExportAPI(BaseAPIView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterAvailableTraitsAPI(BaseAPIView):
     """API endpoint for getting available traits for a character."""
 
     def get(self, request, character_id):
         """Get all traits available to a specific character based on their splat."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
         try:
             character = ObjectDB.objects.get(id=character_id, db_typeclass_path__contains='characters')
         except ObjectDB.DoesNotExist:
             return JsonResponse({'error': 'Character not found'}, status=404)
+
+        # Enforce ownership: only the character's owner or staff can view available traits
+        if character.db_account != request.user and not request.user.is_staff:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
 
         available_traits = get_available_traits_for_character(character)
 
@@ -275,7 +336,6 @@ class CharacterAvailableTraitsAPI(BaseAPIView):
         return JsonResponse({'available_traits': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class PendingCharactersAPI(BaseAPIView):
     """API endpoint for listing characters awaiting approval."""
 
@@ -285,8 +345,10 @@ class PendingCharactersAPI(BaseAPIView):
         if not (request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)):
             return JsonResponse({'error': 'Staff permissions required'}, status=403)
 
-        # Get all characters with CharacterBio that are not approved
-        pending_bios = CharacterBio.objects.filter(approved=False).select_related('character').order_by('created_at')
+        # Get all characters with CharacterBio that are submitted or rejected (not draft, not approved)
+        pending_bios = CharacterBio.objects.filter(
+            status__in=['submitted', 'rejected']
+        ).select_related('character').order_by('created_at')
 
         data = []
         for bio in pending_bios:
@@ -299,13 +361,14 @@ class PendingCharactersAPI(BaseAPIView):
                 'player_name': player_name,
                 'clan': bio.clan,
                 'submitted_date': bio.created_at.isoformat() if bio.created_at else None,
-                'concept': bio.concept
+                'concept': bio.concept,
+                'status': bio.status,
+                'rejection_count': bio.rejection_count,
             })
 
         return JsonResponse({'pending_characters': data})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterDetailAPI(BaseAPIView):
     """API endpoint for getting full character sheet data for review."""
 
@@ -333,10 +396,14 @@ class CharacterDetailAPI(BaseAPIView):
                 'generation': bio.generation,
                 'predator_type': bio.predator_type,
                 'splat': bio.splat,
+                'status': bio.status,
                 'approved': bio.approved,
                 'approved_by': bio.approved_by,
                 'approved_at': bio.approved_at.isoformat() if bio.approved_at else None,
                 'created_at': bio.created_at.isoformat() if bio.created_at else None,
+                'background': bio.background,
+                'rejection_notes': bio.rejection_notes,
+                'rejection_count': bio.rejection_count,
             }
         except CharacterBio.DoesNotExist:
             bio_data = {}
@@ -381,7 +448,6 @@ class CharacterDetailAPI(BaseAPIView):
         })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterCreateAPI(BaseAPIView):
     """API endpoint for creating new characters from web form."""
 
@@ -425,7 +491,7 @@ class CharacterCreateAPI(BaseAPIView):
             character.db_account = request.user
             character.save()
 
-            # Create CharacterBio with approved=False
+            # Create CharacterBio with status='submitted'
             bio = CharacterBio.objects.create(
                 character=character,
                 full_name=character_data.get('name', character_name),
@@ -437,7 +503,8 @@ class CharacterCreateAPI(BaseAPIView):
                 generation=character_data.get('generation'),
                 predator_type=character_data.get('predator_type', ''),
                 splat='vampire',
-                approved=False,
+                status='submitted',
+                background=character_data.get('background', ''),
                 created_at=timezone.now()
             )
 
@@ -461,6 +528,22 @@ class CharacterCreateAPI(BaseAPIView):
                 'message': 'Character created and submitted for approval'
             })
 
+        except (ValueError, KeyError) as e:
+            # Clean up if anything went wrong
+            if 'character' in locals():
+                try:
+                    character.delete()
+                except Exception:
+                    pass
+            return JsonResponse({'error': 'Invalid character data'}, status=400)
+        except ObjectDoesNotExist as e:
+            # Clean up if anything went wrong
+            if 'character' in locals():
+                try:
+                    character.delete()
+                except Exception:
+                    pass
+            return JsonResponse({'error': 'Required data not found'}, status=404)
         except Exception as e:
             import traceback
             traceback.print_exc()
@@ -468,12 +551,11 @@ class CharacterCreateAPI(BaseAPIView):
             if 'character' in locals():
                 try:
                     character.delete()
-                except:
+                except Exception:
                     pass
-            return JsonResponse({'error': f'Failed to create character: {str(e)}'}, status=500)
+            return JsonResponse({'error': 'Server error'}, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class CharacterApprovalAPI(BaseAPIView):
     """API endpoint for approving or rejecting characters."""
 
@@ -499,11 +581,20 @@ class CharacterApprovalAPI(BaseAPIView):
         if action not in ['approve', 'reject']:
             return JsonResponse({'error': 'Invalid action. Must be "approve" or "reject"'}, status=400)
 
+        # Idempotent approval check: prevent double-approval race condition
+        if action == 'approve' and bio.status == 'approved':
+            return JsonResponse({
+                'error': 'Character already approved',
+                'approved_by': bio.approved_by
+            }, status=409)
+
         # Update character bio
         if action == 'approve':
-            bio.approved = True
+            bio.status = 'approved'
         else:
-            bio.approved = False
+            bio.status = 'rejected'
+            bio.rejection_notes = notes
+            bio.rejection_count += 1
 
         bio.approved_by = request.user.username
         bio.approved_at = timezone.now()
@@ -513,12 +604,207 @@ class CharacterApprovalAPI(BaseAPIView):
         if notes:
             character.db.approval_notes = notes
 
+        # Auto-place approved character and send notifications
+        if action == 'approve':
+            place_approved_character(character)
+            if character.db_account:
+                msg = f"Your character '{character.db_key}' has been APPROVED!\nYou may now begin playing."
+                if notes:
+                    msg += f"\nStaff notes: {notes}"
+                notify_account(character.db_account, msg, notification_type="approval")
+        else:
+            # Rejection notification
+            if character.db_account:
+                msg = f"Your character '{character.db_key}' requires revisions.\n"
+                msg += f"Staff feedback:\n{notes}\n"
+                msg += "Please edit and resubmit via the character creation page."
+                notify_account(character.db_account, msg, notification_type="rejection")
+
         return JsonResponse({
             'success': True,
             'action': action,
             'character_name': character.db_key,
             'approved_by': request.user.username,
             'approved_at': bio.approved_at.isoformat()
+        })
+
+
+class MyCharactersAPI(BaseAPIView):
+    """API endpoint returning all characters owned by the authenticated user."""
+
+    def get(self, request):
+        """Get list of characters owned by the current user with their status."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
+        characters = ObjectDB.objects.filter(
+            db_account=request.user,
+            db_typeclass_path__contains='characters'
+        )
+
+        data = []
+        for character in characters:
+            try:
+                bio = CharacterBio.objects.get(character=character)
+            except CharacterBio.DoesNotExist:
+                continue
+
+            char_data = {
+                'character_id': character.id,
+                'character_name': character.db_key,
+                'status': bio.status,
+                'clan': bio.clan,
+                'concept': bio.concept,
+                'rejection_count': bio.rejection_count,
+                'created_at': bio.created_at.isoformat() if bio.created_at else None,
+                'updated_at': bio.updated_at.isoformat() if bio.updated_at else None,
+            }
+
+            if bio.status == 'rejected':
+                char_data['rejection_notes'] = bio.rejection_notes
+
+            data.append(char_data)
+
+        return JsonResponse({'characters': data})
+
+
+class CharacterEditDataAPI(BaseAPIView):
+    """API endpoint returning full character data for editing a rejected character."""
+
+    def get(self, request, character_id):
+        """Get complete character data for editing after rejection."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
+        try:
+            character = ObjectDB.objects.get(
+                id=character_id,
+                db_typeclass_path__contains='characters'
+            )
+        except ObjectDB.DoesNotExist:
+            return JsonResponse({'error': 'Character not found'}, status=404)
+
+        # Verify ownership
+        if character.db_account != request.user:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+        try:
+            bio = CharacterBio.objects.get(character=character)
+        except CharacterBio.DoesNotExist:
+            return JsonResponse({'error': 'Character bio not found'}, status=404)
+
+        if bio.status != 'rejected':
+            return JsonResponse(
+                {'error': 'Only rejected characters can be edited for resubmission'},
+                status=400
+            )
+
+        # Use existing export to get trait data
+        character_data = export_character_to_json(character, include_powers=True)
+
+        # Merge in bio fields not included in export
+        character_data['background'] = bio.background
+        character_data['ambition'] = bio.ambition
+        character_data['desire'] = bio.desire
+        character_data['sire'] = bio.sire
+        character_data['generation'] = bio.generation
+        character_data['predator_type'] = bio.predator_type
+        character_data['full_name'] = bio.full_name
+        character_data['concept'] = bio.concept
+        character_data['clan'] = bio.clan
+        character_data['splat'] = bio.splat
+
+        return JsonResponse({
+            'character_id': character.id,
+            'character_data': character_data,
+            'rejection_notes': bio.rejection_notes,
+            'rejection_count': bio.rejection_count,
+        })
+
+
+class CharacterResubmitAPI(BaseAPIView):
+    """API endpoint for resubmitting a rejected character."""
+
+    def post(self, request, character_id):
+        """Resubmit a rejected character with updated data."""
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required'}, status=401)
+
+        try:
+            character = ObjectDB.objects.get(
+                id=character_id,
+                db_typeclass_path__contains='characters'
+            )
+        except ObjectDB.DoesNotExist:
+            return JsonResponse({'error': 'Character not found'}, status=404)
+
+        # Verify ownership
+        if character.db_account != request.user:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+        try:
+            bio = CharacterBio.objects.get(character=character)
+        except CharacterBio.DoesNotExist:
+            return JsonResponse({'error': 'Character bio not found'}, status=404)
+
+        if bio.status != 'rejected':
+            return JsonResponse(
+                {'error': 'Only rejected characters can be resubmitted'},
+                status=400
+            )
+
+        character_data = request.json.get('character_data')
+        if not character_data:
+            return JsonResponse({'error': 'Missing character_data'}, status=400)
+
+        # Delete ALL existing traits and powers before re-import to prevent duplicates
+        CharacterTrait.objects.filter(character=character).delete()
+        CharacterPower.objects.filter(character=character).delete()
+
+        # Re-import traits from updated data
+        results = enhanced_import_character_from_json(character, character_data)
+
+        if not results['success']:
+            errors = results['errors'] + results['validation_errors']
+            error_msg = '; '.join(errors) if errors else 'Unknown error during import'
+            return JsonResponse(
+                {'error': f'Failed to import character data: {error_msg}'},
+                status=400
+            )
+
+        # Update bio fields from character_data
+        bio.full_name = character_data.get('name', bio.full_name)
+        bio.concept = character_data.get('concept', bio.concept)
+        bio.clan = character_data.get('clan', bio.clan)
+        bio.sire = character_data.get('sire', bio.sire)
+        bio.generation = character_data.get('generation', bio.generation)
+        bio.predator_type = character_data.get('predator_type', bio.predator_type)
+        bio.ambition = character_data.get('ambition', bio.ambition)
+        bio.desire = character_data.get('desire', bio.desire)
+        bio.background = character_data.get('background', bio.background)
+
+        # Update character name if changed
+        new_name = character_data.get('name')
+        if new_name and new_name != character.db_key:
+            # Check for name conflicts
+            conflict = ObjectDB.objects.filter(
+                db_key__iexact=new_name,
+                db_account=request.user,
+                db_typeclass_path__contains='characters'
+            ).exclude(id=character.id).exists()
+            if not conflict:
+                character.db_key = new_name
+                character.save()
+
+        # Reset status for re-review
+        bio.status = 'submitted'
+        bio.rejection_notes = ''
+        bio.save()
+
+        return JsonResponse({
+            'success': True,
+            'character_id': character.id,
+            'message': 'Character resubmitted for approval'
         })
 
 

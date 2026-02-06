@@ -2,24 +2,42 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-03)
+See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Players and builders can do complex, multi-step tasks (character creation and area building) through an intuitive web interface instead of memorizing text commands.
-**Current focus:** Phase 5 -- Sandbox Building
+**Current focus:** Planning v2.0 milestone
+**Status:** v1.0 milestone complete — 7 phases, 16 plans, 28 requirements shipped
 
 ## Current Position
 
-Phase: 7 of 7 (Trigger System) - **COMPLETE**
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-05 -- Completed 07-03-PLAN.md (V5 conditions and trigger editor UI)
+Phase: v1.0 COMPLETE — Ready to plan v2.0
+Plan: Not started
+Status: Milestone complete, awaiting next milestone definition
+Last activity: 2026-02-05 — v1.0 milestone archived and tagged
 
-Progress: [████████████████] 100% (16/16 plans)
+Progress: [████████████████] 100% (16/16 plans in v1.0)
 
-## Performance Metrics
+## v1.0 Milestone Summary
+
+**Shipped:** 2026-02-05  
+**Phases:** 1-7 (16 plans)  
+**Requirements:** 28/28 complete  
+**Tag:** v1.0  
+
+### What Was Delivered
+
+- **Phase 1:** Security hardening (CSRF, auth, V5 validation, concurrency)
+- **Phase 2:** Character approval workflow (rejection/resubmit, background, notifications, drafts)
+- **Phase 3:** Builder UX (compass rose, exit auto-naming, V5 templates)
+- **Phase 4:** Builder approval workflow (state machine, staff review)
+- **Phase 5:** Sandbox building (auto-create rooms, isolation, cleanup)
+- **Phase 6:** Live promotion (connection points, bidirectional exits)
+- **Phase 7:** Trigger system (entry/exit/timed/interaction, V5 conditions, web editor)
+
+### Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 16
 - Average duration: 6 min
 - Total execution time: 71 min
 
@@ -35,87 +53,41 @@ Progress: [████████████████] 100% (16/16 plans)
 | 06-live-promotion | 1/1 | 8 min | 8 min |
 | 07-trigger-system | 3/3 | 39 min | 13 min |
 
-**Recent Trend:**
-- Last 5 plans: 04-01 (7 min), 05-01 (3 min), 05-02 (5 min), 06-01 (8 min), 07-01 (13 min), 07-02 (17 min)
-- Trend: increasing (trigger system is more complex)
-
-*Updated after each plan completion*
+**Code Stats:**
+- 69 commits from 2026-02-03 to 2026-02-05
+- 36,723 lines of Python code
+- 3 days from first commit to ship
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- [Roadmap]: Review & hardening phase before any new features (brownfield safety)
-- [Roadmap]: Builder approval workflow before sandbox/promotion (gate unsafe operations)
-- [Roadmap]: Trigger system last (depends on bridge layer from sandbox phase)
-- [01-01]: Auth checks added per-method (not via mixin) to match existing codebase pattern
-- [01-01]: In-clan discipline validation deferred -- needs clan-discipline mapping model
-- [01-01]: Pool validation returns early before trait processing to avoid partial imports
-- [01-02]: Replaced @py logging with @set attributes -- eliminates code execution vector
-- [01-02]: Optimistic concurrency uses version field comparison (not database locking)
-- [01-02]: Malformed exits/objects in exporter silently skipped -- validator catches upstream
-- [02-01]: Default status is 'submitted' (not 'draft') -- existing CharacterCreateAPI creates at submission time
-- [02-01]: approved @property for backward-compatible reads, all writes use bio.status
-- [02-01]: PendingCharactersAPI shows both submitted and rejected (not just submitted)
-- [02-02]: Helper functions (notify_account, place_approved_character) live in traits/api.py, shared by web API and commands
-- [02-02]: Notifications stored as list of dicts on account.db.pending_notifications
-- [02-02]: Resubmission deletes all CharacterTrait/CharacterPower rows before re-import
-- [02-03]: Rejection modal uses Bootstrap 5 Modal API (vanilla JS, no jQuery)
-- [02-03]: Draft keyed by chargen_draft_<id> for edit, chargen_draft_new for create
-- [02-03]: Draft TTL is 7 days; edit mode loads from API not localStorage
-- [03-01]: Direction calculation uses 8-point compass with grid delta mapping
-- [03-01]: Exits auto-created bidirectionally with opposite directions
-- [03-01]: Direction labels use abbreviated forms (n, s, e, w, ne, nw, se, sw)
-- [03-02]: Templates defined as Python dictionary (not database) for simplicity
-- [03-02]: Haven template includes default haven_ratings for convenience
-- [03-02]: Confirmation dialog only for rooms with existing V5 settings
-- [04-01]: Status choices use 5 states: draft/submitted/approved/built/live
-- [04-01]: Rejection returns to draft (not separate rejected state)
-- [04-01]: Map preview uses canvas with simple room/exit rendering
-- [04-01]: Rejection notes have 10 character minimum
-- [05-01]: 30-second timeout for main thread operations prevents indefinite blocking
-- [05-01]: Continue building on per-room/per-exit errors for partial success
-- [05-01]: Sandbox container room created as entry point with _sandbox_{project_id} alias
-- [05-01]: Triple tagging (web_builder, project_{id}, sandbox) for flexible querying
-- [05-02]: Sandbox isolation uses Room.access() override checking 'sandbox' tag and project ownership
-- [05-02]: Builder commands package structure (beckonmu/commands/builder/ with submodules)
-- [05-02]: Cleanup deletes exits first, then objects, then rooms to avoid reference errors
-- [05-02]: Project status resets from 'built' to 'approved' after cleanup (not to 'draft')
-- [06-01]: Promotion moves rooms (removes 'sandbox' tag) rather than copying - preserves dbrefs and V5 attributes
-- [06-01]: Entry room selection uses lowest room ID as simple heuristic
-- [06-01]: Bidirectional exits created automatically with opposite direction mapping
-- [06-01]: run_in_main_thread import is from evennia.utils.utils (not evennia.server.sessionhandler in Evennia 5.0)
-- [07-01]: Only player characters trigger entry/exit (NPCs excluded via has_account check)
-- [07-01]: Trigger actions are pure functions with no eval/exec - security by design
-- [07-01]: Errors in triggers are logged but don't crash room movement
-- [07-01]: ACTION_REGISTRY pattern allows easy extension of whitelisted actions
-- [07-02]: RoomTriggerScript uses interval=300s default with 10s minimum to prevent abuse
-- [07-02]: Scripts attached to room via obj=room, trigger_id stored in script.db for filtering
-- [07-02]: is_valid() checks room.db.triggers to auto-stop orphaned scripts on server reload
-- [07-02]: Trigger scripts created during sandbox build, deleted during cleanup before rooms
-- [07-03]: 7 condition types cover V5 use cases: clan, splat, hunger, room_type, time_of_day, danger, probability
-- [07-03]: CONDITION_TYPES dict defines parameters for UI generation
-- [07-03]: Trigger editor uses client-side state for responsiveness
-- [07-03]: Conditions checked before action execution in execute_triggers()
+All v1.0 decisions are logged in PROJECT.md Key Decisions table.
+See `.planning/milestones/v1.0-ROADMAP.md` for milestone-specific decisions.
 
 ### Pending Todos
 
-- Run `evennia migrate` to apply 0004_buildproject_connection_fields migration on deployment
-- ~~Run `evennia migrate` to apply 0002_characterbio_status_background migration on deployment~~ (Applied during 02-04)
+- Run `evennia migrate` to apply all migrations on deployment (0002, 0003, 0004)
+- Fix Python environment to 3.12/3.13 for Evennia compatibility (3.14 has cryptography issues)
+- Human E2E testing of character approval workflow (deferred from 02-04 due to environment)
 
 ### Blockers/Concerns
 
-- [Research]: Phase 5 (Sandbox) needs run_in_main_thread() integration testing -- highest architectural risk
-- [Research]: JSON map_data needs schema versioning before Phase 5 -- ADDRESSED: schema_version added to defaults
-- [01-01]: In-clan discipline server-side validation needs ClanDiscipline model (deferred, staff review catches it)
-- [02-03]: beckonmu/web/templates/ is an NTFS junction to web/templates/ -- git tracks both paths, causing duplicate diffs
-- [02-04]: Python 3.14/cryptography incompatibility prevents Evennia server startup (`_cffi_backend` error) -- Use Python 3.12 or 3.13 for testing
+- **Resolved:** All v1.0 phases complete
+- **Environment:** Python 3.14/cryptography incompatibility documented — use Python 3.12/3.13
+- **Tech Debt:** Up/Down vertical exits not implemented (minor — 2D covers majority of use cases)
 
-## Session Continuity
+## Next Milestone (v2.0)
 
-Last session: 2026-02-05
-Stopped at: Completed 07-03-PLAN.md (V5 conditions and trigger editor UI) - Phase 7 COMPLETE
-Resume file: None
+**Candidates:**
+- Character sheet viewer (CHAR-06)
+- Staff trait comments (CHAR-07)
+- Approval history log (CHAR-08)
+- Custom templates (BLDX-06, BLDX-07)
+- Trigger development guide (TRIG-08)
+
+**To start:** `/gsd-new-milestone`
+
+---
+
+*Last updated: 2026-02-05 after v1.0 milestone completion*

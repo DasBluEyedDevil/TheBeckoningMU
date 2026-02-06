@@ -37,13 +37,21 @@ SERVERNAME = "Beckoning"
 
 # Add custom Django apps (BBS, Jobs, Status, Boons, Traits, Web Builder)
 INSTALLED_APPS += (
-    "bbs",
-    "jobs",
-    "status",
-    "boons",
-    "traits",
-    "web.builder.apps.BuilderConfig",
+    "beckonmu.bbs",
+    "beckonmu.jobs",
+    "beckonmu.status",
+    "beckonmu.boons",
+    "beckonmu.traits",
+    "beckonmu.web.builder.apps.BuilderConfig",
 )
+
+# The repo root must be on sys.path so "beckonmu" is importable as a package.
+# Evennia adds the game dir (beckonmu/) to sys.path, but all our apps and imports
+# use the "beckonmu.xyz" prefix, which requires the *parent* directory on the path.
+import sys, os
+_repo_root = os.path.dirname(GAME_DIR)
+if _repo_root not in sys.path:
+    sys.path.insert(0, _repo_root)
 
 ######################################################################
 # MUX Color Markup Support

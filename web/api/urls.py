@@ -5,5 +5,5 @@ Routes API calls to the traits app endpoints.
 from django.urls import path, include
 
 urlpatterns = [
-    path('traits/', include('beckonmu.traits.urls')),
+    path('traits/', include('traits.urls')),
 ]

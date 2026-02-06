@@ -11,6 +11,6 @@ class JobsConfig(AppConfig):
     """
 
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'beckonmu.jobs'
+    name = 'jobs'
     label = 'jobs'
     verbose_name = 'Jobs System'

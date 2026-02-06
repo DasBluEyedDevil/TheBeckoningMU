@@ -64,10 +64,10 @@ class CmdFeed(default_cmds.MuxCommand):
 
         # 5. Perform feeding roll
         # Get pool based on Predator Type
-        from beckonmu.dice import dice_roller
-        from beckonmu.commands.v5.utils.trait_utils import get_trait_value
-        from beckonmu.commands.v5.utils import blood_utils
-        from beckonmu.commands.v5.utils.predator_utils import get_feeding_pool
+        from dice import dice_roller
+        from commands.v5.utils.trait_utils import get_trait_value
+        from commands.v5.utils import blood_utils
+        from commands.v5.utils.predator_utils import get_feeding_pool
 
         pool_str, bonus_dice = get_feeding_pool(self.caller)
         pool_parts = pool_str.split('+')
@@ -193,7 +193,7 @@ class CmdBloodSurge(Command):
             return
 
         # 4. Activate Blood Surge
-        from beckonmu.commands.v5.utils import blood_utils
+        from commands.v5.utils import blood_utils
 
         result = blood_utils.activate_blood_surge(self.caller, trait_type, trait_name)
 
@@ -233,7 +233,7 @@ class CmdHunger(Command):
             return
 
         # 2. Get blood status
-        from beckonmu.commands.v5.utils import blood_utils
+        from commands.v5.utils import blood_utils
 
         hunger = blood_utils.get_hunger_level(self.caller)
         hunger_display = blood_utils.format_hunger_display(self.caller)

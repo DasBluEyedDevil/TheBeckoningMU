@@ -5,7 +5,7 @@ Helper functions for managing and using discipline powers.
 """
 
 from world.v5_data import DISCIPLINES
-from beckonmu.dice.dice_roller import roll_rouse_check
+from dice.dice_roller import roll_rouse_check
 from .blood_utils import get_blood_potency, increase_hunger
 from .discipline_effects import (
     apply_effect,

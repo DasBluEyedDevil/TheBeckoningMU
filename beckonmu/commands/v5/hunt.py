@@ -123,7 +123,7 @@ class CmdHunt(default_cmds.MuxCommand):
 
         # Import Jobs system
         try:
-            from beckonmu.jobs.models import Job, Bucket
+            from jobs.models import Job, Bucket
         except ImportError:
             caller.msg("|rJobs system not available. Please contact staff.|n")
             return

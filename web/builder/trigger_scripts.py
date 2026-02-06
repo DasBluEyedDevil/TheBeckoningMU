@@ -50,7 +50,7 @@ def create_timed_trigger(room, trigger_data: Dict[str, Any]) -> Optional[Any]:
 
     try:
         script = create_script(
-            typeclass="beckonmu.typeclasses.scripts.RoomTriggerScript",
+            typeclass="typeclasses.scripts.RoomTriggerScript",
             key=f"trigger_{trigger_id}",
             obj=room,
             interval=interval,

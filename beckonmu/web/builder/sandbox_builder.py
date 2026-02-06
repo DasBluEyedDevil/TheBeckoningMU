@@ -11,8 +11,8 @@ from typing import Dict, Any, List, Optional
 from evennia.utils.create import create_object
 from evennia.utils.search import search_object
 
-from beckonmu.typeclasses.rooms import Room
-from beckonmu.typeclasses.exits import Exit
+from typeclasses.rooms import Room
+from typeclasses.exits import Exit
 from .trigger_scripts import create_timed_trigger, delete_timed_triggers_for_room
 
 logger = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ def build_sandbox_area(project_id: int, map_data: Dict[str, Any]) -> Dict[str, A
     # Create sandbox container room (entry point)
     sandbox_alias = f"_sandbox_{project_id}"
     sandbox_room = create_object(
-        typeclass="beckonmu.typeclasses.rooms.Room",
+        typeclass="typeclasses.rooms.Room",
         key=f"Builder Sandbox: Project {project_id}",
         aliases=[sandbox_alias],
         location=None,
@@ -72,7 +72,7 @@ def build_sandbox_area(project_id: int, map_data: Dict[str, Any]) -> Dict[str, A
             room_name = room_data.get("name", "Unnamed Room")
 
             room = create_object(
-                typeclass="beckonmu.typeclasses.rooms.Room",
+                typeclass="typeclasses.rooms.Room",
                 key=room_name,
                 aliases=[room_alias],
                 location=None,
@@ -168,7 +168,7 @@ def build_sandbox_area(project_id: int, map_data: Dict[str, Any]) -> Dict[str, A
 
             # Create the exit
             exit_obj = create_object(
-                typeclass="beckonmu.typeclasses.exits.Exit",
+                typeclass="typeclasses.exits.Exit",
                 key=exit_name,
                 aliases=aliases,
                 location=source_room,

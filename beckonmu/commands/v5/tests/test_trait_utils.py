@@ -7,7 +7,7 @@ Validates that the internal bridge functions work correctly.
 
 import unittest
 from unittest.mock import Mock
-from beckonmu.commands.v5.utils import trait_utils
+from commands.v5.utils import trait_utils
 
 
 class TestTraitUtilsBridgeFunctions(unittest.TestCase):

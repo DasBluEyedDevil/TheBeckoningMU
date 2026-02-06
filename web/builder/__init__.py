@@ -1,1 +1,1 @@
-default_app_config = "beckonmu.web.builder.apps.BuilderConfig"
+default_app_config = "web.builder.apps.BuilderConfig"

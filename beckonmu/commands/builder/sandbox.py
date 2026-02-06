@@ -30,7 +30,7 @@ class CmdGotoSandbox(Command):
     help_category = "Building"
 
     def func(self):
-        from beckonmu.web.builder.models import BuildProject
+        from web.builder.models import BuildProject
 
         if not self.args:
             # List user's sandboxes
@@ -60,7 +60,7 @@ class CmdGotoSandbox(Command):
         # Find the sandbox entry room using the project tag
         project_tag = f"project_{project.id}"
         rooms = search.search_object(
-            "", typeclass="beckonmu.typeclasses.rooms.Room", tags=[project_tag]
+            "", typeclass="typeclasses.rooms.Room", tags=[project_tag]
         )
         if rooms:
             self.caller.move_to(rooms[0])
@@ -86,7 +86,7 @@ class CmdListSandboxes(Command):
     help_category = "Admin"
 
     def func(self):
-        from beckonmu.web.builder.models import BuildProject
+        from web.builder.models import BuildProject
 
         projects = BuildProject.objects.filter(
             sandbox_room_id__isnull=False
@@ -122,7 +122,7 @@ class CmdCleanupSandbox(Command):
     help_category = "Building"
 
     def func(self):
-        from beckonmu.web.builder.models import BuildProject
+        from web.builder.models import BuildProject
 
         if not self.args:
             self.caller.msg("Usage: @cleanup_sandbox <project_id>")
@@ -147,7 +147,7 @@ class CmdCleanupSandbox(Command):
             return
 
         # Import and call cleanup
-        from beckonmu.web.builder.sandbox_cleanup import cleanup_sandbox_for_project
+        from web.builder.sandbox_cleanup import cleanup_sandbox_for_project
 
         success, result = cleanup_sandbox_for_project(project_id)
 

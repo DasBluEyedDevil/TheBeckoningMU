@@ -8,7 +8,7 @@ and Blood Surge mechanics.
 import time
 from unittest.mock import patch, Mock
 from evennia.utils.test_resources import EvenniaTest
-from beckonmu.commands.v5.utils import blood_utils
+from commands.v5.utils import blood_utils
 
 
 class HungerManagementTests(EvenniaTest):
@@ -328,7 +328,7 @@ class BloodSurgeManagementTests(EvenniaTest):
         self.char = self.char1
 
     @patch('traits.utils.get_character_trait_value')
-    @patch('beckonmu.dice.rouse_checker.perform_rouse_check')
+    @patch('dice.rouse_checker.perform_rouse_check')
     def test_activate_blood_surge_success(self, mock_rouse, mock_trait):
         """Test successful Blood Surge activation."""
         # Mock Blood Potency
@@ -350,7 +350,7 @@ class BloodSurgeManagementTests(EvenniaTest):
         self.assertIn('rouse_result', result)
 
     @patch('traits.utils.get_character_trait_value')
-    @patch('beckonmu.dice.rouse_checker.perform_rouse_check')
+    @patch('dice.rouse_checker.perform_rouse_check')
     def test_activate_blood_surge_stores_data(self, mock_rouse, mock_trait):
         """Test Blood Surge activation stores data correctly."""
         mock_trait.return_value = 2
@@ -369,7 +369,7 @@ class BloodSurgeManagementTests(EvenniaTest):
         self.assertEqual(surge['bonus'], 2)
 
     @patch('traits.utils.get_character_trait_value')
-    @patch('beckonmu.dice.rouse_checker.perform_rouse_check')
+    @patch('dice.rouse_checker.perform_rouse_check')
     def test_activate_blood_surge_performs_rouse_check(self, mock_rouse, mock_trait):
         """Test Blood Surge performs Rouse check."""
         mock_trait.return_value = 1
@@ -505,7 +505,7 @@ class EdgeCaseTests(EvenniaTest):
         self.assertNotEqual(res2['expires'], res1['expires'])
 
     @patch('traits.utils.get_character_trait_value')
-    @patch('beckonmu.dice.rouse_checker.perform_rouse_check')
+    @patch('dice.rouse_checker.perform_rouse_check')
     def test_blood_surge_replaces_previous(self, mock_rouse, mock_trait):
         """Test that activating Blood Surge on new trait replaces previous."""
         mock_trait.return_value = 2

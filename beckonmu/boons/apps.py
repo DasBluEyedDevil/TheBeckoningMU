@@ -9,6 +9,6 @@ class BoonsConfig(AppConfig):
     """Django app configuration for the Boons system."""
 
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'beckonmu.boons'
+    name = 'boons'
     label = 'boons'
     verbose_name = 'Boons System'

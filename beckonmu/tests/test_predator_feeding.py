@@ -2,7 +2,7 @@
 Tests for predator type feeding mechanics.
 """
 from evennia.utils.test_resources import EvenniaTest
-from beckonmu.commands.v5.utils.predator_utils import get_feeding_pool
+from commands.v5.utils.predator_utils import get_feeding_pool
 
 
 class TestPredatorFeeding(EvenniaTest):

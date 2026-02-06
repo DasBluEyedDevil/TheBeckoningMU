@@ -628,7 +628,7 @@ class ListConnectionRoomsView(StaffRequiredMixin, View):
 
         # Search for all rooms
         all_rooms = search.search_object(
-            "", typeclass="beckonmu.typeclasses.rooms.Room"
+            "", typeclass="typeclasses.rooms.Room"
         )
 
         # Filter out sandbox rooms

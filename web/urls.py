@@ -27,9 +27,9 @@ urlpatterns = [
     # web admin
     path("admin/", include("web.admin.urls")),
     # API routing
-    path("api/", include("beckonmu.web.api.urls")),
+    path("api/", include("web.api.urls")),
     # Web Builder
-    path("builder/", include("beckonmu.web.builder.urls", namespace="builder")),
+    path("builder/", include("web.builder.urls", namespace="builder")),
     # add any extra urls here:
     # path("mypath/", include("path.to.my.urls.file")),
 ]

@@ -8,7 +8,7 @@ To integrate with your game:
 1. Import this command set in your character default cmdsets
 2. Add it to the CharacterCmdSet in beckonmu/commands/default_cmdsets.py:
 
-    from beckonmu.dice.cmdset import DiceCmdSet
+    from dice.cmdset import DiceCmdSet
 
     class CharacterCmdSet(default_cmds.CharacterCmdSet):
         def at_cmdset_creation(self):

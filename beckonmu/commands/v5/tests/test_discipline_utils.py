@@ -7,7 +7,7 @@ integration that was fixed (BUG-004, BUG-005).
 
 import unittest
 from unittest.mock import Mock, patch, MagicMock
-from beckonmu.commands.v5.utils import discipline_utils
+from commands.v5.utils import discipline_utils
 
 
 class TestActivateDisciplinePowerRouseCheck(unittest.TestCase):
@@ -21,12 +21,12 @@ class TestActivateDisciplinePowerRouseCheck(unittest.TestCase):
         self.character.db.disciplines = {'Potence': 2}
         self.character.db.resonance = None
 
-    @patch('beckonmu.commands.v5.utils.discipline_utils.get_power_by_name')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.get_blood_potency')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.rouse_check')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.increase_hunger')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.check_resonance_bonus')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.get_power_duration')
+    @patch('commands.v5.utils.discipline_utils.get_power_by_name')
+    @patch('commands.v5.utils.discipline_utils.get_blood_potency')
+    @patch('commands.v5.utils.discipline_utils.rouse_check')
+    @patch('commands.v5.utils.discipline_utils.increase_hunger')
+    @patch('commands.v5.utils.discipline_utils.check_resonance_bonus')
+    @patch('commands.v5.utils.discipline_utils.get_power_duration')
     def test_rouse_check_success(
         self,
         mock_duration,
@@ -73,10 +73,10 @@ class TestActivateDisciplinePowerRouseCheck(unittest.TestCase):
         # Verify increase_hunger was NOT called (success)
         mock_increase_hunger.assert_not_called()
 
-    @patch('beckonmu.commands.v5.utils.discipline_utils.get_power_by_name')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.get_blood_potency')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.rouse_check')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.increase_hunger')
+    @patch('commands.v5.utils.discipline_utils.get_power_by_name')
+    @patch('commands.v5.utils.discipline_utils.get_blood_potency')
+    @patch('commands.v5.utils.discipline_utils.rouse_check')
+    @patch('commands.v5.utils.discipline_utils.increase_hunger')
     def test_rouse_check_failure(
         self,
         mock_increase_hunger,
@@ -121,9 +121,9 @@ class TestActivateDisciplinePowerRouseCheck(unittest.TestCase):
         self.assertIn('Hunger', result['message'], "Message should mention hunger")
         self.assertIn('3', result['message'], "Message should show new hunger level")
 
-    @patch('beckonmu.commands.v5.utils.discipline_utils.get_power_by_name')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.check_resonance_bonus')
-    @patch('beckonmu.commands.v5.utils.discipline_utils.get_power_duration')
+    @patch('commands.v5.utils.discipline_utils.get_power_by_name')
+    @patch('commands.v5.utils.discipline_utils.check_resonance_bonus')
+    @patch('commands.v5.utils.discipline_utils.get_power_duration')
     def test_no_rouse_check_for_non_rouse_powers(
         self,
         mock_duration,
@@ -160,10 +160,10 @@ class TestActivateDisciplinePowerRouseCheck(unittest.TestCase):
 class TestGetBloodPotencyIntegration(unittest.TestCase):
     """Test that blood_potency is correctly retrieved for rouse checks."""
 
-    @patch('beckonmu.commands.v5.utils.discipline_utils.get_blood_potency')
+    @patch('commands.v5.utils.discipline_utils.get_blood_potency')
     def test_blood_potency_retrieved(self, mock_get_bp):
         """Verify get_blood_potency is called correctly."""
-        from beckonmu.commands.v5.utils.blood_utils import get_blood_potency
+        from commands.v5.utils.blood_utils import get_blood_potency
 
         character = Mock()
         character.db = Mock()

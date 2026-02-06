@@ -6,12 +6,12 @@ Commands for managing Humanity, Convictions, Touchstones, Stains, Remorse, and F
 
 from evennia.commands.command import Command
 from evennia import default_cmds
-from beckonmu.commands.v5.utils.humanity_utils import (
+from commands.v5.utils.humanity_utils import (
     get_humanity_status, add_stain, add_conviction, add_touchstone,
     remove_conviction, remove_touchstone, remorse_roll, check_frenzy_risk,
     resist_frenzy, get_stains, get_humanity
 )
-from beckonmu.commands.v5.utils.display_utils import (
+from commands.v5.utils.display_utils import (
     BLOOD_RED, VAMPIRE_GOLD, RESET, SHADOW_GREY,
     BOX_H, BOX_V, BOX_TL, BOX_TR, BOX_BL, BOX_BR
 )
@@ -421,7 +421,7 @@ class CmdFrenzy(default_cmds.MuxCommand):
             return
 
         # No switches - show frenzy status
-        from beckonmu.commands.v5.utils.blood_utils import get_hunger
+        from commands.v5.utils.blood_utils import get_hunger
         humanity = get_humanity(caller)
         hunger = get_hunger(caller)
 

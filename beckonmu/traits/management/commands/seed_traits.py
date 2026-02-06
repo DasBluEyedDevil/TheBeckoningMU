@@ -14,10 +14,10 @@ Usage:
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from beckonmu.traits.models import TraitCategory, Trait, DisciplinePower
+from traits.models import TraitCategory, Trait, DisciplinePower
 
 # Import trait constants from v5_data - single source of truth
-from beckonmu.world.v5_data import ATTRIBUTES, SKILLS, DISCIPLINES
+from world.v5_data import ATTRIBUTES, SKILLS, DISCIPLINES
 
 
 class Command(BaseCommand):

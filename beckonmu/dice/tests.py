@@ -10,21 +10,21 @@ Test coverage for:
 
 from unittest.mock import patch, MagicMock
 from evennia.utils.test_resources import EvenniaTest
-from beckonmu.dice import dice_roller, roll_result, discipline_roller, rouse_checker
-from beckonmu.dice.dice_roller import (
+from dice import dice_roller, roll_result, discipline_roller, rouse_checker
+from dice.dice_roller import (
     roll_v5_pool, roll_chance_die, roll_rouse_check, roll_contested,
     apply_willpower_reroll, validate_pool_params, get_success_threshold
 )
-from beckonmu.dice.roll_result import RollResult
-from beckonmu.dice.discipline_roller import (
+from dice.roll_result import RollResult
+from dice.discipline_roller import (
     roll_discipline_power, parse_dice_pool, calculate_pool_from_traits,
     get_blood_potency_bonus, can_use_power, get_character_discipline_powers
 )
-from beckonmu.dice.rouse_checker import (
+from dice.rouse_checker import (
     perform_rouse_check, can_reroll_rouse, get_hunger_level,
     set_hunger_level, format_hunger_display
 )
-from beckonmu.traits.models import (
+from traits.models import (
     TraitCategory, Trait, DisciplinePower, CharacterTrait, CharacterPower
 )
 
@@ -734,7 +734,7 @@ class DisciplineRollerTestCase(EvenniaTest):
         initial_hunger = self.char1.db.hunger
 
         # Mock rouse check to always fail
-        with patch('beckonmu.dice.rouse_checker.base_rouse_check') as mock_rouse:
+        with patch('dice.rouse_checker.base_rouse_check') as mock_rouse:
             mock_rouse.return_value = {'roll': 3, 'success': False, 'hunger_change': 1}
 
             result = roll_discipline_power(
@@ -802,7 +802,7 @@ class RouseCheckerTestCase(EvenniaTest):
 
     def test_rouse_check_success(self):
         """Test roll 6+ = no Hunger gain."""
-        with patch('beckonmu.dice.rouse_checker.base_rouse_check') as mock_rouse:
+        with patch('dice.rouse_checker.base_rouse_check') as mock_rouse:
             mock_rouse.return_value = {'roll': 8, 'success': True, 'hunger_change': 0}
 
             result = perform_rouse_check(self.char1, "Test", power_level=1)
@@ -814,7 +814,7 @@ class RouseCheckerTestCase(EvenniaTest):
 
     def test_rouse_check_failure(self):
         """Test roll 1-5 = +1 Hunger."""
-        with patch('beckonmu.dice.rouse_checker.base_rouse_check') as mock_rouse:
+        with patch('dice.rouse_checker.base_rouse_check') as mock_rouse:
             mock_rouse.return_value = {'roll': 3, 'success': False, 'hunger_change': 1}
 
             result = perform_rouse_check(self.char1, "Test", power_level=1)
@@ -868,7 +868,7 @@ class RouseCheckerTestCase(EvenniaTest):
             rating=2  # Can reroll Level 1
         )
 
-        with patch('beckonmu.dice.rouse_checker.base_rouse_check') as mock_rouse:
+        with patch('dice.rouse_checker.base_rouse_check') as mock_rouse:
             # First call fails, second succeeds
             mock_rouse.side_effect = [
                 {'roll': 3, 'success': False, 'hunger_change': 1},  # Initial fail
@@ -887,7 +887,7 @@ class RouseCheckerTestCase(EvenniaTest):
         """Test character.db.hunger updated correctly."""
         initial_hunger = self.char1.db.hunger
 
-        with patch('beckonmu.dice.rouse_checker.base_rouse_check') as mock_rouse:
+        with patch('dice.rouse_checker.base_rouse_check') as mock_rouse:
             mock_rouse.return_value = {'roll': 2, 'success': False, 'hunger_change': 1}
 
             result = perform_rouse_check(self.char1, "Test")

@@ -470,7 +470,7 @@ def check_harpy_permissions(character):
         bool: True if character is a Harpy
     """
     try:
-        from beckonmu.status.utils import get_character_status
+        from status.utils import get_character_status
 
         char_status = get_character_status(character)
         if not char_status or not char_status.position:
@@ -497,7 +497,7 @@ def format_boon_ledger(caller, ledger):
     Returns:
         str: Formatted boon ledger display
     """
-    from beckonmu.world.ansi_theme import (
+    from world.ansi_theme import (
         GOLD, PALE_IVORY, RESET, BLOOD_RED, SHADOW_GREY
     )
 
@@ -571,7 +571,7 @@ def format_boons_with_character(caller, target, boons, net_position):
     Returns:
         str: Formatted boons display
     """
-    from beckonmu.world.ansi_theme import (
+    from world.ansi_theme import (
         PALE_IVORY, RESET, GOLD, BLOOD_RED, SHADOW_GREY
     )
 
@@ -622,7 +622,7 @@ def format_pending_boons(caller, pending):
     Returns:
         str: Formatted pending boons display
     """
-    from beckonmu.world.ansi_theme import (
+    from world.ansi_theme import (
         PALE_IVORY, RESET, GOLD, BLOOD_RED, SHADOW_GREY
     )
 

@@ -8,8 +8,8 @@ of dice rolling, Hunger management, and resonance tracking.
 import time
 from unittest.mock import Mock, patch, MagicMock, call
 from evennia.utils.test_resources import EvenniaTest
-from beckonmu.commands.v5.blood import CmdFeed, CmdBloodSurge, CmdHunger
-from beckonmu.commands.v5.utils import blood_utils
+from commands.v5.blood import CmdFeed, CmdBloodSurge, CmdHunger
+from commands.v5.utils import blood_utils
 
 
 class CmdFeedTestCase(EvenniaTest):
@@ -52,7 +52,7 @@ class CmdFeedTestCase(EvenniaTest):
         valid_resonances = ['choleric', 'melancholic', 'phlegmatic', 'sanguine']
 
         for resonance in valid_resonances:
-            with patch('beckonmu.dice.dice_roller.roll_v5_pool') as mock_roll:
+            with patch('dice.dice_roller.roll_v5_pool') as mock_roll:
                 with patch('traits.utils.get_character_trait_value', return_value=3):
                     # Mock successful roll
                     mock_result = Mock()
@@ -71,7 +71,7 @@ class CmdFeedTestCase(EvenniaTest):
                     message = self.char.msg.call_args[0][0]
                     self.assertNotIn("Invalid resonance", message.lower())
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_success_reduces_hunger(self, mock_trait, mock_roll):
         """Test successful feeding reduces Hunger."""
@@ -108,7 +108,7 @@ class CmdFeedTestCase(EvenniaTest):
         self.assertIn("Feeding successful", message)
         self.assertIn("Hunger reduced", message)
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_reduction_scales_with_successes(self, mock_trait, mock_roll):
         """Test Hunger reduction scales with number of successes."""
@@ -142,7 +142,7 @@ class CmdFeedTestCase(EvenniaTest):
             self.assertEqual(actual_reduction, expected_reduction,
                            f"{successes} successes should reduce Hunger by {expected_reduction}")
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_sets_resonance(self, mock_trait, mock_roll):
         """Test feeding with resonance sets it correctly."""
@@ -174,7 +174,7 @@ class CmdFeedTestCase(EvenniaTest):
         self.assertIn("Choleric", message)
         self.assertIn("Fleeting", message)
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_messy_critical(self, mock_trait, mock_roll):
         """Test feeding with Messy Critical still reduces Hunger but has consequences."""
@@ -206,7 +206,7 @@ class CmdFeedTestCase(EvenniaTest):
         self.assertIn("Messy Critical", message)
         self.assertIn("successful", message.lower())
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_bestial_failure(self, mock_trait, mock_roll):
         """Test feeding with Bestial Failure does not reduce Hunger."""
@@ -238,7 +238,7 @@ class CmdFeedTestCase(EvenniaTest):
         self.assertIn("Bestial Failure", message)
         self.assertIn("Beast", message)
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_regular_failure(self, mock_trait, mock_roll):
         """Test feeding with regular failure does not reduce Hunger."""
@@ -269,7 +269,7 @@ class CmdFeedTestCase(EvenniaTest):
         message = self.char.msg.call_args[0][0]
         self.assertIn("failed", message.lower())
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_broadcasts_to_room(self, mock_trait, mock_roll):
         """Test feeding broadcasts message to room."""
@@ -299,7 +299,7 @@ class CmdFeedTestCase(EvenniaTest):
         self.assertIn("feeds", message.lower())
         self.assertEqual(call_args[1]['exclude'], [self.char])
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_uses_hunger_dice(self, mock_trait, mock_roll):
         """Test feeding uses current Hunger for dice roll."""
@@ -329,7 +329,7 @@ class CmdFeedTestCase(EvenniaTest):
         # Should use Hunger of 4
         self.assertEqual(call_args[0][1], 4)
 
-    @patch('beckonmu.dice.dice_roller.roll_v5_pool')
+    @patch('dice.dice_roller.roll_v5_pool')
     @patch('traits.utils.get_character_trait_value')
     def test_feed_cannot_reduce_below_zero(self, mock_trait, mock_roll):
         """Test feeding at low Hunger doesn't go negative."""
@@ -376,7 +376,7 @@ class CmdBloodSurgeTestCase(EvenniaTest):
         message = self.char.msg.call_args[0][0]
         self.assertIn("Usage", message)
 
-    @patch('beckonmu.commands.v5.utils.blood_utils.activate_blood_surge')
+    @patch('commands.v5.utils.blood_utils.activate_blood_surge')
     def test_bloodsurge_success(self, mock_activate):
         """Test successful Blood Surge activation."""
         mock_activate.return_value = {
@@ -404,7 +404,7 @@ class CmdBloodSurgeTestCase(EvenniaTest):
         self.assertIn("Strength", message)
         self.assertIn("+3", message)
 
-    @patch('beckonmu.commands.v5.utils.blood_utils.activate_blood_surge')
+    @patch('commands.v5.utils.blood_utils.activate_blood_surge')
     def test_bloodsurge_capitalizes_trait_name(self, mock_activate):
         """Test Blood Surge capitalizes trait name."""
         mock_activate.return_value = {
@@ -425,7 +425,7 @@ class CmdBloodSurgeTestCase(EvenniaTest):
         call_args = mock_activate.call_args
         self.assertEqual(call_args[0][2], 'Brawl')
 
-    @patch('beckonmu.commands.v5.utils.blood_utils.activate_blood_surge')
+    @patch('commands.v5.utils.blood_utils.activate_blood_surge')
     def test_bloodsurge_shows_rouse_result(self, mock_activate):
         """Test Blood Surge displays Rouse check result."""
         mock_activate.return_value = {
@@ -444,7 +444,7 @@ class CmdBloodSurgeTestCase(EvenniaTest):
         message = self.char.msg.call_args[0][0]
         self.assertIn("Rouse check", message)
 
-    @patch('beckonmu.commands.v5.utils.blood_utils.activate_blood_surge')
+    @patch('commands.v5.utils.blood_utils.activate_blood_surge')
     def test_bloodsurge_shows_duration(self, mock_activate):
         """Test Blood Surge displays duration information."""
         mock_activate.return_value = {
@@ -464,7 +464,7 @@ class CmdBloodSurgeTestCase(EvenniaTest):
         self.assertIn("1 hour", message.lower())
 
     @patch('traits.utils.get_character_trait_value')
-    @patch('beckonmu.dice.rouse_checker.perform_rouse_check')
+    @patch('dice.rouse_checker.perform_rouse_check')
     def test_bloodsurge_performs_rouse_check(self, mock_rouse, mock_trait):
         """Test Blood Surge actually performs Rouse check."""
         mock_trait.return_value = 2
@@ -482,7 +482,7 @@ class CmdBloodSurgeTestCase(EvenniaTest):
         mock_rouse.assert_called_once()
 
     @patch('traits.utils.get_character_trait_value')
-    @patch('beckonmu.dice.rouse_checker.perform_rouse_check')
+    @patch('dice.rouse_checker.perform_rouse_check')
     def test_bloodsurge_bonus_equals_blood_potency(self, mock_rouse, mock_trait):
         """Test Blood Surge bonus equals Blood Potency value."""
         test_bp_values = [0, 1, 2, 3, 4, 5]

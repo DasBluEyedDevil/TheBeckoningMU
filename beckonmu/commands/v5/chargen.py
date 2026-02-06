@@ -189,7 +189,7 @@ class CmdChargen(default_cmds.MuxCommand):
 
         # Create approval job in Jobs system
         try:
-            from beckonmu.jobs.models import Job, Bucket
+            from jobs.models import Job, Bucket
 
             # Get or create Approval bucket
             approval_bucket, created = Bucket.objects.get_or_create(

@@ -66,7 +66,7 @@ class CmdPromote(Command):
 
         # Try to update Django project record
         try:
-            from beckonmu.web.builder.models import BuildProject
+            from web.builder.models import BuildProject
 
             # Find project by sandbox tag
             project_tag = [t for t in sandbox.tags.all() if t.startswith("project_")]
@@ -134,7 +134,7 @@ class CmdAbandon(Command):
 
         # Try to update Django project record
         try:
-            from beckonmu.web.builder.models import BuildProject
+            from web.builder.models import BuildProject
 
             project_tag = [t for t in sandbox.tags.all() if t.startswith("project_")]
             if project_tag:

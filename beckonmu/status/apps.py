@@ -9,6 +9,6 @@ class StatusConfig(AppConfig):
     """Django app configuration for the Status system."""
 
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'beckonmu.status'
+    name = 'status'
     label = 'status'
     verbose_name = 'Status System'

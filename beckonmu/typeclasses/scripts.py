@@ -63,7 +63,7 @@ class RoomTriggerScript(DefaultScript):
             return
 
         # Import here to avoid circular imports
-        from beckonmu.web.builder.trigger_engine import execute_triggers
+        from web.builder.trigger_engine import execute_triggers
 
         # Execute as a "timed" trigger type
         # The engine will filter by trigger_id to find this specific trigger

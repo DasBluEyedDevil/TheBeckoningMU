@@ -170,7 +170,7 @@ def _check_character_clan(character, clan: str) -> bool:
 
     # Get clan from character's bio/traits
     try:
-        from beckonmu.traits.models import CharacterBio
+        from traits.models import CharacterBio
 
         bio = CharacterBio.objects.get(character_id=character.id)
         # Clan would be stored in traits or bio - adjust as needed
@@ -187,7 +187,7 @@ def _check_character_splat(character, splat: str) -> bool:
         return False
 
     try:
-        from beckonmu.traits.models import CharacterBio
+        from traits.models import CharacterBio
 
         bio = CharacterBio.objects.get(character_id=character.id)
         return bio.splat.lower() == splat.lower()
@@ -202,7 +202,7 @@ def _check_character_hunger(character, operator: str, value: int) -> bool:
 
     # Get hunger from character traits
     try:
-        from beckonmu.traits.models import CharacterTrait, Trait
+        from traits.models import CharacterTrait, Trait
 
         hunger_trait = Trait.objects.get(name="Hunger")
         char_hunger = CharacterTrait.objects.get(

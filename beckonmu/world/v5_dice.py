@@ -17,8 +17,8 @@ See V5_REFERENCE_DATABASE.md for complete dice mechanics.
 import random
 from typing import Dict, List, Tuple, Optional
 
-from beckonmu.world.v5_data import BLOOD_POTENCY, DISCIPLINES, RESONANCES, FRENZY_TRIGGERS
-from beckonmu.world.ansi_theme import (
+from world.v5_data import BLOOD_POTENCY, DISCIPLINES, RESONANCES, FRENZY_TRIGGERS
+from world.ansi_theme import (
     DICE_CRITICAL, DICE_SUCCESS, DICE_FAILURE,
     DICE_HUNGER_CRITICAL, DICE_HUNGER_SUCCESS, DICE_HUNGER_FAILURE,
     MESSY_CRITICAL_BANNER, BESTIAL_FAILURE_BANNER, CRITICAL_SUCCESS_BANNER,

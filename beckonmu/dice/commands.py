@@ -85,7 +85,7 @@ class CmdRoll(default_cmds.MuxCommand):
         # Handle Messy Critical - automatically add Stain
         if result.is_messy_critical:
             try:
-                from beckonmu.commands.v5.utils import humanity_utils
+                from commands.v5.utils import humanity_utils
                 stain_result = humanity_utils.add_stain(self.caller, 1)
                 message += f"\n\n|r*** MESSY CRITICAL ***|n"
                 message += f"\n|yYour Beast influenced your success!|n"
@@ -279,7 +279,7 @@ class CmdRollPower(default_cmds.MuxCommand):
         roll_result = result.get('roll_result')
         if roll_result and roll_result.is_messy_critical:
             try:
-                from beckonmu.commands.v5.utils import humanity_utils
+                from commands.v5.utils import humanity_utils
                 stain_result = humanity_utils.add_stain(self.caller, 1)
                 self.caller.msg(f"\n|r*** MESSY CRITICAL ***|n")
                 self.caller.msg(f"|yYour Beast influenced your power!|n")

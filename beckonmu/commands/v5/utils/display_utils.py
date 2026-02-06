@@ -6,7 +6,7 @@ This module provides WoD-style formatting with dot leaders adapted to V5 data.
 
 from evennia.utils.ansi import ANSIString
 
-from beckonmu.world.ansi_theme import (
+from world.ansi_theme import (
     BLOOD_RED, DARK_RED, PALE_IVORY, SHADOW_GREY, DEEP_PURPLE,
     MIDNIGHT_BLUE, BONE_WHITE, DECAY_GREEN, GOLD, VAMPIRE_GOLD, RESET,
     HUNGER_0, HUNGER_1_2, HUNGER_3_4, HUNGER_5,
@@ -372,7 +372,7 @@ def _format_advantages_section(character):
 
 def _format_status_section(character):
     """Format status information."""
-    from beckonmu.status.models import CharacterStatus
+    from status.models import CharacterStatus
 
     try:
         char_status = CharacterStatus.objects.get(character=character)
@@ -389,7 +389,7 @@ def _format_status_section(character):
 
 def _format_boons_section(character):
     """Format boons owed and owed by."""
-    from beckonmu.boons.models import Boon
+    from boons.models import Boon
 
     try:
         boons_owed = Boon.objects.filter(debtor=character, status='active')

@@ -16,19 +16,19 @@ def _do_cleanup_in_main_thread(project_id):
     Returns (success, result_dict).
     """
     try:
-        from beckonmu.web.builder.models import BuildProject
+        from web.builder.models import BuildProject
 
         # Find all objects tagged with this project
         project_tag = f"project_{project_id}"
 
         # Search for rooms
         rooms = search.search_object(
-            "", typeclass="beckonmu.typeclasses.rooms.Room", tags=[project_tag]
+            "", typeclass="typeclasses.rooms.Room", tags=[project_tag]
         )
 
         # Search for exits
         exits = search.search_object(
-            "", typeclass="beckonmu.typeclasses.exits.Exit", tags=[project_tag]
+            "", typeclass="typeclasses.exits.Exit", tags=[project_tag]
         )
 
         # Search for objects
@@ -88,7 +88,7 @@ def cleanup_sandbox_for_project(project_id):
         (success: bool, result: dict)
         result contains: deleted_rooms, deleted_exits, deleted_objects, errors
     """
-    from beckonmu.web.builder.models import BuildProject
+    from web.builder.models import BuildProject
 
     try:
         project = BuildProject.objects.get(id=project_id)

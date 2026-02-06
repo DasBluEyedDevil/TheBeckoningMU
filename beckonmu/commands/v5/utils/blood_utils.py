@@ -453,7 +453,7 @@ def activate_blood_surge(character, trait_type: str, trait_name: str) -> Dict[st
             'rouse_result': dict
         }
     """
-    from beckonmu.dice.dice_roller import roll_rouse_check
+    from dice.dice_roller import roll_rouse_check
 
     # Perform Rouse check (using roll_rouse_check with character and reason)
     rouse_result = roll_rouse_check(character, reason=f"Blood Surge ({trait_name})")
@@ -614,7 +614,7 @@ def mend_damage(character, damage_type: str = 'superficial', amount: int = 1) ->
         >>> mend_damage(character, 'superficial', 2)
         {'success': True, 'healed': 2, 'hunger_increased': False, ...}
     """
-    from beckonmu.dice.dice_roller import roll_rouse_check
+    from dice.dice_roller import roll_rouse_check
 
     # Get current damage
     current_superficial = getattr(character.db, 'superficial_damage', 0)

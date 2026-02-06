@@ -66,8 +66,8 @@ def _do_promotion_in_main_thread(
         result contains: promoted_rooms, created_exits, entry_room_id, errors
     """
     try:
-        from beckonmu.typeclasses.rooms import Room
-        from beckonmu.typeclasses.exits import Exit
+        from typeclasses.rooms import Room
+        from typeclasses.exits import Exit
         from evennia.utils.create import create_object
 
         errors = []
@@ -76,7 +76,7 @@ def _do_promotion_in_main_thread(
         project_tag = f"project_{project_id}"
         sandbox_rooms = search.search_object(
             "",
-            typeclass="beckonmu.typeclasses.rooms.Room",
+            typeclass="typeclasses.rooms.Room",
             tags=[project_tag, "sandbox"],
         )
 
@@ -130,7 +130,7 @@ def _do_promotion_in_main_thread(
         created_exits = []
         try:
             forward_exit = create_object(
-                typeclass="beckonmu.typeclasses.exits.Exit",
+                typeclass="typeclasses.exits.Exit",
                 key=connection_direction,
                 aliases=[connection_direction.lower()],
                 location=connection_room,
@@ -161,7 +161,7 @@ def _do_promotion_in_main_thread(
         if opposite_direction:
             try:
                 return_exit = create_object(
-                    typeclass="beckonmu.typeclasses.exits.Exit",
+                    typeclass="typeclasses.exits.Exit",
                     key=opposite_direction,
                     aliases=[opposite_direction.lower()],
                     location=entry_room,
@@ -222,8 +222,8 @@ def promote_project_to_live(
         On failure: result contains error message
     """
     from django.utils import timezone
-    from beckonmu.web.builder.models import BuildProject
-    from beckonmu.web.builder.sandbox_cleanup import cleanup_sandbox_for_project
+    from web.builder.models import BuildProject
+    from web.builder.sandbox_cleanup import cleanup_sandbox_for_project
 
     try:
         # Load and validate project

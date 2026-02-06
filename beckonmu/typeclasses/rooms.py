@@ -11,7 +11,7 @@ from evennia.utils.ansi import ANSIString
 from evennia.utils.evtable import EvTable
 from .objects import ObjectParent
 
-from beckonmu.web.builder.trigger_engine import execute_triggers
+from web.builder.trigger_engine import execute_triggers
 
 
 class Room(ObjectParent, DefaultRoom):
@@ -228,7 +228,7 @@ class Room(ObjectParent, DefaultRoom):
             # Sandbox rooms are tagged with project_{id}
             project_tags = [t for t in self.tags.all() if t.startswith("project_")]
             if project_tags:
-                from beckonmu.web.builder.models import BuildProject
+                from web.builder.models import BuildProject
 
                 try:
                     project_id = int(project_tags[0].split("_")[1])

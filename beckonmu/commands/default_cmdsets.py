@@ -36,36 +36,36 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         #
 
         # Add custom system commands (styled error messages)
-        from beckonmu.commands.system_commands import SystemNoMatch
+        from commands.system_commands import SystemNoMatch
 
         self.add(SystemNoMatch)
 
         # Add V5 Character Sheet commands
-        from beckonmu.commands.v5.sheet import CmdSheet, CmdSheetShort
+        from commands.v5.sheet import CmdSheet, CmdSheetShort
 
         self.add(CmdSheet)
         self.add(CmdSheetShort)
 
         # Add V5 Character Generation commands
-        from beckonmu.commands.v5.chargen import CmdChargen
+        from commands.v5.chargen import CmdChargen
 
         self.add(CmdChargen)
 
         # Add V5 hunting commands
-        from beckonmu.commands.v5.hunt import CmdHunt, CmdHuntingInfo
+        from commands.v5.hunt import CmdHunt, CmdHuntingInfo
 
         self.add(CmdHunt)
         self.add(CmdHuntingInfo)
 
         # Add V5 XP commands
-        from beckonmu.commands.v5.xp import CmdXP, CmdSpend, CmdXPAward
+        from commands.v5.xp import CmdXP, CmdSpend, CmdXPAward
 
         self.add(CmdXP)
         self.add(CmdSpend)
         self.add(CmdXPAward)
 
         # Add V5 Discipline commands
-        from beckonmu.commands.v5.disciplines import (
+        from commands.v5.disciplines import (
             CmdDisciplines,
             CmdActivatePower,
             CmdDisciplineInfo,
@@ -76,12 +76,12 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdDisciplineInfo)
 
         # Add V5 Effects command
-        from beckonmu.commands.v5.effects import CmdEffects
+        from commands.v5.effects import CmdEffects
 
         self.add(CmdEffects)
 
         # Add V5 Humanity commands
-        from beckonmu.commands.v5.humanity import (
+        from commands.v5.humanity import (
             CmdHumanity,
             CmdStain,
             CmdRemorse,
@@ -94,7 +94,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdFrenzy)
 
         # Add V5 Combat commands
-        from beckonmu.commands.v5.combat import CmdAttack, CmdDamage, CmdHeal, CmdHealth
+        from commands.v5.combat import CmdAttack, CmdDamage, CmdHeal, CmdHealth
 
         self.add(CmdAttack)
         self.add(CmdDamage)
@@ -102,23 +102,23 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdHealth)
 
         # Add V5 Thin-Blood commands
-        from beckonmu.commands.v5.thinblood import CmdAlchemy, CmdDaylight
+        from commands.v5.thinblood import CmdAlchemy, CmdDaylight
 
         self.add(CmdAlchemy)
         self.add(CmdDaylight)
 
         # Add V5 Background commands
-        from beckonmu.commands.v5.backgrounds import CmdBackground
+        from commands.v5.backgrounds import CmdBackground
 
         self.add(CmdBackground)
 
         # Add V5 dice system
-        from beckonmu.dice.cmdset import DiceCmdSet
+        from dice.cmdset import DiceCmdSet
 
         self.add(DiceCmdSet)
 
         # Add Status system commands
-        from beckonmu.status.commands import (
+        from status.commands import (
             CmdStatus,
             CmdPositions,
             CmdStatusRequest,
@@ -131,7 +131,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdStatusAdmin)
 
         # Add Boons system commands
-        from beckonmu.boons.commands import (
+        from boons.commands import (
             CmdBoon,
             CmdBoonGive,
             CmdBoonAccept,
@@ -150,39 +150,39 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(CmdBoonAdmin)
 
         # Add V5 Social commands (Coteries)
-        from beckonmu.commands.v5.social import CmdCoterie, CmdSocial
+        from commands.v5.social import CmdCoterie, CmdSocial
 
         self.add(CmdCoterie)
         self.add(CmdSocial)
 
         # Add BBS commands
-        from beckonmu.bbs.commands import BBSCmdSet
+        from bbs.commands import BBSCmdSet
 
         self.add(BBSCmdSet)
 
         # Add Jobs commands
-        from beckonmu.jobs.cmdset import JobsCmdSet
+        from jobs.cmdset import JobsCmdSet
 
         self.add(JobsCmdSet)
 
         # Add V5 blood system (feeding, Blood Surge, Hunger tracking)
-        from beckonmu.commands.v5.blood_cmdset import BloodCmdSet
+        from commands.v5.blood_cmdset import BloodCmdSet
 
         self.add(BloodCmdSet)
 
         # Add News command
-        from beckonmu.commands.news import CmdNews
+        from commands.news import CmdNews
 
         self.add(CmdNews)
 
         # Add Builder commands
-        from beckonmu.commands.builder import CmdPromote, CmdAbandon
+        from commands.builder import CmdPromote, CmdAbandon
 
         self.add(CmdPromote)
         self.add(CmdAbandon)
 
         # Add Sandbox commands
-        from beckonmu.commands.builder.sandbox import (
+        from commands.builder.sandbox import (
             CmdGotoSandbox,
             CmdListSandboxes,
             CmdCleanupSandbox,

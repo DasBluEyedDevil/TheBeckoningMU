@@ -7,14 +7,14 @@ applications using the traits system.
 
 from evennia.commands.command import Command
 from evennia.commands.cmdset import CmdSet
-from beckonmu.traits.models import CharacterTrait, CharacterPower, CharacterBio, Trait, TraitCategory
-from beckonmu.traits.utils import (
+from traits.models import CharacterTrait, CharacterPower, CharacterBio, Trait, TraitCategory
+from traits.utils import (
     get_character_trait_value,
     set_character_trait_value,
     validate_trait_for_character,
     enhanced_import_character_from_json
 )
-from beckonmu.traits.api import place_approved_character, notify_account
+from traits.api import place_approved_character, notify_account
 from evennia.utils.search import object_search
 from evennia.utils import evtable
 from django.utils import timezone
@@ -22,7 +22,7 @@ import datetime
 
 # Import Jobs system for approval integration
 try:
-    from beckonmu.jobs.models import Job, Bucket, Comment
+    from jobs.models import Job, Bucket, Comment
     JOBS_AVAILABLE = True
 except ImportError:
     JOBS_AVAILABLE = False

@@ -468,6 +468,33 @@
                     Delete Room
                 </button>
             </div>
+
+            <div id="exit-properties" style="display: none;">
+                <h6 class="text-light mb-3">Exit Properties</h6>
+                <div class="form-group">
+                    <label class="builder-label">Direction</label>
+                    <input type="text" id="exit-direction" class="builder-input" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="builder-label">Name</label>
+                    <input type="text" id="exit-name" class="builder-input">
+                </div>
+                <div class="form-group">
+                    <label class="builder-label">Aliases (comma-separated)</label>
+                    <input type="text" id="exit-aliases" class="builder-input">
+                </div>
+                <div class="form-group">
+                    <label class="builder-label">Description</label>
+                    <textarea id="exit-desc" class="builder-textarea" placeholder="What the player sees when looking at this exit..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="builder-label">Lock String</label>
+                    <input type="text" id="exit-locks" class="builder-input" placeholder="e.g. traverse:perm(Builder)">
+                </div>
+                <button class="btn btn-outline-danger w-100 mt-3" onclick="deleteSelectedExit()">
+                    Delete Exit
+                </button>
+            </div>
         </div>
 
         <div class="sidebar-footer">
@@ -503,7 +530,7 @@
             </button>
         </div>
 
-        <svg id="exit-lines" class="exit-line" style="width: 100%; height: 100%;"></svg>
+        <svg id="exit-lines" style="position: absolute; width: 100%; height: 100%; z-index: 1; pointer-events: none;"></svg>
 
         <!-- Orientation Widget (Compass Rose) -->
         <div class="orientation-widget">
@@ -536,6 +563,7 @@
     let selectedRoomId = null;
     let currentMode = 'select';
     let exitSourceRoom = null;
+    let selectedExitId = null;
 
     // Grid settings
     const GRID_SIZE = 20;
@@ -686,6 +714,8 @@
         // Show properties panel
         document.getElementById('no-selection').style.display = 'none';
         document.getElementById('room-properties').style.display = 'block';
+        document.getElementById('exit-properties').style.display = 'none';
+        selectedExitId = null;
 
         // Populate fields
         const room = mapData.rooms[id];
@@ -1004,25 +1034,42 @@
             const x2 = targetRoom.grid_x * GRID_SIZE + ROOM_WIDTH / 2;
             const y2 = targetRoom.grid_y * GRID_SIZE + ROOM_HEIGHT / 2;
 
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', x1);
-            line.setAttribute('y1', y1);
-            line.setAttribute('x2', x2);
-            line.setAttribute('y2', y2);
-            line.setAttribute('stroke', '#666');
-            line.setAttribute('stroke-width', '2');
+            // Visual line
+            const visLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            visLine.setAttribute('x1', x1);
+            visLine.setAttribute('y1', y1);
+            visLine.setAttribute('x2', x2);
+            visLine.setAttribute('y2', y2);
+            visLine.setAttribute('stroke', id === selectedExitId ? '#cc0000' : '#666');
+            visLine.setAttribute('stroke-width', id === selectedExitId ? '3' : '2');
+            visLine.style.pointerEvents = 'none';
+            svg.appendChild(visLine);
 
-            svg.appendChild(line);
+            // Invisible wide click target
+            const hitLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            hitLine.setAttribute('x1', x1);
+            hitLine.setAttribute('y1', y1);
+            hitLine.setAttribute('x2', x2);
+            hitLine.setAttribute('y2', y2);
+            hitLine.setAttribute('stroke', 'transparent');
+            hitLine.setAttribute('stroke-width', '12');
+            hitLine.style.pointerEvents = 'stroke';
+            hitLine.style.cursor = 'pointer';
+            hitLine.addEventListener('click', (function(exitId) {
+                return function(e) {
+                    e.stopPropagation();
+                    selectExit(exitId);
+                };
+            })(id));
+            svg.appendChild(hitLine);
 
             // Add direction label at midpoint
             if (exit.direction) {
                 const midX = (x1 + x2) / 2;
                 const midY = (y1 + y2) / 2;
 
-                // Get abbreviation (first letter or two for diagonals)
                 const abbrev = exit.aliases && exit.aliases.length > 0 ? exit.aliases[0] : exit.direction.substring(0, 1);
 
-                // Create background rect for readability
                 const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                 const textWidth = abbrev.length * 7;
                 bgRect.setAttribute('x', midX - textWidth / 2 - 2);
@@ -1034,16 +1081,70 @@
                 bgRect.setAttribute('opacity', '0.9');
                 svg.appendChild(bgRect);
 
-                // Create text label
                 const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 text.setAttribute('x', midX);
                 text.setAttribute('y', midY);
                 text.setAttribute('class', 'exit-label');
                 text.textContent = abbrev;
-
                 svg.appendChild(text);
             }
         }
+    }
+
+    function selectExit(exitId) {
+        // Deselect room if selected
+        if (selectedRoomId) {
+            const prev = document.getElementById(`room-${selectedRoomId}`);
+            if (prev) prev.classList.remove('selected');
+            selectedRoomId = null;
+        }
+
+        selectedExitId = exitId;
+        const exit = mapData.exits[exitId];
+        if (!exit) return;
+
+        // Show exit properties, hide room properties
+        document.getElementById('no-selection').style.display = 'none';
+        document.getElementById('room-properties').style.display = 'none';
+        document.getElementById('exit-properties').style.display = 'block';
+
+        // Populate fields
+        document.getElementById('exit-direction').value = exit.direction || '';
+        document.getElementById('exit-name').value = exit.name || '';
+        document.getElementById('exit-aliases').value = (exit.aliases || []).join(', ');
+        document.getElementById('exit-desc').value = exit.description || '';
+        document.getElementById('exit-locks').value = exit.locks || '';
+
+        // Bind input handlers
+        document.getElementById('exit-name').oninput = function(e) {
+            exit.name = e.target.value;
+        };
+        document.getElementById('exit-aliases').oninput = function(e) {
+            exit.aliases = e.target.value.split(',').map(a => a.trim()).filter(a => a);
+        };
+        document.getElementById('exit-desc').oninput = function(e) {
+            exit.description = e.target.value;
+        };
+        document.getElementById('exit-locks').oninput = function(e) {
+            exit.locks = e.target.value;
+        };
+
+        // Redraw with highlight
+        drawExitLines();
+    }
+
+    function deleteSelectedExit() {
+        if (!canEdit || !selectedExitId) return;
+        if (!confirm('Delete this exit?')) return;
+
+        delete mapData.exits[selectedExitId];
+        selectedExitId = null;
+
+        document.getElementById('exit-properties').style.display = 'none';
+        document.getElementById('no-selection').style.display = 'block';
+
+        drawExitLines();
+        updateStatusBar();
     }
 
     function startDrag(e, el, roomId) {

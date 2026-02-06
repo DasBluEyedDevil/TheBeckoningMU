@@ -1,11 +1,9 @@
-# Evennia Server Files
-*.db3
-*.sqlite3
-server/evennia.db3
-server/logs/
-*.log
+# ============================================================
+# TheBeckoningMU .gitignore
+# Only track files needed to install and run the game
+# ============================================================
 
-# Python
+# ----- Python -----
 __pycache__/
 *.py[cod]
 *$py.class
@@ -27,71 +25,81 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# ----- Virtual Environments -----
 .venv/
 venv/
 ENV/
 env/
 
-# IDEs
+# ----- Package Managers -----
+# Poetry
+poetry.lock
+poetry.toml
+# uv
+uv.lock
+
+# ----- Evennia / Django -----
+*.db3
+*.db3-journal
+*.sqlite3
+server/evennia.db3
+server/logs/
+beckonmu/server/logs/
+*.log
+
+# ----- IDEs -----
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
-.DS_Store
 
-# Git/Development
-*.orig
-*.rej
-.git/
+# ----- OS Generated -----
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 nul
 
-# Evennia Specific
-server/evennia.db3
-*.db3-journal
-world/*.pyc
-typeclasses/*.pyc
-commands/*.pyc
-beckonmu/server/logs/
+# ----- AI Dev Tooling -----
+# Claude Code
+CLAUDE.md
+/.claude/
+# DevilMCP / Daem0nMCP
+/.devilmcp/
+/.daem0nmcp/
+# GSD Planning
+/.planning/
+# Skills / Tasks
+/.skills/
+/.tasks/
 
-# Reference Repository (read-only, don't track changes)
-reference repo/
+# ----- Dev Documentation -----
+WEB_BUILDER_DESIGN.md
+WEB_BUILDER_IMPLEMENTATION_PLAN.md
 
-# Local Configuration
+# ----- Local Configuration -----
 server/conf/secret_settings.py
+beckonmu/server/conf/secret_settings.py
 *.local.json
 .env
 
-# Testing
+# ----- Testing -----
 .pytest_cache/
 .coverage
 htmlcov/
 .tox/
 
-# Documentation Build
+# ----- Build Artifacts -----
 docs/_build/
 
-# OS Generated
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# Poetry
-poetry.lock
-
-# Backup files
+# ----- Backup / Temp Files -----
 *.bak
-*_v1.md
 *.backup
-/docs/
-/.claude/
-/.skills/
-/.devilmcp/
-/cursor-agent-wrapper.sh
-/.claude/
-/.daem0nmcp/
-/.devilmcp/
-/.planning/
-/.skills/
-/.tasks/
+*.orig
+*.rej
+
+# ----- Reference Repo -----
+reference repo/

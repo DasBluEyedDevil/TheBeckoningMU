@@ -1,246 +1,335 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Creation - The Beckoning MU</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .main-container {
-            max-width: 900px;
-            margin: 60px auto 40px;
-            padding: 20px;
-        }
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: #1a1a1a;
-            border-bottom: 2px solid #8b0000;
-            padding: 15px 20px;
-            z-index: 1000;
-        }
-        .header h1 {
-            margin: 0;
-            color: #ff6b6b;
-            font-size: 1.8rem;
-        }
-        .form-section {
-            background-color: #2d2d2d;
-            border: 1px solid #555;
-            border-radius: 8px;
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-        .form-section h3 {
-            color: #ff6b6b;
-            border-bottom: 2px solid #8b0000;
-            padding-bottom: 8px;
-            margin-bottom: 20px;
-        }
-        .form-label {
-            color: #aaa;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-control, .form-select {
-            background-color: #3a3a3a;
-            border: 1px solid #555;
-            color: #e0e0e0;
-        }
-        .form-control:focus, .form-select:focus {
-            background-color: #4a4a4a;
-            border-color: #8b0000;
-            color: #e0e0e0;
-        }
-        .trait-group {
-            margin-bottom: 20px;
-        }
-        .trait-group h5 {
-            color: #ff6b6b;
-            margin-bottom: 15px;
-        }
-        .trait-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .trait-label {
-            flex: 0 0 150px;
-            color: #ccc;
-        }
-        .trait-dots {
-            display: flex;
-            gap: 5px;
-        }
-        .dot {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            border: 2px solid #8b0000;
-            background-color: #2d2d2d;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .dot:hover {
-            background-color: #4a1a1a;
-        }
-        .dot.filled {
-            background-color: #ff0000;
-        }
-        .btn-submit {
-            background-color: #8b0000;
-            border-color: #8b0000;
-            color: white;
-            font-size: 1.2rem;
-            padding: 12px 40px;
-        }
-        .btn-submit:hover {
-            background-color: #a00000;
-            border-color: #a00000;
-        }
-        .toast-container {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            z-index: 9999;
-        }
-        .clan-info {
-            background-color: #3a3a3a;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 10px;
-            border-left: 3px solid #8b0000;
-        }
-        .help-text {
-            color: #999;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-        .character-points {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #2d2d2d;
-            border: 2px solid #8b0000;
-            padding: 15px;
-            border-radius: 8px;
-            z-index: 500;
-        }
-        .points-label {
-            color: #ff6b6b;
-            font-weight: bold;
-        }
-        .in-clan {
-            color: #ffd700;
-            font-weight: bold;
-        }
-        .trait-instance-input {
-            margin-left: 10px;
-            flex: 1;
-            max-width: 300px;
-        }
-        .trait-row-with-input {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .trait-specialty-input {
-            margin-left: 10px;
-            flex: 1;
-            max-width: 300px;
-        }
-        .priority-selector {
-            background-color: #3a3a3a;
-            border: 1px solid #555;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .priority-selector h5 {
-            color: #ff6b6b;
-            margin-bottom: 10px;
-        }
-        .priority-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .priority-label {
-            flex: 0 0 100px;
-            color: #ccc;
-        }
-        .priority-select {
-            flex: 1;
-            max-width: 200px;
-        }
-        .validation-error {
-            color: #ff4444;
-            font-weight: bold;
-        }
-        .validation-success {
-            color: #44ff44;
-            font-weight: bold;
-        }
-        .error-list {
-            background-color: #3a1a1a;
-            border: 2px solid #ff4444;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .error-list h5 {
-            color: #ff4444;
-            margin-bottom: 10px;
-        }
-        .error-list ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-        .error-list li {
-            color: #ffaaaa;
-            margin-bottom: 5px;
-        }
-        .btn-submit:disabled {
-            background-color: #555;
-            border-color: #555;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>🩸 Create Your Character</h1>
+{% extends "builder/base.html" %}
+
+{% block title %}Character Creation{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ── Chargen Layout ────────────────────────────────── */
+    .chargen-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 24px 80px;
+    }
+
+    /* ── Section Cards ─────────────────────────────────── */
+    .chargen-section {
+        background: var(--builder-card);
+        border: 1px solid var(--builder-border);
+        border-radius: 10px;
+        margin-bottom: 24px;
+        overflow: hidden;
+        transition: border-color 0.2s;
+    }
+    .chargen-section:hover {
+        border-color: var(--builder-border-hover);
+    }
+    .section-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--builder-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .section-header h3 {
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--builder-muted);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .section-header h3 i {
+        color: var(--builder-accent-light);
+        font-size: 15px;
+    }
+    .section-hint {
+        color: var(--builder-muted);
+        font-size: 12px;
+    }
+    .section-body {
+        padding: 24px;
+    }
+
+    /* ── Trait Groups ──────────────────────────────────── */
+    .trait-group {
+        margin-bottom: 24px;
+    }
+    .trait-group:last-child {
+        margin-bottom: 0;
+    }
+    .trait-group h5 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--builder-accent-light);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .trait-group h5 span {
+        color: var(--builder-muted);
+        font-weight: 400;
+        font-size: 12px;
+    }
+
+    /* ── Trait Rows ────────────────────────────────────── */
+    .trait-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 4px 0;
+    }
+    .trait-label {
+        flex: 0 0 150px;
+        color: var(--builder-text);
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .trait-row-with-input {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 4px 0;
+    }
+
+    /* ── Dots ──────────────────────────────────────────── */
+    .trait-dots {
+        display: flex;
+        gap: 5px;
+    }
+    .dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid var(--builder-border-hover);
+        background: var(--builder-bg);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+    .dot:hover {
+        border-color: var(--builder-accent);
+        background: rgba(139, 0, 0, 0.12);
+    }
+    .dot.filled {
+        background: var(--builder-accent);
+        border-color: var(--builder-accent-light);
+        box-shadow: 0 0 6px var(--builder-accent-glow);
+    }
+
+    /* ── Priority Selector ─────────────────────────────── */
+    .priority-selector {
+        background: var(--builder-panel);
+        border: 1px solid var(--builder-border);
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .priority-selector h5 {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--builder-muted);
+        margin-bottom: 12px;
+    }
+    .priority-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    .priority-label {
+        flex: 0 0 120px;
+        color: var(--builder-text);
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .priority-select {
+        flex: 1;
+        max-width: 200px;
+    }
+
+    /* ── Clan Info ─────────────────────────────────────── */
+    .clan-info {
+        background: var(--builder-panel);
+        padding: 14px 16px;
+        border-radius: 8px;
+        margin-top: 10px;
+        border-left: 3px solid var(--builder-accent);
+        font-size: 13px;
+        color: var(--builder-text);
+    }
+    .clan-info strong {
+        color: var(--builder-accent-light);
+    }
+    .in-clan {
+        color: var(--builder-warning) !important;
+        font-weight: 600;
+    }
+
+    /* ── Instance / Specialty Inputs ───────────────────── */
+    .trait-instance-input,
+    .trait-specialty-input {
+        margin-left: 12px;
+        flex: 1;
+        max-width: 280px;
+    }
+
+    /* ── Character Points Tracker ──────────────────────── */
+    .character-points {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--builder-card);
+        border: 1px solid var(--builder-border);
+        border-radius: 10px;
+        z-index: 500;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+        font-size: 12px;
+        min-width: 210px;
+        backdrop-filter: blur(12px);
+        overflow: hidden;
+    }
+    .tracker-section {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--builder-border);
+    }
+    .tracker-section:last-child {
+        border-bottom: none;
+    }
+    .points-label {
+        color: var(--builder-accent-light);
+        font-weight: 600;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 2px;
+    }
+
+    /* ── Validation ────────────────────────────────────── */
+    .validation-error {
+        color: #ff6b6b;
+        font-weight: 600;
+    }
+    .validation-success {
+        color: var(--builder-success);
+        font-weight: 600;
+    }
+    .error-list {
+        background: rgba(139, 0, 0, 0.1);
+        border: 1px solid rgba(139, 0, 0, 0.3);
+        border-radius: 10px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+    .error-list h5 {
+        color: #ff6b6b;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .error-list ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    .error-list li {
+        color: #ffaaaa;
+        margin-bottom: 4px;
+        font-size: 13px;
+    }
+
+    /* ── Submit Button ─────────────────────────────────── */
+    .btn-chargen-submit {
+        background: var(--builder-accent);
+        border: none;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 14px 48px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-chargen-submit:hover {
+        background: var(--builder-accent-light);
+        box-shadow: 0 0 24px var(--builder-accent-glow);
+    }
+    .btn-chargen-submit:disabled {
+        background: var(--builder-border-hover);
+        cursor: not-allowed;
+        opacity: 0.5;
+        box-shadow: none;
+    }
+
+    /* ── Toast ─────────────────────────────────────────── */
+    .toast-container {
+        position: fixed;
+        top: 76px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    /* ── Rejection Banner (edit mode) ──────────────────── */
+    .alert-danger {
+        background: rgba(139, 0, 0, 0.15);
+        border: 1px solid rgba(178, 34, 34, 0.4);
+        color: var(--builder-text);
+        border-radius: 10px;
+    }
+    .alert-danger .alert-heading {
+        color: var(--builder-accent-light);
+    }
+    .alert-danger hr {
+        border-color: rgba(178, 34, 34, 0.3);
+    }
+
+    /* ── Loading Spinner ───────────────────────────────── */
+    .chargen-loading {
+        text-align: center;
+        padding: 32px 20px;
+        color: var(--builder-muted);
+        font-size: 13px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chargen-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2 id="page-title"><i class="bi bi-person-plus-fill" style="color: var(--builder-accent-light);"></i> Create Your Character</h2>
+        <p>Build your vampire for The Beckoning. Complete each section and submit for staff review.</p>
     </div>
 
-    <div class="main-container">
-        <form id="character-form">
-            <!-- Bio Section -->
-            <div class="form-section">
-                <h3>Basic Information</h3>
-
+    <form id="character-form">
+        <!-- ── Bio Section ─────────────────────────────── -->
+        <div class="chargen-section">
+            <div class="section-header">
+                <h3><i class="bi bi-person-badge"></i> Basic Information</h3>
+            </div>
+            <div class="section-body">
                 <div class="mb-3">
-                    <label class="form-label">Character Name</label>
+                    <label class="form-label" for="full_name">Character Name</label>
                     <input type="text" class="form-control" id="full_name" required>
-                    <div class="help-text">Your character's full name</div>
+                    <div class="form-text">Your character's full name</div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Concept</label>
+                    <label class="form-label" for="concept">Concept</label>
                     <input type="text" class="form-control" id="concept" required>
-                    <div class="help-text">A brief description of your character (e.g., "Street-Smart Detective", "Tormented Artist")</div>
+                    <div class="form-text">A brief description (e.g., "Street-Smart Detective", "Tormented Artist")</div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Clan</label>
+                    <label class="form-label" for="clan">Clan</label>
                     <select class="form-select" id="clan" required>
                         <option value="">Select a clan...</option>
                         <option value="Banu Haqim">Banu Haqim</option>
@@ -263,13 +352,13 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Sire</label>
+                    <label class="form-label" for="sire">Sire</label>
                     <input type="text" class="form-control" id="sire">
-                    <div class="help-text">The name of your character's sire (who embraced them)</div>
+                    <div class="form-text">The name of your character's sire (who embraced them)</div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Generation</label>
+                    <label class="form-label" for="generation">Generation</label>
                     <select class="form-select" id="generation">
                         <option value="">Select generation...</option>
                         <option value="13">13th Generation</option>
@@ -277,11 +366,11 @@
                         <option value="11">11th Generation</option>
                         <option value="10">10th Generation</option>
                     </select>
-                    <div class="help-text">Most new vampires are 12th or 13th generation</div>
+                    <div class="form-text">Most new vampires are 12th or 13th generation</div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Predator Type</label>
+                    <label class="form-label" for="predator_type">Predator Type</label>
                     <select class="form-select" id="predator_type">
                         <option value="">Select predator type...</option>
                         <option value="Alleycat">Alleycat</option>
@@ -291,19 +380,19 @@
                         <option value="Sandman">Sandman</option>
                         <option value="Siren">Siren</option>
                     </select>
-                    <div class="help-text">How your character prefers to feed</div>
+                    <div class="form-text">How your character prefers to feed</div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Ambition</label>
+                    <label class="form-label" for="ambition">Ambition</label>
                     <textarea class="form-control" id="ambition" rows="2"></textarea>
-                    <div class="help-text">Your character's long-term goal</div>
+                    <div class="form-text">Your character's long-term goal</div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Desire</label>
+                    <label class="form-label" for="desire">Desire</label>
                     <textarea class="form-control" id="desire" rows="2"></textarea>
-                    <div class="help-text">Your character's short-term want</div>
+                    <div class="form-text">Your character's short-term want</div>
                 </div>
 
                 <div class="mb-3">
@@ -311,21 +400,23 @@
                     <textarea class="form-control" id="background" name="background" rows="6"
                               placeholder="Write your character's backstory here. This is free-text and will be reviewed by staff."
                               maxlength="5000"></textarea>
-                    <div class="help-text">Optional but recommended. Tell us about your character's history, personality, and motivations.</div>
+                    <div class="form-text">Optional but recommended. Tell us about your character's history, personality, and motivations.</div>
                 </div>
             </div>
+        </div>
 
-            <!-- Attributes Section -->
-            <div class="form-section">
-                <h3>Attributes</h3>
-                <div class="help-text mb-3">Each attribute starts at 1. Assign priorities to categories, then distribute the additional dots.</div>
-                
-                <!-- Priority Selector -->
+        <!-- ── Attributes Section ──────────────────────── -->
+        <div class="chargen-section">
+            <div class="section-header">
+                <h3><i class="bi bi-bar-chart-fill"></i> Attributes</h3>
+                <span class="section-hint">Starts at 1. Assign priorities, then distribute dots.</span>
+            </div>
+            <div class="section-body">
                 <div class="priority-selector">
                     <h5>Assign Priorities</h5>
                     <div class="priority-row">
                         <span class="priority-label">Primary (7 dots):</span>
-                        <select class="form-select priority-select" id="attr-priority-primary">
+                        <select class="form-select form-select-sm priority-select" id="attr-priority-primary">
                             <option value="">Select category...</option>
                             <option value="physical">Physical</option>
                             <option value="social">Social</option>
@@ -334,7 +425,7 @@
                     </div>
                     <div class="priority-row">
                         <span class="priority-label">Secondary (5 dots):</span>
-                        <select class="form-select priority-select" id="attr-priority-secondary">
+                        <select class="form-select form-select-sm priority-select" id="attr-priority-secondary">
                             <option value="">Select category...</option>
                             <option value="physical">Physical</option>
                             <option value="social">Social</option>
@@ -343,7 +434,7 @@
                     </div>
                     <div class="priority-row">
                         <span class="priority-label">Tertiary (3 dots):</span>
-                        <select class="form-select priority-select" id="attr-priority-tertiary">
+                        <select class="form-select form-select-sm priority-select" id="attr-priority-tertiary">
                             <option value="">Select category...</option>
                             <option value="physical">Physical</option>
                             <option value="social">Social</option>
@@ -400,18 +491,20 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Skills Section -->
-            <div class="form-section">
-                <h3>Skills</h3>
-                <div class="help-text mb-3">Skills start at 0. Assign priorities to categories, then distribute the dots.</div>
-                
-                <!-- Priority Selector -->
+        <!-- ── Skills Section ──────────────────────────── -->
+        <div class="chargen-section">
+            <div class="section-header">
+                <h3><i class="bi bi-tools"></i> Skills</h3>
+                <span class="section-hint">Starts at 0. Assign priorities, then distribute dots.</span>
+            </div>
+            <div class="section-body">
                 <div class="priority-selector">
                     <h5>Assign Priorities</h5>
                     <div class="priority-row">
                         <span class="priority-label">Primary (13 dots):</span>
-                        <select class="form-select priority-select" id="skill-priority-primary">
+                        <select class="form-select form-select-sm priority-select" id="skill-priority-primary">
                             <option value="">Select category...</option>
                             <option value="physical">Physical</option>
                             <option value="social">Social</option>
@@ -420,7 +513,7 @@
                     </div>
                     <div class="priority-row">
                         <span class="priority-label">Secondary (9 dots):</span>
-                        <select class="form-select priority-select" id="skill-priority-secondary">
+                        <select class="form-select form-select-sm priority-select" id="skill-priority-secondary">
                             <option value="">Select category...</option>
                             <option value="physical">Physical</option>
                             <option value="social">Social</option>
@@ -429,7 +522,7 @@
                     </div>
                     <div class="priority-row">
                         <span class="priority-label">Tertiary (5 dots):</span>
-                        <select class="form-select priority-select" id="skill-priority-tertiary">
+                        <select class="form-select form-select-sm priority-select" id="skill-priority-tertiary">
                             <option value="">Select category...</option>
                             <option value="physical">Physical</option>
                             <option value="social">Social</option>
@@ -558,260 +651,701 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Disciplines Section -->
-            <div class="form-section">
-                <h3>Disciplines</h3>
-                <div class="help-text mb-3">Spend 3 dots total. Must have at least 2 dots in one discipline. Max 3 dots per discipline.</div>
+        <!-- ── Disciplines Section ─────────────────────── -->
+        <div class="chargen-section">
+            <div class="section-header">
+                <h3><i class="bi bi-lightning-fill"></i> Disciplines</h3>
+                <span class="section-hint">3 dots total. At least 2 in-clan. Max 3 per discipline.</span>
+            </div>
+            <div class="section-body">
                 <div id="disciplines-container">
-                    <div class="text-center">
-                        <div class="spinner-border text-danger" role="status">
-                            <span class="visually-hidden">Loading disciplines...</span>
+                    <div class="chargen-loading">
+                        <div class="spinner-border spinner-border-sm" style="color: var(--builder-accent);" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
+                        <span class="ms-2">Loading disciplines...</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Advantages Section -->
-            <div class="form-section">
-                <h3>Advantages</h3>
-                <div class="help-text mb-3">Spend up to 7 points on merits and advantages. Each dot costs 1 point.</div>
+        <!-- ── Advantages Section ──────────────────────── -->
+        <div class="chargen-section">
+            <div class="section-header">
+                <h3><i class="bi bi-star-fill"></i> Advantages</h3>
+                <span class="section-hint">Spend up to 7 points. Each dot = 1 point.</span>
+            </div>
+            <div class="section-body">
                 <div id="advantages-container">
-                    <div class="text-center">
-                        <div class="spinner-border text-danger" role="status">
-                            <span class="visually-hidden">Loading advantages...</span>
+                    <div class="chargen-loading">
+                        <div class="spinner-border spinner-border-sm" style="color: var(--builder-accent);" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
+                        <span class="ms-2">Loading advantages...</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Flaws Section -->
-            <div class="form-section">
-                <h3>Flaws</h3>
-                <div class="help-text mb-3">Optionally take up to 2 points of flaws.</div>
+        <!-- ── Flaws Section ───────────────────────────── -->
+        <div class="chargen-section">
+            <div class="section-header">
+                <h3><i class="bi bi-exclamation-diamond"></i> Flaws</h3>
+                <span class="section-hint">Optionally take up to 2 points.</span>
+            </div>
+            <div class="section-body">
                 <div id="flaws-container">
-                    <div class="text-center">
-                        <div class="spinner-border text-danger" role="status">
-                            <span class="visually-hidden">Loading flaws...</span>
+                    <div class="chargen-loading">
+                        <div class="spinner-border spinner-border-sm" style="color: var(--builder-accent);" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
+                        <span class="ms-2">Loading flaws...</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Validation Errors -->
-            <div id="validation-errors" class="error-list" style="display: none;">
-                <h5>⚠ Please fix the following issues:</h5>
-                <ul id="error-list-items"></ul>
-            </div>
+        <!-- ── Validation Errors ───────────────────────── -->
+        <div id="validation-errors" class="error-list" style="display: none;">
+            <h5><i class="bi bi-exclamation-triangle"></i> Please fix the following issues</h5>
+            <ul id="error-list-items"></ul>
+        </div>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-submit btn-lg" id="submit-button" disabled>Submit Character for Approval</button>
-                <div class="help-text mt-2">Complete all sections to enable submission</div>
-            </div>
-        </form>
-    </div>
+        <!-- ── Submit ──────────────────────────────────── -->
+        <div class="text-center" style="padding: 20px 0 60px;">
+            <button type="submit" class="btn-chargen-submit" id="submit-button" disabled>
+                <i class="bi bi-send"></i> Submit Character for Approval
+            </button>
+            <div class="form-text mt-2">Complete all sections to enable submission</div>
+        </div>
+    </form>
+</div>
 
-        <!-- Character Points Tracker -->
-    <div class="character-points">
-        <div class="points-label">Attributes Spent</div>
+<!-- ── Character Points Tracker ────────────────────── -->
+<div class="character-points">
+    <div class="tracker-section">
+        <div class="points-label">Attributes</div>
         <div id="tracker-attr-physical">Physical: <span id="points-physical">0</span>/<span id="attr-physical-max">?</span></div>
         <div id="tracker-attr-social">Social: <span id="points-social">0</span>/<span id="attr-social-max">?</span></div>
         <div id="tracker-attr-mental">Mental: <span id="points-mental">0</span>/<span id="attr-mental-max">?</span></div>
-        <hr>
-        <div class="points-label">Skills Spent</div>
+    </div>
+    <div class="tracker-section">
+        <div class="points-label">Skills</div>
         <div id="tracker-skill-physical">Physical: <span id="points-skills-physical">0</span>/<span id="skill-physical-max">?</span></div>
         <div id="tracker-skill-social">Social: <span id="points-skills-social">0</span>/<span id="skill-social-max">?</span></div>
         <div id="tracker-skill-mental">Mental: <span id="points-skills-mental">0</span>/<span id="skill-mental-max">?</span></div>
-        <hr>
-        <div class="points-label">Disciplines Spent</div>
+    </div>
+    <div class="tracker-section">
+        <div class="points-label">Disciplines</div>
         <div id="tracker-disciplines"><span id="points-disciplines">0</span>/3 dots</div>
-        <hr>
-        <div class="points-label">Advantages Spent</div>
+    </div>
+    <div class="tracker-section">
+        <div class="points-label">Advantages</div>
         <div id="tracker-advantages"><span id="points-advantages">0</span>/7 points</div>
-        <hr>
-        <div class="points-label">Flaws Spent</div>
+    </div>
+    <div class="tracker-section">
+        <div class="points-label">Flaws</div>
         <div id="tracker-flaws"><span id="points-flaws">0</span>/2 points</div>
     </div>
+</div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toast-container"></div>
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+{% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const CSRF_TOKEN = '{{ csrf_token }}';
+{% block extra_js %}
+<script>
+    const CSRF_TOKEN = '{{ csrf_token }}';
 
-        // Edit mode: Django template variable injection
-        const editCharacterId = {{ edit_character_id|default:"null" }};
-        let isEditMode = false;
+    // Edit mode: Django template variable injection
+    const editCharacterId = {{ edit_character_id|default:"null" }};
+    let isEditMode = false;
 
-        // Clan data
-        const CLANS = {
-            "Banu Haqim": {
-                disciplines: ["Blood Sorcery", "Celerity", "Obfuscate"],
-                bane: "Judgment: Lose Humanity for witnessing corruption without acting"
-            },
-            "Brujah": {
-                disciplines: ["Celerity", "Potence", "Presence"],
-                bane: "Violent Temper: Difficulty +2 to resist fury frenzy"
-            },
-            "Gangrel": {
-                disciplines: ["Animalism", "Fortitude", "Protean"],
-                bane: "Bestial Features: Animal features emerge when Hunger 4+"
-            },
-            "Hecata": {
-                disciplines: ["Auspex", "Fortitude", "Oblivion"],
-                bane: "Painful Kiss: Feeding causes intense pain to victim"
-            },
-            "Lasombra": {
-                disciplines: ["Dominate", "Oblivion", "Potence"],
-                bane: "Callous: Cannot gain Humanity from Remorse"
-            },
-            "Malkavian": {
-                disciplines: ["Auspex", "Dominate", "Obfuscate"],
-                bane: "Fractured Perspective: Must have at least one mental derangement"
-            },
-            "Ministry": {
-                disciplines: ["Obfuscate", "Presence", "Protean"],
-                bane: "Abhors the Light: Additional damage from sunlight"
-            },
-            "Nosferatu": {
-                disciplines: ["Animalism", "Obfuscate", "Potence"],
-                bane: "Repulsive: Appearance 0, automatic fail on Persuasion/Performance vs mortals"
-            },
-            "Ravnos": {
-                disciplines: ["Animalism", "Obfuscate", "Presence"],
-                bane: "Doomed: Cannot rest in same place twice in 7 nights"
-            },
-            "Salubri": {
-                disciplines: ["Auspex", "Dominate", "Fortitude"],
-                bane: "Third Eye: Visible third eye when using Disciplines"
-            },
-            "Toreador": {
-                disciplines: ["Auspex", "Celerity", "Presence"],
-                bane: "Aesthetic Fixation: May become entranced by beauty"
-            },
-            "Tremere": {
-                disciplines: ["Auspex", "Blood Sorcery", "Dominate"],
-                bane: "Deficient Blood: Blood bonds form one step stronger"
-            },
-            "Tzimisce": {
-                disciplines: ["Animalism", "Dominate", "Protean"],
-                bane: "Grounded: Must rest with homeland soil"
-            },
-            "Ventrue": {
-                disciplines: ["Dominate", "Fortitude", "Presence"],
-                bane: "Rarefied Taste: Can only feed from specific type of mortal"
-            },
-            "Caitiff": {
-                disciplines: [],
-                bane: "Suspect Blood: Ostracized by Camarilla"
+    // Clan data
+    const CLANS = {
+        "Banu Haqim": {
+            disciplines: ["Blood Sorcery", "Celerity", "Obfuscate"],
+            bane: "Judgment: Lose Humanity for witnessing corruption without acting"
+        },
+        "Brujah": {
+            disciplines: ["Celerity", "Potence", "Presence"],
+            bane: "Violent Temper: Difficulty +2 to resist fury frenzy"
+        },
+        "Gangrel": {
+            disciplines: ["Animalism", "Fortitude", "Protean"],
+            bane: "Bestial Features: Animal features emerge when Hunger 4+"
+        },
+        "Hecata": {
+            disciplines: ["Auspex", "Fortitude", "Oblivion"],
+            bane: "Painful Kiss: Feeding causes intense pain to victim"
+        },
+        "Lasombra": {
+            disciplines: ["Dominate", "Oblivion", "Potence"],
+            bane: "Callous: Cannot gain Humanity from Remorse"
+        },
+        "Malkavian": {
+            disciplines: ["Auspex", "Dominate", "Obfuscate"],
+            bane: "Fractured Perspective: Must have at least one mental derangement"
+        },
+        "Ministry": {
+            disciplines: ["Obfuscate", "Presence", "Protean"],
+            bane: "Abhors the Light: Additional damage from sunlight"
+        },
+        "Nosferatu": {
+            disciplines: ["Animalism", "Obfuscate", "Potence"],
+            bane: "Repulsive: Appearance 0, automatic fail on Persuasion/Performance vs mortals"
+        },
+        "Ravnos": {
+            disciplines: ["Animalism", "Obfuscate", "Presence"],
+            bane: "Doomed: Cannot rest in same place twice in 7 nights"
+        },
+        "Salubri": {
+            disciplines: ["Auspex", "Dominate", "Fortitude"],
+            bane: "Third Eye: Visible third eye when using Disciplines"
+        },
+        "Toreador": {
+            disciplines: ["Auspex", "Celerity", "Presence"],
+            bane: "Aesthetic Fixation: May become entranced by beauty"
+        },
+        "Tremere": {
+            disciplines: ["Auspex", "Blood Sorcery", "Dominate"],
+            bane: "Deficient Blood: Blood bonds form one step stronger"
+        },
+        "Tzimisce": {
+            disciplines: ["Animalism", "Dominate", "Protean"],
+            bane: "Grounded: Must rest with homeland soil"
+        },
+        "Ventrue": {
+            disciplines: ["Dominate", "Fortitude", "Presence"],
+            bane: "Rarefied Taste: Can only feed from specific type of mortal"
+        },
+        "Caitiff": {
+            disciplines: [],
+            bane: "Suspect Blood: Ostracized by Camarilla"
+        }
+    };
+
+    // Trait values storage
+    const traitValues = {};
+    const disciplineValues = {};
+    const advantageValues = {};
+    const flawValues = {};
+
+    // Priority assignments
+    const attributePriorities = {
+        primary: null,
+        secondary: null,
+        tertiary: null
+    };
+    const skillPriorities = {
+        primary: null,
+        secondary: null,
+        tertiary: null
+    };
+
+    // Trait data from API
+    let disciplinesData = [];
+    let advantagesData = [];
+    let flawsData = [];
+
+    // Initialize dots
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeDots();
+        setupClanSelector();
+        setupFormSubmit();
+        loadTraitData();
+        setupPrioritySelectors();
+
+        // Draft system: offer to resume saved draft (only for new characters)
+        if (!editCharacterId) {
+            loadDraft();
+        }
+
+        // Edit mode: load character data for editing after rejection
+        if (editCharacterId) {
+            isEditMode = true;
+            loadCharacterForEdit(editCharacterId);
+        }
+
+        // Auto-save draft every 30 seconds
+        setInterval(saveDraft, 30000);
+
+        // Save draft on blur of key text fields
+        ['full_name', 'concept', 'sire', 'ambition', 'desire', 'background'].forEach(function(fieldId) {
+            const el = document.getElementById(fieldId);
+            if (el) {
+                el.addEventListener('blur', saveDraft);
             }
-        };
+        });
+    });
 
-        // Trait values storage
-        const traitValues = {};
-        const disciplineValues = {};
-        const advantageValues = {};
-        const flawValues = {};
-        
-        // Priority assignments
-        const attributePriorities = {
-            primary: null,
-            secondary: null,
-            tertiary: null
-        };
-        const skillPriorities = {
-            primary: null,
-            secondary: null,
-            tertiary: null
-        };
-        
-        // Trait data from API
-        let disciplinesData = [];
-        let advantagesData = [];
-        let flawsData = [];
+    function initializeDots() {
+        document.querySelectorAll('.trait-dots').forEach(container => {
+            const trait = container.dataset.trait;
+            const category = container.dataset.category;
+            const maxDots = 5;
 
-        // Initialize dots
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeDots();
-            setupClanSelector();
-            setupFormSubmit();
-            loadTraitData();
-            setupPrioritySelectors();
+            // Initialize trait value
+            traitValues[trait] = category.startsWith('skills') ? 0 : 1;
 
-            // Draft system: offer to resume saved draft (only for new characters)
-            if (!editCharacterId) {
-                loadDraft();
+            // Create dot elements
+            for (let i = 1; i <= maxDots; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (i <= traitValues[trait]) {
+                    dot.classList.add('filled');
+                }
+                dot.dataset.value = i;
+
+                dot.addEventListener('click', function() {
+                    const newValue = parseInt(this.dataset.value);
+                    const minValue = category.startsWith('skills') ? 0 : 1;
+
+                    if (newValue >= minValue) {
+                        traitValues[trait] = newValue;
+                        updateDots(container, newValue);
+                        updatePointsDisplay();
+                        validateForm();
+                    }
+                });
+
+                container.appendChild(dot);
             }
+        });
 
-            // Edit mode: load character data for editing after rejection
-            if (editCharacterId) {
-                isEditMode = true;
-                loadCharacterForEdit(editCharacterId);
+        updatePointsDisplay();
+    }
+
+    function updateDots(container, value) {
+        container.querySelectorAll('.dot').forEach(dot => {
+            const dotValue = parseInt(dot.dataset.value);
+            if (dotValue <= value) {
+                dot.classList.add('filled');
+            } else {
+                dot.classList.remove('filled');
             }
+        });
+    }
 
-            // Auto-save draft every 30 seconds
-            setInterval(saveDraft, 30000);
+    function updatePointsDisplay() {
+        // Attributes (start at 1, so subtract base)
+        const physicalSpent = (['strength', 'dexterity', 'stamina']
+            .reduce((sum, trait) => sum + traitValues[trait], 0)) - 3;
+        const socialSpent = (['charisma', 'manipulation', 'composure']
+            .reduce((sum, trait) => sum + traitValues[trait], 0)) - 3;
+        const mentalSpent = (['intelligence', 'wits', 'resolve']
+            .reduce((sum, trait) => sum + traitValues[trait], 0)) - 3;
 
-            // Save draft on blur of key text fields
-            ['full_name', 'concept', 'sire', 'ambition', 'desire', 'background'].forEach(function(fieldId) {
-                const el = document.getElementById(fieldId);
-                if (el) {
-                    el.addEventListener('blur', saveDraft);
+        document.getElementById('points-physical').textContent = physicalSpent;
+        document.getElementById('points-social').textContent = socialSpent;
+        document.getElementById('points-mental').textContent = mentalSpent;
+
+        // Update attribute pool displays
+        updatePoolDisplay('attr', 'physical', physicalSpent, getAttributePoolForCategory('physical'));
+        updatePoolDisplay('attr', 'social', socialSpent, getAttributePoolForCategory('social'));
+        updatePoolDisplay('attr', 'mental', mentalSpent, getAttributePoolForCategory('mental'));
+
+        // Skills
+        const physicalSkills = ['athletics', 'brawl', 'craft', 'drive', 'firearms', 'melee', 'larceny', 'stealth', 'survival'];
+        const socialSkills = ['animal_ken', 'etiquette', 'insight', 'intimidation', 'leadership', 'performance', 'persuasion', 'streetwise', 'subterfuge'];
+        const mentalSkills = ['academics', 'awareness', 'finance', 'investigation', 'medicine', 'occult', 'politics', 'science', 'technology'];
+
+        const physicalSkillsSpent = physicalSkills.reduce((sum, trait) => sum + (traitValues[trait] || 0), 0);
+        const socialSkillsSpent = socialSkills.reduce((sum, trait) => sum + (traitValues[trait] || 0), 0);
+        const mentalSkillsSpent = mentalSkills.reduce((sum, trait) => sum + (traitValues[trait] || 0), 0);
+
+        document.getElementById('points-skills-physical').textContent = physicalSkillsSpent;
+        document.getElementById('points-skills-social').textContent = socialSkillsSpent;
+        document.getElementById('points-skills-mental').textContent = mentalSkillsSpent;
+
+        // Update skill pool displays
+        updatePoolDisplay('skill', 'physical', physicalSkillsSpent, getSkillPoolForCategory('physical'));
+        updatePoolDisplay('skill', 'social', socialSkillsSpent, getSkillPoolForCategory('social'));
+        updatePoolDisplay('skill', 'mental', mentalSkillsSpent, getSkillPoolForCategory('mental'));
+
+        // Disciplines
+        const disciplinesSpent = Object.values(disciplineValues).reduce((sum, val) => sum + val, 0);
+        document.getElementById('points-disciplines').textContent = disciplinesSpent;
+
+        // Advantages
+        const advantagesSpent = Object.values(advantageValues).reduce((sum, adv) => sum + adv.value, 0);
+        document.getElementById('points-advantages').textContent = advantagesSpent;
+
+        // Flaws
+        const flawsSpent = Object.values(flawValues).reduce((sum, flaw) => sum + flaw.value, 0);
+        document.getElementById('points-flaws').textContent = flawsSpent;
+    }
+
+    function setupPrioritySelectors() {
+        // Attribute priority selectors
+        ['primary', 'secondary', 'tertiary'].forEach(level => {
+            document.getElementById(`attr-priority-${level}`).addEventListener('change', function() {
+                handleAttributePriorityChange(level, this.value);
+            });
+            document.getElementById(`skill-priority-${level}`).addEventListener('change', function() {
+                handleSkillPriorityChange(level, this.value);
+            });
+        });
+    }
+
+    function handleAttributePriorityChange(level, category) {
+        attributePriorities[level] = category || null;
+
+        // Prevent duplicate selections
+        validatePrioritySelections('attr');
+
+        // Update max values in tracker
+        updateAttributeMaxValues();
+        updatePointsDisplay();
+        validateForm();
+    }
+
+    function handleSkillPriorityChange(level, category) {
+        skillPriorities[level] = category || null;
+
+        // Prevent duplicate selections
+        validatePrioritySelections('skill');
+
+        // Update max values in tracker
+        updateSkillMaxValues();
+        updatePointsDisplay();
+        validateForm();
+    }
+
+    function validatePrioritySelections(type) {
+        const priorities = type === 'attr' ? attributePriorities : skillPriorities;
+        const prefix = type === 'attr' ? 'attr' : 'skill';
+
+        // Get all selected values
+        const selected = Object.values(priorities).filter(v => v !== null);
+
+        // Disable already-selected options in other dropdowns
+        ['primary', 'secondary', 'tertiary'].forEach(level => {
+            const select = document.getElementById(`${prefix}-priority-${level}`);
+            const currentValue = priorities[level];
+
+            Array.from(select.options).forEach(option => {
+                if (option.value && option.value !== currentValue) {
+                    option.disabled = selected.includes(option.value);
                 }
             });
         });
+    }
 
-        function initializeDots() {
-            document.querySelectorAll('.trait-dots').forEach(container => {
-                const trait = container.dataset.trait;
-                const category = container.dataset.category;
-                const maxDots = 5;
+    function getAttributePoolForCategory(category) {
+        if (attributePriorities.primary === category) return 7;
+        if (attributePriorities.secondary === category) return 5;
+        if (attributePriorities.tertiary === category) return 3;
+        return null;
+    }
 
-                // Initialize trait value
-                traitValues[trait] = category.startsWith('skills') ? 0 : 1;
+    function getSkillPoolForCategory(category) {
+        if (skillPriorities.primary === category) return 13;
+        if (skillPriorities.secondary === category) return 9;
+        if (skillPriorities.tertiary === category) return 5;
+        return null;
+    }
 
-                // Create dot elements
-                for (let i = 1; i <= maxDots; i++) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('dot');
-                    if (i <= traitValues[trait]) {
-                        dot.classList.add('filled');
-                    }
-                    dot.dataset.value = i;
+    function updateAttributeMaxValues() {
+        document.getElementById('attr-physical-max').textContent = getAttributePoolForCategory('physical') ?? '?';
+        document.getElementById('attr-social-max').textContent = getAttributePoolForCategory('social') ?? '?';
+        document.getElementById('attr-mental-max').textContent = getAttributePoolForCategory('mental') ?? '?';
 
-                    dot.addEventListener('click', function() {
-                        const newValue = parseInt(this.dataset.value);
-                        const minValue = category.startsWith('skills') ? 0 : 1;
+        // Update section headers
+        const physPool = getAttributePoolForCategory('physical');
+        const socPool = getAttributePoolForCategory('social');
+        const menPool = getAttributePoolForCategory('mental');
 
-                        if (newValue >= minValue) {
-                            traitValues[trait] = newValue;
-                            updateDots(container, newValue);
-                            updatePointsDisplay();
-                            validateForm();
-                        }
-                    });
+        document.getElementById('attr-physical-pool').textContent = physPool ? `(${physPool} dots)` : '';
+        document.getElementById('attr-social-pool').textContent = socPool ? `(${socPool} dots)` : '';
+        document.getElementById('attr-mental-pool').textContent = menPool ? `(${menPool} dots)` : '';
+    }
 
-                    container.appendChild(dot);
-                }
-            });
+    function updateSkillMaxValues() {
+        document.getElementById('skill-physical-max').textContent = getSkillPoolForCategory('physical') ?? '?';
+        document.getElementById('skill-social-max').textContent = getSkillPoolForCategory('social') ?? '?';
+        document.getElementById('skill-mental-max').textContent = getSkillPoolForCategory('mental') ?? '?';
 
-            updatePointsDisplay();
+        // Update section headers
+        const physPool = getSkillPoolForCategory('physical');
+        const socPool = getSkillPoolForCategory('social');
+        const menPool = getSkillPoolForCategory('mental');
+
+        document.getElementById('skill-physical-pool').textContent = physPool ? `(${physPool} dots)` : '';
+        document.getElementById('skill-social-pool').textContent = socPool ? `(${socPool} dots)` : '';
+        document.getElementById('skill-mental-pool').textContent = menPool ? `(${menPool} dots)` : '';
+    }
+
+    function updatePoolDisplay(type, category, spent, max) {
+        const trackerId = `tracker-${type}-${category}`;
+        const tracker = document.getElementById(trackerId);
+        if (!tracker) return;
+
+        if (max === null) {
+            tracker.className = '';
+            return;
         }
 
-        function updateDots(container, value) {
-            container.querySelectorAll('.dot').forEach(dot => {
-                const dotValue = parseInt(dot.dataset.value);
-                if (dotValue <= value) {
-                    dot.classList.add('filled');
+        if (spent === max) {
+            tracker.className = 'validation-success';
+            tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ✓');
+        } else if (spent > max) {
+            tracker.className = 'validation-error';
+            tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ❌');
+        } else {
+            tracker.className = 'validation-error';
+            tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ❌');
+        }
+    }
+
+    function setupClanSelector() {
+        document.getElementById('clan').addEventListener('change', function() {
+            const clanInfo = document.getElementById('clan-info');
+            const selectedClan = this.value;
+
+            if (selectedClan && CLANS[selectedClan]) {
+                const clan = CLANS[selectedClan];
+                let html = `<strong>${selectedClan}</strong><br>`;
+                if (clan.disciplines.length > 0) {
+                    html += `<strong>Disciplines:</strong> ${clan.disciplines.join(', ')}<br>`;
                 } else {
-                    dot.classList.remove('filled');
+                    html += `<strong>Disciplines:</strong> Choose any 2 disciplines at character creation<br>`;
                 }
-            });
-        }
+                html += `<strong>Bane:</strong> ${clan.bane}`;
+                clanInfo.innerHTML = html;
+                clanInfo.style.display = 'block';
 
-        function updatePointsDisplay() {
-            // Attributes (start at 1, so subtract base)
+                // Re-render disciplines if they're already loaded
+                if (disciplinesData.length > 0) {
+                    renderDisciplines();
+                }
+            } else {
+                clanInfo.style.display = 'none';
+            }
+        });
+    }
+
+    async function loadTraitData() {
+        try {
+            // Load disciplines, advantages, and flaws in parallel
+            const [disciplinesResponse, advantagesResponse, flawsResponse] = await Promise.all([
+                fetch('/api/traits/?category=disciplines'),
+                fetch('/api/traits/?category=advantages'),
+                fetch('/api/traits/?category=flaws')
+            ]);
+
+            if (!disciplinesResponse.ok || !advantagesResponse.ok || !flawsResponse.ok) {
+                throw new Error('Failed to load trait data');
+            }
+
+            const disciplinesJson = await disciplinesResponse.json();
+            const advantagesJson = await advantagesResponse.json();
+            const flawsJson = await flawsResponse.json();
+
+            // Extract the traits array from the API response objects
+            disciplinesData = disciplinesJson.traits;
+            advantagesData = advantagesJson.traits;
+            flawsData = flawsJson.traits;
+
+            renderDisciplines();
+            renderAdvantages();
+            renderFlaws();
+
+        } catch (error) {
+            console.error('Error loading trait data:', error);
+            showToast('Error loading trait data: ' + error.message, 'danger');
+        }
+    }
+
+    function renderDisciplines() {
+        const container = document.getElementById('disciplines-container');
+        const selectedClan = document.getElementById('clan').value;
+        const inClanDisciplines = selectedClan && CLANS[selectedClan] ? CLANS[selectedClan].disciplines : [];
+
+        let html = '<div class="trait-group">';
+
+        disciplinesData.forEach(discipline => {
+            const isInClan = inClanDisciplines.includes(discipline.name);
+            const labelClass = isInClan ? 'trait-label in-clan' : 'trait-label';
+
+            html += `
+                <div class="trait-row">
+                    <span class="${labelClass}">${discipline.name}${isInClan ? ' ★' : ''}</span>
+                    <div class="trait-dots" data-trait="${discipline.name}" data-category="disciplines"></div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+
+        // Initialize discipline dots
+        container.querySelectorAll('.trait-dots').forEach(dotsContainer => {
+            const trait = dotsContainer.dataset.trait;
+            disciplineValues[trait] = disciplineValues[trait] || 0;
+
+            // Create dots (max 3 for disciplines)
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (i <= disciplineValues[trait]) {
+                    dot.classList.add('filled');
+                }
+                dot.dataset.value = i;
+
+                dot.addEventListener('click', function() {
+                    const newValue = parseInt(this.dataset.value);
+                    disciplineValues[trait] = newValue;
+                    updateDots(dotsContainer, newValue);
+                    updatePointsDisplay();
+                    validateForm();
+                });
+
+                dotsContainer.appendChild(dot);
+            }
+        });
+
+        updatePointsDisplay();
+    }
+
+    function renderAdvantages() {
+        const container = document.getElementById('advantages-container');
+
+        let html = '<div class="trait-group">';
+
+        advantagesData.forEach(advantage => {
+            const needsInstance = advantage.is_instanced || false;
+            const needsSpecialty = advantage.has_specialties || false;
+
+            html += `
+                <div class="trait-row-with-input">
+                    <span class="trait-label">${advantage.name}</span>
+                    <div class="trait-dots" data-trait="${advantage.name}" data-category="advantages"></div>
+            `;
+
+            if (needsInstance) {
+                html += `
+                    <input type="text" class="form-control form-control-sm trait-instance-input"
+                           id="advantage-instance-${advantage.name.replace(/\s+/g, '_')}"
+                           placeholder="Specify instance...">
+                `;
+            } else if (needsSpecialty) {
+                html += `
+                    <input type="text" class="form-control form-control-sm trait-specialty-input"
+                           id="advantage-specialty-${advantage.name.replace(/\s+/g, '_')}"
+                           placeholder="Specify specialty...">
+                `;
+            }
+
+            html += '</div>';
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+
+        // Initialize advantage dots
+        container.querySelectorAll('.trait-dots').forEach(dotsContainer => {
+            const trait = dotsContainer.dataset.trait;
+            advantageValues[trait] = advantageValues[trait] || { value: 0 };
+
+            // Create dots (1-5 for advantages)
+            for (let i = 1; i <= 5; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (i <= advantageValues[trait].value) {
+                    dot.classList.add('filled');
+                }
+                dot.dataset.value = i;
+
+                dot.addEventListener('click', function() {
+                    const newValue = parseInt(this.dataset.value);
+                    advantageValues[trait].value = newValue;
+                    updateDots(dotsContainer, newValue);
+                    updatePointsDisplay();
+                    validateForm();
+                });
+
+                dotsContainer.appendChild(dot);
+            }
+        });
+
+        updatePointsDisplay();
+    }
+
+    function renderFlaws() {
+        const container = document.getElementById('flaws-container');
+
+        let html = '<div class="trait-group">';
+
+        flawsData.forEach(flaw => {
+            const needsInstance = flaw.is_instanced || false;
+            const needsSpecialty = flaw.has_specialties || false;
+
+            html += `
+                <div class="trait-row-with-input">
+                    <span class="trait-label">${flaw.name}</span>
+                    <div class="trait-dots" data-trait="${flaw.name}" data-category="flaws"></div>
+            `;
+
+            if (needsInstance) {
+                html += `
+                    <input type="text" class="form-control form-control-sm trait-instance-input"
+                           id="flaw-instance-${flaw.name.replace(/\s+/g, '_')}"
+                           placeholder="Specify instance...">
+                `;
+            } else if (needsSpecialty) {
+                html += `
+                    <input type="text" class="form-control form-control-sm trait-specialty-input"
+                           id="flaw-specialty-${flaw.name.replace(/\s+/g, '_')}"
+                           placeholder="Specify specialty...">
+                `;
+            }
+
+            html += '</div>';
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+
+        // Initialize flaw dots
+        container.querySelectorAll('.trait-dots').forEach(dotsContainer => {
+            const trait = dotsContainer.dataset.trait;
+            flawValues[trait] = flawValues[trait] || { value: 0 };
+
+            // Create dots (1-5 for flaws)
+            for (let i = 1; i <= 5; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (i <= flawValues[trait].value) {
+                    dot.classList.add('filled');
+                }
+                dot.dataset.value = i;
+
+                dot.addEventListener('click', function() {
+                    const newValue = parseInt(this.dataset.value);
+                    flawValues[trait].value = newValue;
+                    updateDots(dotsContainer, newValue);
+                    updatePointsDisplay();
+                    validateForm();
+                });
+
+                dotsContainer.appendChild(dot);
+            }
+        });
+
+        updatePointsDisplay();
+    }
+
+    function validateForm() {
+        const errors = [];
+
+        // Validate attribute priorities are assigned
+        if (!attributePriorities.primary || !attributePriorities.secondary || !attributePriorities.tertiary) {
+            errors.push('You must assign all attribute priorities (Primary, Secondary, Tertiary)');
+        } else {
+            // Validate attribute spending
             const physicalSpent = (['strength', 'dexterity', 'stamina']
                 .reduce((sum, trait) => sum + traitValues[trait], 0)) - 3;
             const socialSpent = (['charisma', 'manipulation', 'composure']
@@ -819,16 +1353,26 @@
             const mentalSpent = (['intelligence', 'wits', 'resolve']
                 .reduce((sum, trait) => sum + traitValues[trait], 0)) - 3;
 
-            document.getElementById('points-physical').textContent = physicalSpent;
-            document.getElementById('points-social').textContent = socialSpent;
-            document.getElementById('points-mental').textContent = mentalSpent;
-            
-            // Update attribute pool displays
-            updatePoolDisplay('attr', 'physical', physicalSpent, getAttributePoolForCategory('physical'));
-            updatePoolDisplay('attr', 'social', socialSpent, getAttributePoolForCategory('social'));
-            updatePoolDisplay('attr', 'mental', mentalSpent, getAttributePoolForCategory('mental'));
+            const physicalMax = getAttributePoolForCategory('physical');
+            const socialMax = getAttributePoolForCategory('social');
+            const mentalMax = getAttributePoolForCategory('mental');
 
-            // Skills
+            if (physicalSpent !== physicalMax) {
+                errors.push(`Physical Attributes: Must spend exactly ${physicalMax} dots (currently ${physicalSpent})`);
+            }
+            if (socialSpent !== socialMax) {
+                errors.push(`Social Attributes: Must spend exactly ${socialMax} dots (currently ${socialSpent})`);
+            }
+            if (mentalSpent !== mentalMax) {
+                errors.push(`Mental Attributes: Must spend exactly ${mentalMax} dots (currently ${mentalSpent})`);
+            }
+        }
+
+        // Validate skill priorities are assigned
+        if (!skillPriorities.primary || !skillPriorities.secondary || !skillPriorities.tertiary) {
+            errors.push('You must assign all skill priorities (Primary, Secondary, Tertiary)');
+        } else {
+            // Validate skill spending
             const physicalSkills = ['athletics', 'brawl', 'craft', 'drive', 'firearms', 'melee', 'larceny', 'stealth', 'survival'];
             const socialSkills = ['animal_ken', 'etiquette', 'insight', 'intimidation', 'leadership', 'performance', 'persuasion', 'streetwise', 'subterfuge'];
             const mentalSkills = ['academics', 'awareness', 'finance', 'investigation', 'medicine', 'occult', 'politics', 'science', 'technology'];
@@ -837,1019 +1381,589 @@
             const socialSkillsSpent = socialSkills.reduce((sum, trait) => sum + (traitValues[trait] || 0), 0);
             const mentalSkillsSpent = mentalSkills.reduce((sum, trait) => sum + (traitValues[trait] || 0), 0);
 
-            document.getElementById('points-skills-physical').textContent = physicalSkillsSpent;
-            document.getElementById('points-skills-social').textContent = socialSkillsSpent;
-            document.getElementById('points-skills-mental').textContent = mentalSkillsSpent;
-            
-            // Update skill pool displays
-            updatePoolDisplay('skill', 'physical', physicalSkillsSpent, getSkillPoolForCategory('physical'));
-            updatePoolDisplay('skill', 'social', socialSkillsSpent, getSkillPoolForCategory('social'));
-            updatePoolDisplay('skill', 'mental', mentalSkillsSpent, getSkillPoolForCategory('mental'));
-            
-            // Disciplines
-            const disciplinesSpent = Object.values(disciplineValues).reduce((sum, val) => sum + val, 0);
-            document.getElementById('points-disciplines').textContent = disciplinesSpent;
-            
-            // Advantages
-            const advantagesSpent = Object.values(advantageValues).reduce((sum, adv) => sum + adv.value, 0);
-            document.getElementById('points-advantages').textContent = advantagesSpent;
-            
-            // Flaws
-            const flawsSpent = Object.values(flawValues).reduce((sum, flaw) => sum + flaw.value, 0);
-            document.getElementById('points-flaws').textContent = flawsSpent;
+            const physicalSkillMax = getSkillPoolForCategory('physical');
+            const socialSkillMax = getSkillPoolForCategory('social');
+            const mentalSkillMax = getSkillPoolForCategory('mental');
+
+            if (physicalSkillsSpent !== physicalSkillMax) {
+                errors.push(`Physical Skills: Must spend exactly ${physicalSkillMax} dots (currently ${physicalSkillsSpent})`);
+            }
+            if (socialSkillsSpent !== socialSkillMax) {
+                errors.push(`Social Skills: Must spend exactly ${socialSkillMax} dots (currently ${socialSkillsSpent})`);
+            }
+            if (mentalSkillsSpent !== mentalSkillMax) {
+                errors.push(`Mental Skills: Must spend exactly ${mentalSkillMax} dots (currently ${mentalSkillsSpent})`);
+            }
         }
-        
-        function setupPrioritySelectors() {
-            // Attribute priority selectors
-            ['primary', 'secondary', 'tertiary'].forEach(level => {
-                document.getElementById(`attr-priority-${level}`).addEventListener('change', function() {
-                    handleAttributePriorityChange(level, this.value);
-                });
-                document.getElementById(`skill-priority-${level}`).addEventListener('change', function() {
-                    handleSkillPriorityChange(level, this.value);
-                });
-            });
+
+        // Validate disciplines
+        const selectedClan = document.getElementById('clan').value;
+        const disciplinesSpent = Object.values(disciplineValues).reduce((sum, val) => sum + val, 0);
+
+        if (disciplinesSpent !== 3) {
+            errors.push(`Disciplines: Must spend exactly 3 dots (currently ${disciplinesSpent})`);
+        } else if (selectedClan && CLANS[selectedClan]) {
+            // Validate in-clan dots
+            const inClanDisciplines = CLANS[selectedClan].disciplines;
+            const inClanSpent = Object.entries(disciplineValues)
+                .filter(([disc, val]) => inClanDisciplines.includes(disc) && val > 0)
+                .reduce((sum, [disc, val]) => sum + val, 0);
+
+            if (inClanSpent < 2) {
+                errors.push(`Disciplines: Must spend at least 2 dots in in-clan disciplines (currently ${inClanSpent})`);
+            }
         }
-        
-        function handleAttributePriorityChange(level, category) {
-            attributePriorities[level] = category || null;
-            
-            // Prevent duplicate selections
-            validatePrioritySelections('attr');
-            
-            // Update max values in tracker
-            updateAttributeMaxValues();
-            updatePointsDisplay();
-            validateForm();
+
+        // Validate advantages
+        const advantagesSpent = Object.values(advantageValues).reduce((sum, adv) => sum + adv.value, 0);
+        if (advantagesSpent !== 7) {
+            errors.push(`Advantages: Must spend exactly 7 points (currently ${advantagesSpent})`);
         }
-        
-        function handleSkillPriorityChange(level, category) {
-            skillPriorities[level] = category || null;
-            
-            // Prevent duplicate selections
-            validatePrioritySelections('skill');
-            
-            // Update max values in tracker
-            updateSkillMaxValues();
-            updatePointsDisplay();
-            validateForm();
+
+        // Validate flaws (maximum 2)
+        const flawsSpent = Object.values(flawValues).reduce((sum, flaw) => sum + flaw.value, 0);
+        if (flawsSpent > 2) {
+            errors.push(`Flaws: Cannot exceed 2 points (currently ${flawsSpent})`);
         }
-        
-        function validatePrioritySelections(type) {
-            const priorities = type === 'attr' ? attributePriorities : skillPriorities;
-            const prefix = type === 'attr' ? 'attr' : 'skill';
-            
-            // Get all selected values
-            const selected = Object.values(priorities).filter(v => v !== null);
-            
-            // Disable already-selected options in other dropdowns
-            ['primary', 'secondary', 'tertiary'].forEach(level => {
-                const select = document.getElementById(`${prefix}-priority-${level}`);
-                const currentValue = priorities[level];
-                
-                Array.from(select.options).forEach(option => {
-                    if (option.value && option.value !== currentValue) {
-                        option.disabled = selected.includes(option.value);
-                    }
-                });
-            });
+
+        // Update tracker display with validation status
+        const trackerDisciplines = document.getElementById('tracker-disciplines');
+        if (disciplinesSpent === 3) {
+            trackerDisciplines.className = 'validation-success';
+            trackerDisciplines.innerHTML = trackerDisciplines.innerHTML.replace('dots', 'dots ✓');
+        } else {
+            trackerDisciplines.className = 'validation-error';
+            trackerDisciplines.innerHTML = trackerDisciplines.innerHTML.replace('dots', 'dots ❌');
         }
-        
-        function getAttributePoolForCategory(category) {
-            if (attributePriorities.primary === category) return 7;
-            if (attributePriorities.secondary === category) return 5;
-            if (attributePriorities.tertiary === category) return 3;
-            return null;
+
+        const trackerAdvantages = document.getElementById('tracker-advantages');
+        if (advantagesSpent === 7) {
+            trackerAdvantages.className = 'validation-success';
+            trackerAdvantages.innerHTML = trackerAdvantages.innerHTML.replace('points', 'points ✓');
+        } else {
+            trackerAdvantages.className = 'validation-error';
+            trackerAdvantages.innerHTML = trackerAdvantages.innerHTML.replace('points', 'points ❌');
         }
-        
-        function getSkillPoolForCategory(category) {
-            if (skillPriorities.primary === category) return 13;
-            if (skillPriorities.secondary === category) return 9;
-            if (skillPriorities.tertiary === category) return 5;
-            return null;
+
+        const trackerFlaws = document.getElementById('tracker-flaws');
+        if (flawsSpent <= 2) {
+            trackerFlaws.className = 'validation-success';
+            trackerFlaws.innerHTML = trackerFlaws.innerHTML.replace('points', 'points ✓');
+        } else {
+            trackerFlaws.className = 'validation-error';
+            trackerFlaws.innerHTML = trackerFlaws.innerHTML.replace('points', 'points ❌');
         }
-        
-        function updateAttributeMaxValues() {
-            document.getElementById('attr-physical-max').textContent = getAttributePoolForCategory('physical') ?? '?';
-            document.getElementById('attr-social-max').textContent = getAttributePoolForCategory('social') ?? '?';
-            document.getElementById('attr-mental-max').textContent = getAttributePoolForCategory('mental') ?? '?';
-            
-            // Update section headers
-            const physPool = getAttributePoolForCategory('physical');
-            const socPool = getAttributePoolForCategory('social');
-            const menPool = getAttributePoolForCategory('mental');
-            
-            document.getElementById('attr-physical-pool').textContent = physPool ? `(${physPool} dots)` : '';
-            document.getElementById('attr-social-pool').textContent = socPool ? `(${socPool} dots)` : '';
-            document.getElementById('attr-mental-pool').textContent = menPool ? `(${menPool} dots)` : '';
+
+        // Display errors or hide error section
+        const errorSection = document.getElementById('validation-errors');
+        const errorList = document.getElementById('error-list-items');
+        const submitButton = document.getElementById('submit-button');
+
+        if (errors.length > 0) {
+            errorList.innerHTML = errors.map(err => `<li>${err}</li>`).join('');
+            errorSection.style.display = 'block';
+            submitButton.disabled = true;
+        } else {
+            errorSection.style.display = 'none';
+            submitButton.disabled = false;
         }
-        
-        function updateSkillMaxValues() {
-            document.getElementById('skill-physical-max').textContent = getSkillPoolForCategory('physical') ?? '?';
-            document.getElementById('skill-social-max').textContent = getSkillPoolForCategory('social') ?? '?';
-            document.getElementById('skill-mental-max').textContent = getSkillPoolForCategory('mental') ?? '?';
-            
-            // Update section headers
-            const physPool = getSkillPoolForCategory('physical');
-            const socPool = getSkillPoolForCategory('social');
-            const menPool = getSkillPoolForCategory('mental');
-            
-            document.getElementById('skill-physical-pool').textContent = physPool ? `(${physPool} dots)` : '';
-            document.getElementById('skill-social-pool').textContent = socPool ? `(${socPool} dots)` : '';
-            document.getElementById('skill-mental-pool').textContent = menPool ? `(${menPool} dots)` : '';
-        }
-        
-        function updatePoolDisplay(type, category, spent, max) {
-            const trackerId = `tracker-${type}-${category}`;
-            const tracker = document.getElementById(trackerId);
-            if (!tracker) return;
-            
-            if (max === null) {
-                tracker.className = '';
+
+        return errors.length === 0;
+    }
+
+    function setupFormSubmit() {
+        document.getElementById('character-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Final validation check
+            if (!validateForm()) {
+                showToast('Please fix all validation errors before submitting', 'danger');
                 return;
             }
-            
-            if (spent === max) {
-                tracker.className = 'validation-success';
-                tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ✓');
-            } else if (spent > max) {
-                tracker.className = 'validation-error';
-                tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ❌');
-            } else {
-                tracker.className = 'validation-error';
-                tracker.innerHTML = tracker.innerHTML.replace(/^[^:]+:/, match => match + ' ❌');
+
+            // Build character data
+            const character_data = {
+                name: document.getElementById('full_name').value,
+                concept: document.getElementById('concept').value,
+                clan: document.getElementById('clan').value,
+                sire: document.getElementById('sire').value,
+                generation: parseInt(document.getElementById('generation').value) || null,
+                predator_type: document.getElementById('predator_type').value,
+                ambition: document.getElementById('ambition').value,
+                desire: document.getElementById('desire').value,
+                background: document.getElementById('background').value,
+                splat: 'vampire'
+            };
+
+            // Add basic traits (attributes and skills)
+            for (const [trait, value] of Object.entries(traitValues)) {
+                character_data[trait] = value;
             }
-        }
 
-        function setupClanSelector() {
-            document.getElementById('clan').addEventListener('change', function() {
-                const clanInfo = document.getElementById('clan-info');
-                const selectedClan = this.value;
-
-                if (selectedClan && CLANS[selectedClan]) {
-                    const clan = CLANS[selectedClan];
-                    let html = `<strong>${selectedClan}</strong><br>`;
-                    if (clan.disciplines.length > 0) {
-                        html += `<strong>Disciplines:</strong> ${clan.disciplines.join(', ')}<br>`;
-                    } else {
-                        html += `<strong>Disciplines:</strong> Choose any 2 disciplines at character creation<br>`;
-                    }
-                    html += `<strong>Bane:</strong> ${clan.bane}`;
-                    clanInfo.innerHTML = html;
-                    clanInfo.style.display = 'block';
-                    
-                    // Re-render disciplines if they're already loaded
-                    if (disciplinesData.length > 0) {
-                        renderDisciplines();
-                    }
-                } else {
-                    clanInfo.style.display = 'none';
+            // Add disciplines
+            const disciplines = {};
+            for (const [discipline, value] of Object.entries(disciplineValues)) {
+                if (value > 0) {
+                    disciplines[discipline] = value;
                 }
-            });
-        }
+            }
+            character_data.disciplines = disciplines;
 
-        async function loadTraitData() {
+            // Add advantages with instance/specialty data
+            const advantages = {};
+            for (const [advantage, data] of Object.entries(advantageValues)) {
+                if (data.value > 0) {
+                    const advantageData = { value: data.value };
+
+                    // Check for instance input
+                    const instanceInput = document.getElementById(`advantage-instance-${advantage.replace(/\s+/g, '_')}`);
+                    if (instanceInput && instanceInput.value) {
+                        advantageData.instance = instanceInput.value;
+                    }
+
+                    // Check for specialty input
+                    const specialtyInput = document.getElementById(`advantage-specialty-${advantage.replace(/\s+/g, '_')}`);
+                    if (specialtyInput && specialtyInput.value) {
+                        advantageData.specialty = specialtyInput.value;
+                    }
+
+                    advantages[advantage] = advantageData;
+                }
+            }
+            character_data.advantages = advantages;
+
+            // Add flaws with instance/specialty data
+            const flaws = {};
+            for (const [flaw, data] of Object.entries(flawValues)) {
+                if (data.value > 0) {
+                    const flawData = { value: data.value };
+
+                    // Check for instance input
+                    const instanceInput = document.getElementById(`flaw-instance-${flaw.replace(/\s+/g, '_')}`);
+                    if (instanceInput && instanceInput.value) {
+                        flawData.instance = instanceInput.value;
+                    }
+
+                    // Check for specialty input
+                    const specialtyInput = document.getElementById(`flaw-specialty-${flaw.replace(/\s+/g, '_')}`);
+                    if (specialtyInput && specialtyInput.value) {
+                        flawData.specialty = specialtyInput.value;
+                    }
+
+                    flaws[flaw] = flawData;
+                }
+            }
+            character_data.flaws = flaws;
+
+            const payload = { character_data };
+            console.log('Submitting character:', payload);
+
             try {
-                // Load disciplines, advantages, and flaws in parallel
-                const [disciplinesResponse, advantagesResponse, flawsResponse] = await Promise.all([
-                    fetch('/api/traits/?category=disciplines'),
-                    fetch('/api/traits/?category=advantages'),
-                    fetch('/api/traits/?category=flaws')
-                ]);
+                let url, successMsg;
 
-                if (!disciplinesResponse.ok || !advantagesResponse.ok || !flawsResponse.ok) {
-                    throw new Error('Failed to load trait data');
+                if (isEditMode && editCharacterId) {
+                    // Resubmit to the resubmit endpoint
+                    url = `/api/traits/character/${editCharacterId}/resubmit/`;
+                    successMsg = 'Character resubmitted for approval!';
+                } else {
+                    // Original create flow
+                    url = '/api/traits/character/create/';
+                    successMsg = 'Character submitted for approval!';
                 }
 
-                const disciplinesJson = await disciplinesResponse.json();
-                const advantagesJson = await advantagesResponse.json();
-                const flawsJson = await flawsResponse.json();
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': CSRF_TOKEN
+                    },
+                    body: JSON.stringify(payload)
+                });
 
-                // Extract the traits array from the API response objects
-                disciplinesData = disciplinesJson.traits;
-                advantagesData = advantagesJson.traits;
-                flawsData = flawsJson.traits;
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || 'Failed to submit character');
+                }
 
-                renderDisciplines();
-                renderAdvantages();
-                renderFlaws();
+                const data = await response.json();
+                console.log('Success response:', data);
+
+                // Clear draft on successful submission
+                clearDraft();
+
+                showToast(successMsg, 'success');
+
+                // Redirect after success
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
 
             } catch (error) {
-                console.error('Error loading trait data:', error);
-                showToast('Error loading trait data: ' + error.message, 'danger');
+                console.error('Error submitting character:', error);
+                showToast('Error: ' + error.message, 'danger');
+            }
+        });
+    }
+
+    // ============================================================
+    // Edit Mode Functions (CHAR-01: rejection resubmission)
+    // ============================================================
+
+    async function loadCharacterForEdit(charId) {
+        try {
+            const response = await fetch(`/api/traits/character/${charId}/for-edit/`, {
+                headers: {
+                    'X-CSRFToken': CSRF_TOKEN
+                }
+            });
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                alert('Cannot edit: ' + (err.error || 'Unknown error'));
+                return;
+            }
+            const data = await response.json();
+
+            // Show rejection notes banner
+            if (data.rejection_notes) {
+                showRejectionBanner(data.rejection_notes, data.rejection_count);
+            }
+
+            // Populate form with existing data
+            populateFormFromCharacterData(data.character_data);
+
+            // Change submit button text
+            const submitBtn = document.getElementById('submit-button');
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Resubmit Character';
+            }
+
+            // Update page title
+            const titleEl = document.getElementById('page-title');
+            if (titleEl) {
+                titleEl.innerHTML = '<i class="bi bi-pencil-square" style="color: var(--builder-accent-light);"></i> Edit & Resubmit Character';
+            }
+        } catch (err) {
+            console.error('Error loading character for edit:', err);
+            alert('Failed to load character data.');
+        }
+    }
+
+    function showRejectionBanner(notes, count) {
+        const banner = document.createElement('div');
+        banner.className = 'alert alert-danger mb-4';
+        banner.id = 'rejection-banner';
+        banner.innerHTML =
+            '<h5 class="alert-heading">Character Requires Revisions</h5>' +
+            '<p><strong>Staff feedback:</strong></p>' +
+            '<p style="white-space: pre-wrap;">' + escapeHtml(notes) + '</p>' +
+            '<hr>' +
+            '<small>This character has been rejected ' + count + ' time(s). Please address the feedback and resubmit.</small>';
+        // Insert at the top of the form
+        const form = document.getElementById('character-form');
+        if (form) {
+            form.insertBefore(banner, form.firstChild);
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function populateFormFromCharacterData(data) {
+        // Set simple bio fields
+        if (data.full_name) document.getElementById('full_name').value = data.full_name;
+        if (data.concept) document.getElementById('concept').value = data.concept;
+        if (data.ambition) document.getElementById('ambition').value = data.ambition;
+        if (data.desire) document.getElementById('desire').value = data.desire;
+        if (data.background) document.getElementById('background').value = data.background;
+        if (data.sire) document.getElementById('sire').value = data.sire;
+
+        // Set select fields
+        if (data.clan) {
+            document.getElementById('clan').value = data.clan;
+            // Trigger clan change event to update disciplines display
+            document.getElementById('clan').dispatchEvent(new Event('change'));
+        }
+        if (data.generation) {
+            document.getElementById('generation').value = String(data.generation);
+        }
+        if (data.predator_type) {
+            document.getElementById('predator_type').value = data.predator_type;
+        }
+
+        // Set attributes from export format (data.attributes = {strength: 3, ...})
+        const attrMap = data.attributes || {};
+        for (const [traitName, rating] of Object.entries(attrMap)) {
+            const lowerName = traitName.toLowerCase();
+            if (traitValues.hasOwnProperty(lowerName)) {
+                traitValues[lowerName] = rating;
+                const dotsContainer = document.querySelector(`.trait-dots[data-trait="${lowerName}"]`);
+                if (dotsContainer) {
+                    updateDots(dotsContainer, rating);
+                }
             }
         }
 
-        function renderDisciplines() {
-            const container = document.getElementById('disciplines-container');
-            const selectedClan = document.getElementById('clan').value;
-            const inClanDisciplines = selectedClan && CLANS[selectedClan] ? CLANS[selectedClan].disciplines : [];
-            
-            let html = '<div class="trait-group">';
-            
-            disciplinesData.forEach(discipline => {
-                const isInClan = inClanDisciplines.includes(discipline.name);
-                const labelClass = isInClan ? 'trait-label in-clan' : 'trait-label';
-                
-                html += `
-                    <div class="trait-row">
-                        <span class="${labelClass}">${discipline.name}${isInClan ? ' ★' : ''}</span>
-                        <div class="trait-dots" data-trait="${discipline.name}" data-category="disciplines"></div>
-                    </div>
-                `;
-            });
-            
-            html += '</div>';
-            container.innerHTML = html;
-            
-            // Initialize discipline dots
-            container.querySelectorAll('.trait-dots').forEach(dotsContainer => {
-                const trait = dotsContainer.dataset.trait;
-                disciplineValues[trait] = disciplineValues[trait] || 0;
-                
-                // Create dots (max 3 for disciplines)
-                for (let i = 1; i <= 3; i++) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('dot');
-                    if (i <= disciplineValues[trait]) {
-                        dot.classList.add('filled');
-                    }
-                    dot.dataset.value = i;
-                    
-                    dot.addEventListener('click', function() {
-                        const newValue = parseInt(this.dataset.value);
-                        disciplineValues[trait] = newValue;
-                        updateDots(dotsContainer, newValue);
-                        updatePointsDisplay();
-                        validateForm();
-                    });
-                    
-                    dotsContainer.appendChild(dot);
+        // Set skills from export format (data.skills = {athletics: 2, ...})
+        const skillMap = data.skills || {};
+        for (const [traitName, rating] of Object.entries(skillMap)) {
+            const lowerName = traitName.toLowerCase();
+            if (traitValues.hasOwnProperty(lowerName)) {
+                traitValues[lowerName] = rating;
+                const dotsContainer = document.querySelector(`.trait-dots[data-trait="${lowerName}"]`);
+                if (dotsContainer) {
+                    updateDots(dotsContainer, rating);
                 }
-            });
-            
-            updatePointsDisplay();
+            }
         }
 
-        function renderAdvantages() {
-            const container = document.getElementById('advantages-container');
-            
-            let html = '<div class="trait-group">';
-            
-            advantagesData.forEach(advantage => {
-                const needsInstance = advantage.is_instanced || false;
-                const needsSpecialty = advantage.has_specialties || false;
-                
-                html += `
-                    <div class="trait-row-with-input">
-                        <span class="trait-label">${advantage.name}</span>
-                        <div class="trait-dots" data-trait="${advantage.name}" data-category="advantages"></div>
-                `;
-                
-                if (needsInstance) {
-                    html += `
-                        <input type="text" class="form-control trait-instance-input" 
-                               id="advantage-instance-${advantage.name.replace(/\s+/g, '_')}" 
-                               placeholder="Specify instance...">
-                    `;
-                } else if (needsSpecialty) {
-                    html += `
-                        <input type="text" class="form-control trait-specialty-input" 
-                               id="advantage-specialty-${advantage.name.replace(/\s+/g, '_')}" 
-                               placeholder="Specify specialty...">
-                    `;
-                }
-                
-                html += '</div>';
-            });
-            
-            html += '</div>';
-            container.innerHTML = html;
-            
-            // Initialize advantage dots
-            container.querySelectorAll('.trait-dots').forEach(dotsContainer => {
-                const trait = dotsContainer.dataset.trait;
-                advantageValues[trait] = advantageValues[trait] || { value: 0 };
-                
-                // Create dots (1-5 for advantages)
-                for (let i = 1; i <= 5; i++) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('dot');
-                    if (i <= advantageValues[trait].value) {
-                        dot.classList.add('filled');
-                    }
-                    dot.dataset.value = i;
-                    
-                    dot.addEventListener('click', function() {
-                        const newValue = parseInt(this.dataset.value);
-                        advantageValues[trait].value = newValue;
-                        updateDots(dotsContainer, newValue);
-                        updatePointsDisplay();
-                        validateForm();
-                    });
-                    
-                    dotsContainer.appendChild(dot);
-                }
-            });
-            
-            updatePointsDisplay();
+        // Set disciplines from export format (data.disciplines = {Potence: 2, ...})
+        const discMap = data.disciplines || {};
+        for (const [discName, rating] of Object.entries(discMap)) {
+            disciplineValues[discName] = rating;
         }
 
-        function renderFlaws() {
-            const container = document.getElementById('flaws-container');
-            
-            let html = '<div class="trait-group">';
-            
-            flawsData.forEach(flaw => {
-                const needsInstance = flaw.is_instanced || false;
-                const needsSpecialty = flaw.has_specialties || false;
-                
-                html += `
-                    <div class="trait-row-with-input">
-                        <span class="trait-label">${flaw.name}</span>
-                        <div class="trait-dots" data-trait="${flaw.name}" data-category="flaws"></div>
-                `;
-                
-                if (needsInstance) {
-                    html += `
-                        <input type="text" class="form-control trait-instance-input" 
-                               id="flaw-instance-${flaw.name.replace(/\s+/g, '_')}" 
-                               placeholder="Specify instance...">
-                    `;
-                } else if (needsSpecialty) {
-                    html += `
-                        <input type="text" class="form-control trait-specialty-input" 
-                               id="flaw-specialty-${flaw.name.replace(/\s+/g, '_')}" 
-                               placeholder="Specify specialty...">
-                    `;
-                }
-                
-                html += '</div>';
-            });
-            
-            html += '</div>';
-            container.innerHTML = html;
-            
-            // Initialize flaw dots
-            container.querySelectorAll('.trait-dots').forEach(dotsContainer => {
-                const trait = dotsContainer.dataset.trait;
-                flawValues[trait] = flawValues[trait] || { value: 0 };
-                
-                // Create dots (1-5 for flaws)
-                for (let i = 1; i <= 5; i++) {
-                    const dot = document.createElement('div');
-                    dot.classList.add('dot');
-                    if (i <= flawValues[trait].value) {
-                        dot.classList.add('filled');
-                    }
-                    dot.dataset.value = i;
-                    
-                    dot.addEventListener('click', function() {
-                        const newValue = parseInt(this.dataset.value);
-                        flawValues[trait].value = newValue;
-                        updateDots(dotsContainer, newValue);
-                        updatePointsDisplay();
-                        validateForm();
-                    });
-                    
-                    dotsContainer.appendChild(dot);
-                }
-            });
-            
-            updatePointsDisplay();
+        // Set advantages from export format (data.advantages = {Ally_john: 3, ...})
+        const advMap = data.advantages || {};
+        for (const [advName, rating] of Object.entries(advMap)) {
+            if (typeof rating === 'number') {
+                advantageValues[advName] = { value: rating };
+            } else if (typeof rating === 'object' && rating.value !== undefined) {
+                advantageValues[advName] = rating;
+            }
         }
 
-        function validateForm() {
-            const errors = [];
-            
-            // Validate attribute priorities are assigned
-            if (!attributePriorities.primary || !attributePriorities.secondary || !attributePriorities.tertiary) {
-                errors.push('You must assign all attribute priorities (Primary, Secondary, Tertiary)');
+        // Set flaws from export format (data.flaws = {Enemy_rival: 2, ...})
+        const flawMap = data.flaws || {};
+        for (const [flawName, rating] of Object.entries(flawMap)) {
+            if (typeof rating === 'number') {
+                flawValues[flawName] = { value: rating };
+            } else if (typeof rating === 'object' && rating.value !== undefined) {
+                flawValues[flawName] = rating;
+            }
+        }
+
+        // Re-render dynamic sections so dots update
+        document.querySelectorAll('#disciplines-container .trait-dots').forEach(function(dotsContainer) {
+            const trait = dotsContainer.dataset.trait;
+            if (disciplineValues[trait]) {
+                updateDots(dotsContainer, disciplineValues[trait]);
+            }
+        });
+        document.querySelectorAll('#advantages-container .trait-dots').forEach(function(dotsContainer) {
+            const trait = dotsContainer.dataset.trait;
+            if (advantageValues[trait]) {
+                updateDots(dotsContainer, advantageValues[trait].value);
+            }
+        });
+        document.querySelectorAll('#flaws-container .trait-dots').forEach(function(dotsContainer) {
+            const trait = dotsContainer.dataset.trait;
+            if (flawValues[trait]) {
+                updateDots(dotsContainer, flawValues[trait].value);
+            }
+        });
+
+        // Update points display and validation
+        updatePointsDisplay();
+        validateForm();
+    }
+
+    // ============================================================
+    // Draft Save/Resume Functions (CHAR-05: localStorage persistence)
+    // ============================================================
+
+    function getDraftKey() {
+        return isEditMode ? 'chargen_draft_' + editCharacterId : 'chargen_draft_new';
+    }
+
+    function saveDraft() {
+        try {
+            const draft = {
+                full_name: document.getElementById('full_name').value,
+                concept: document.getElementById('concept').value,
+                clan: document.getElementById('clan').value,
+                sire: document.getElementById('sire').value,
+                generation: document.getElementById('generation').value,
+                predator_type: document.getElementById('predator_type').value,
+                ambition: document.getElementById('ambition').value,
+                desire: document.getElementById('desire').value,
+                background: document.getElementById('background').value,
+                traitValues: Object.assign({}, traitValues),
+                disciplineValues: Object.assign({}, disciplineValues),
+                advantageValues: JSON.parse(JSON.stringify(advantageValues)),
+                flawValues: JSON.parse(JSON.stringify(flawValues)),
+                attributePriorities: Object.assign({}, attributePriorities),
+                skillPriorities: Object.assign({}, skillPriorities),
+                savedAt: new Date().toISOString()
+            };
+            localStorage.setItem(getDraftKey(), JSON.stringify(draft));
+        } catch (e) {
+            console.warn('Draft save failed:', e);
+        }
+    }
+
+    function loadDraft() {
+        try {
+            const saved = localStorage.getItem(getDraftKey());
+            if (!saved) return;
+            const draft = JSON.parse(saved);
+            const savedDate = new Date(draft.savedAt);
+            const ageMinutes = (Date.now() - savedDate.getTime()) / 60000;
+            // Don't offer drafts older than 7 days
+            if (ageMinutes > 10080) {
+                localStorage.removeItem(getDraftKey());
+                return;
+            }
+            if (confirm('Resume draft from ' + savedDate.toLocaleString() + '?')) {
+                applyDraftToForm(draft);
             } else {
-                // Validate attribute spending
-                const physicalSpent = (['strength', 'dexterity', 'stamina']
-                    .reduce((sum, trait) => sum + traitValues[trait], 0)) - 3;
-                const socialSpent = (['charisma', 'manipulation', 'composure']
-                    .reduce((sum, trait) => sum + traitValues[trait], 0)) - 3;
-                const mentalSpent = (['intelligence', 'wits', 'resolve']
-                    .reduce((sum, trait) => sum + traitValues[trait], 0)) - 3;
-                
-                const physicalMax = getAttributePoolForCategory('physical');
-                const socialMax = getAttributePoolForCategory('social');
-                const mentalMax = getAttributePoolForCategory('mental');
-                
-                if (physicalSpent !== physicalMax) {
-                    errors.push(`Physical Attributes: Must spend exactly ${physicalMax} dots (currently ${physicalSpent})`);
-                }
-                if (socialSpent !== socialMax) {
-                    errors.push(`Social Attributes: Must spend exactly ${socialMax} dots (currently ${socialSpent})`);
-                }
-                if (mentalSpent !== mentalMax) {
-                    errors.push(`Mental Attributes: Must spend exactly ${mentalMax} dots (currently ${mentalSpent})`);
-                }
+                localStorage.removeItem(getDraftKey());
             }
-            
-            // Validate skill priorities are assigned
-            if (!skillPriorities.primary || !skillPriorities.secondary || !skillPriorities.tertiary) {
-                errors.push('You must assign all skill priorities (Primary, Secondary, Tertiary)');
-            } else {
-                // Validate skill spending
-                const physicalSkills = ['athletics', 'brawl', 'craft', 'drive', 'firearms', 'melee', 'larceny', 'stealth', 'survival'];
-                const socialSkills = ['animal_ken', 'etiquette', 'insight', 'intimidation', 'leadership', 'performance', 'persuasion', 'streetwise', 'subterfuge'];
-                const mentalSkills = ['academics', 'awareness', 'finance', 'investigation', 'medicine', 'occult', 'politics', 'science', 'technology'];
-                
-                const physicalSkillsSpent = physicalSkills.reduce((sum, trait) => sum + (traitValues[trait] || 0), 0);
-                const socialSkillsSpent = socialSkills.reduce((sum, trait) => sum + (traitValues[trait] || 0), 0);
-                const mentalSkillsSpent = mentalSkills.reduce((sum, trait) => sum + (traitValues[trait] || 0), 0);
-                
-                const physicalSkillMax = getSkillPoolForCategory('physical');
-                const socialSkillMax = getSkillPoolForCategory('social');
-                const mentalSkillMax = getSkillPoolForCategory('mental');
-                
-                if (physicalSkillsSpent !== physicalSkillMax) {
-                    errors.push(`Physical Skills: Must spend exactly ${physicalSkillMax} dots (currently ${physicalSkillsSpent})`);
-                }
-                if (socialSkillsSpent !== socialSkillMax) {
-                    errors.push(`Social Skills: Must spend exactly ${socialSkillMax} dots (currently ${socialSkillsSpent})`);
-                }
-                if (mentalSkillsSpent !== mentalSkillMax) {
-                    errors.push(`Mental Skills: Must spend exactly ${mentalSkillMax} dots (currently ${mentalSkillsSpent})`);
-                }
-            }
-            
-            // Validate disciplines
-            const selectedClan = document.getElementById('clan').value;
-            const disciplinesSpent = Object.values(disciplineValues).reduce((sum, val) => sum + val, 0);
-            
-            if (disciplinesSpent !== 3) {
-                errors.push(`Disciplines: Must spend exactly 3 dots (currently ${disciplinesSpent})`);
-            } else if (selectedClan && CLANS[selectedClan]) {
-                // Validate in-clan dots
-                const inClanDisciplines = CLANS[selectedClan].disciplines;
-                const inClanSpent = Object.entries(disciplineValues)
-                    .filter(([disc, val]) => inClanDisciplines.includes(disc) && val > 0)
-                    .reduce((sum, [disc, val]) => sum + val, 0);
-                
-                if (inClanSpent < 2) {
-                    errors.push(`Disciplines: Must spend at least 2 dots in in-clan disciplines (currently ${inClanSpent})`);
-                }
-            }
-            
-            // Validate advantages
-            const advantagesSpent = Object.values(advantageValues).reduce((sum, adv) => sum + adv.value, 0);
-            if (advantagesSpent !== 7) {
-                errors.push(`Advantages: Must spend exactly 7 points (currently ${advantagesSpent})`);
-            }
-            
-            // Validate flaws (maximum 2)
-            const flawsSpent = Object.values(flawValues).reduce((sum, flaw) => sum + flaw.value, 0);
-            if (flawsSpent > 2) {
-                errors.push(`Flaws: Cannot exceed 2 points (currently ${flawsSpent})`);
-            }
-            
-            // Update tracker display with validation status
-            const trackerDisciplines = document.getElementById('tracker-disciplines');
-            if (disciplinesSpent === 3) {
-                trackerDisciplines.className = 'validation-success';
-                trackerDisciplines.innerHTML = trackerDisciplines.innerHTML.replace('dots', 'dots ✓');
-            } else {
-                trackerDisciplines.className = 'validation-error';
-                trackerDisciplines.innerHTML = trackerDisciplines.innerHTML.replace('dots', 'dots ❌');
-            }
-            
-            const trackerAdvantages = document.getElementById('tracker-advantages');
-            if (advantagesSpent === 7) {
-                trackerAdvantages.className = 'validation-success';
-                trackerAdvantages.innerHTML = trackerAdvantages.innerHTML.replace('points', 'points ✓');
-            } else {
-                trackerAdvantages.className = 'validation-error';
-                trackerAdvantages.innerHTML = trackerAdvantages.innerHTML.replace('points', 'points ❌');
-            }
-            
-            const trackerFlaws = document.getElementById('tracker-flaws');
-            if (flawsSpent <= 2) {
-                trackerFlaws.className = 'validation-success';
-                trackerFlaws.innerHTML = trackerFlaws.innerHTML.replace('points', 'points ✓');
-            } else {
-                trackerFlaws.className = 'validation-error';
-                trackerFlaws.innerHTML = trackerFlaws.innerHTML.replace('points', 'points ❌');
-            }
-            
-            // Display errors or hide error section
-            const errorSection = document.getElementById('validation-errors');
-            const errorList = document.getElementById('error-list-items');
-            const submitButton = document.getElementById('submit-button');
-            
-            if (errors.length > 0) {
-                errorList.innerHTML = errors.map(err => `<li>${err}</li>`).join('');
-                errorSection.style.display = 'block';
-                submitButton.disabled = true;
-            } else {
-                errorSection.style.display = 'none';
-                submitButton.disabled = false;
-            }
-            
-            return errors.length === 0;
+        } catch (e) {
+            console.warn('Draft load failed:', e);
         }
-        
-        function setupFormSubmit() {
-            document.getElementById('character-form').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                // Final validation check
-                if (!validateForm()) {
-                    showToast('Please fix all validation errors before submitting', 'danger');
-                    return;
-                }
+    }
 
-                // Build character data
-                const character_data = {
-                    name: document.getElementById('full_name').value,
-                    concept: document.getElementById('concept').value,
-                    clan: document.getElementById('clan').value,
-                    sire: document.getElementById('sire').value,
-                    generation: parseInt(document.getElementById('generation').value) || null,
-                    predator_type: document.getElementById('predator_type').value,
-                    ambition: document.getElementById('ambition').value,
-                    desire: document.getElementById('desire').value,
-                    background: document.getElementById('background').value,
-                    splat: 'vampire'
-                };
+    function applyDraftToForm(draft) {
+        // Restore simple form fields
+        if (draft.full_name) document.getElementById('full_name').value = draft.full_name;
+        if (draft.concept) document.getElementById('concept').value = draft.concept;
+        if (draft.sire) document.getElementById('sire').value = draft.sire;
+        if (draft.ambition) document.getElementById('ambition').value = draft.ambition;
+        if (draft.desire) document.getElementById('desire').value = draft.desire;
+        if (draft.background) document.getElementById('background').value = draft.background;
 
-                // Add basic traits (attributes and skills)
-                for (const [trait, value] of Object.entries(traitValues)) {
-                    character_data[trait] = value;
-                }
+        // Restore selects
+        if (draft.clan) {
+            document.getElementById('clan').value = draft.clan;
+            document.getElementById('clan').dispatchEvent(new Event('change'));
+        }
+        if (draft.generation) {
+            document.getElementById('generation').value = draft.generation;
+        }
+        if (draft.predator_type) {
+            document.getElementById('predator_type').value = draft.predator_type;
+        }
 
-                // Add disciplines
-                const disciplines = {};
-                for (const [discipline, value] of Object.entries(disciplineValues)) {
-                    if (value > 0) {
-                        disciplines[discipline] = value;
-                    }
-                }
-                character_data.disciplines = disciplines;
-
-                // Add advantages with instance/specialty data
-                const advantages = {};
-                for (const [advantage, data] of Object.entries(advantageValues)) {
-                    if (data.value > 0) {
-                        const advantageData = { value: data.value };
-                        
-                        // Check for instance input
-                        const instanceInput = document.getElementById(`advantage-instance-${advantage.replace(/\s+/g, '_')}`);
-                        if (instanceInput && instanceInput.value) {
-                            advantageData.instance = instanceInput.value;
-                        }
-                        
-                        // Check for specialty input
-                        const specialtyInput = document.getElementById(`advantage-specialty-${advantage.replace(/\s+/g, '_')}`);
-                        if (specialtyInput && specialtyInput.value) {
-                            advantageData.specialty = specialtyInput.value;
-                        }
-                        
-                        advantages[advantage] = advantageData;
-                    }
-                }
-                character_data.advantages = advantages;
-
-                // Add flaws with instance/specialty data
-                const flaws = {};
-                for (const [flaw, data] of Object.entries(flawValues)) {
-                    if (data.value > 0) {
-                        const flawData = { value: data.value };
-                        
-                        // Check for instance input
-                        const instanceInput = document.getElementById(`flaw-instance-${flaw.replace(/\s+/g, '_')}`);
-                        if (instanceInput && instanceInput.value) {
-                            flawData.instance = instanceInput.value;
-                        }
-                        
-                        // Check for specialty input
-                        const specialtyInput = document.getElementById(`flaw-specialty-${flaw.replace(/\s+/g, '_')}`);
-                        if (specialtyInput && specialtyInput.value) {
-                            flawData.specialty = specialtyInput.value;
-                        }
-                        
-                        flaws[flaw] = flawData;
-                    }
-                }
-                character_data.flaws = flaws;
-
-                const payload = { character_data };
-                console.log('Submitting character:', payload);
-
-                try {
-                    let url, successMsg;
-
-                    if (isEditMode && editCharacterId) {
-                        // Resubmit to the resubmit endpoint
-                        url = `/api/traits/character/${editCharacterId}/resubmit/`;
-                        successMsg = 'Character resubmitted for approval!';
-                    } else {
-                        // Original create flow
-                        url = '/api/traits/character/create/';
-                        successMsg = 'Character submitted for approval!';
-                    }
-
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': CSRF_TOKEN
-                        },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.error || 'Failed to submit character');
-                    }
-
-                    const data = await response.json();
-                    console.log('Success response:', data);
-
-                    // Clear draft on successful submission
-                    clearDraft();
-
-                    showToast(successMsg, 'success');
-
-                    // Redirect after success
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 2000);
-
-                } catch (error) {
-                    console.error('Error submitting character:', error);
-                    showToast('Error: ' + error.message, 'danger');
+        // Restore priorities
+        if (draft.attributePriorities) {
+            ['primary', 'secondary', 'tertiary'].forEach(function(level) {
+                if (draft.attributePriorities[level]) {
+                    attributePriorities[level] = draft.attributePriorities[level];
+                    document.getElementById('attr-priority-' + level).value = draft.attributePriorities[level];
                 }
             });
+            validatePrioritySelections('attr');
+            updateAttributeMaxValues();
+        }
+        if (draft.skillPriorities) {
+            ['primary', 'secondary', 'tertiary'].forEach(function(level) {
+                if (draft.skillPriorities[level]) {
+                    skillPriorities[level] = draft.skillPriorities[level];
+                    document.getElementById('skill-priority-' + level).value = draft.skillPriorities[level];
+                }
+            });
+            validatePrioritySelections('skill');
+            updateSkillMaxValues();
         }
 
-        // ============================================================
-        // Edit Mode Functions (CHAR-01: rejection resubmission)
-        // ============================================================
-
-        async function loadCharacterForEdit(charId) {
-            try {
-                const response = await fetch(`/api/traits/character/${charId}/for-edit/`, {
-                    headers: {
-                        'X-CSRFToken': CSRF_TOKEN
-                    }
-                });
-                if (!response.ok) {
-                    const err = await response.json().catch(() => ({}));
-                    alert('Cannot edit: ' + (err.error || 'Unknown error'));
-                    return;
+        // Restore trait values (attributes and skills)
+        if (draft.traitValues) {
+            for (const [trait, value] of Object.entries(draft.traitValues)) {
+                traitValues[trait] = value;
+                const dotsContainer = document.querySelector('.trait-dots[data-trait="' + trait + '"]');
+                if (dotsContainer) {
+                    updateDots(dotsContainer, value);
                 }
-                const data = await response.json();
-
-                // Show rejection notes banner
-                if (data.rejection_notes) {
-                    showRejectionBanner(data.rejection_notes, data.rejection_count);
-                }
-
-                // Populate form with existing data
-                populateFormFromCharacterData(data.character_data);
-
-                // Change submit button text
-                const submitBtn = document.getElementById('submit-button');
-                if (submitBtn) {
-                    submitBtn.textContent = 'Resubmit Character';
-                }
-
-                // Update page title
-                const titleEl = document.querySelector('.header h1');
-                if (titleEl) {
-                    titleEl.textContent = 'Edit & Resubmit Character';
-                }
-            } catch (err) {
-                console.error('Error loading character for edit:', err);
-                alert('Failed to load character data.');
             }
         }
 
-        function showRejectionBanner(notes, count) {
-            const banner = document.createElement('div');
-            banner.className = 'alert alert-danger mb-4';
-            banner.id = 'rejection-banner';
-            banner.innerHTML =
-                '<h5 class="alert-heading">Character Requires Revisions</h5>' +
-                '<p><strong>Staff feedback:</strong></p>' +
-                '<p style="white-space: pre-wrap;">' + escapeHtml(notes) + '</p>' +
-                '<hr>' +
-                '<small>This character has been rejected ' + count + ' time(s). Please address the feedback and resubmit.</small>';
-            // Insert at the top of the form
-            const form = document.getElementById('character-form');
-            if (form) {
-                form.insertBefore(banner, form.firstChild);
+        // Restore discipline values
+        if (draft.disciplineValues) {
+            for (const [disc, value] of Object.entries(draft.disciplineValues)) {
+                disciplineValues[disc] = value;
             }
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function populateFormFromCharacterData(data) {
-            // Set simple bio fields
-            if (data.full_name) document.getElementById('full_name').value = data.full_name;
-            if (data.concept) document.getElementById('concept').value = data.concept;
-            if (data.ambition) document.getElementById('ambition').value = data.ambition;
-            if (data.desire) document.getElementById('desire').value = data.desire;
-            if (data.background) document.getElementById('background').value = data.background;
-            if (data.sire) document.getElementById('sire').value = data.sire;
-
-            // Set select fields
-            if (data.clan) {
-                document.getElementById('clan').value = data.clan;
-                // Trigger clan change event to update disciplines display
-                document.getElementById('clan').dispatchEvent(new Event('change'));
-            }
-            if (data.generation) {
-                document.getElementById('generation').value = String(data.generation);
-            }
-            if (data.predator_type) {
-                document.getElementById('predator_type').value = data.predator_type;
-            }
-
-            // Set attributes from export format (data.attributes = {strength: 3, ...})
-            // The export uses category codes as keys
-            const attrMap = data.attributes || {};
-            for (const [traitName, rating] of Object.entries(attrMap)) {
-                const lowerName = traitName.toLowerCase();
-                if (traitValues.hasOwnProperty(lowerName)) {
-                    traitValues[lowerName] = rating;
-                    const dotsContainer = document.querySelector(`.trait-dots[data-trait="${lowerName}"]`);
-                    if (dotsContainer) {
-                        updateDots(dotsContainer, rating);
-                    }
-                }
-            }
-
-            // Set skills from export format (data.skills = {athletics: 2, ...})
-            const skillMap = data.skills || {};
-            for (const [traitName, rating] of Object.entries(skillMap)) {
-                const lowerName = traitName.toLowerCase();
-                if (traitValues.hasOwnProperty(lowerName)) {
-                    traitValues[lowerName] = rating;
-                    const dotsContainer = document.querySelector(`.trait-dots[data-trait="${lowerName}"]`);
-                    if (dotsContainer) {
-                        updateDots(dotsContainer, rating);
-                    }
-                }
-            }
-
-            // Set disciplines from export format (data.disciplines = {Potence: 2, ...})
-            const discMap = data.disciplines || {};
-            for (const [discName, rating] of Object.entries(discMap)) {
-                disciplineValues[discName] = rating;
-            }
-
-            // Set advantages from export format (data.advantages = {Ally_john: 3, ...})
-            const advMap = data.advantages || {};
-            for (const [advName, rating] of Object.entries(advMap)) {
-                if (typeof rating === 'number') {
-                    advantageValues[advName] = { value: rating };
-                } else if (typeof rating === 'object' && rating.value !== undefined) {
-                    advantageValues[advName] = rating;
-                }
-            }
-
-            // Set flaws from export format (data.flaws = {Enemy_rival: 2, ...})
-            const flawMap = data.flaws || {};
-            for (const [flawName, rating] of Object.entries(flawMap)) {
-                if (typeof rating === 'number') {
-                    flawValues[flawName] = { value: rating };
-                } else if (typeof rating === 'object' && rating.value !== undefined) {
-                    flawValues[flawName] = rating;
-                }
-            }
-
-            // Re-render dynamic sections so dots update
-            // Disciplines, advantages, flaws are rendered after API load --
-            // they will pick up values from the state objects when re-rendered.
-            // For already-rendered sections, update dots now:
+            // Update dots if already rendered
             document.querySelectorAll('#disciplines-container .trait-dots').forEach(function(dotsContainer) {
                 const trait = dotsContainer.dataset.trait;
                 if (disciplineValues[trait]) {
                     updateDots(dotsContainer, disciplineValues[trait]);
                 }
             });
+        }
+
+        // Restore advantage values
+        if (draft.advantageValues) {
+            for (const [adv, data] of Object.entries(draft.advantageValues)) {
+                advantageValues[adv] = data;
+            }
             document.querySelectorAll('#advantages-container .trait-dots').forEach(function(dotsContainer) {
                 const trait = dotsContainer.dataset.trait;
                 if (advantageValues[trait]) {
                     updateDots(dotsContainer, advantageValues[trait].value);
                 }
             });
+        }
+
+        // Restore flaw values
+        if (draft.flawValues) {
+            for (const [flaw, data] of Object.entries(draft.flawValues)) {
+                flawValues[flaw] = data;
+            }
             document.querySelectorAll('#flaws-container .trait-dots').forEach(function(dotsContainer) {
                 const trait = dotsContainer.dataset.trait;
                 if (flawValues[trait]) {
                     updateDots(dotsContainer, flawValues[trait].value);
                 }
             });
-
-            // Update points display and validation
-            updatePointsDisplay();
-            validateForm();
         }
 
-        // ============================================================
-        // Draft Save/Resume Functions (CHAR-05: localStorage persistence)
-        // ============================================================
+        updatePointsDisplay();
+        validateForm();
+    }
 
-        function getDraftKey() {
-            return isEditMode ? 'chargen_draft_' + editCharacterId : 'chargen_draft_new';
+    function clearDraft() {
+        try {
+            localStorage.removeItem(getDraftKey());
+        } catch (e) {
+            console.warn('Draft clear failed:', e);
         }
+    }
 
-        function saveDraft() {
-            try {
-                const draft = {
-                    full_name: document.getElementById('full_name').value,
-                    concept: document.getElementById('concept').value,
-                    clan: document.getElementById('clan').value,
-                    sire: document.getElementById('sire').value,
-                    generation: document.getElementById('generation').value,
-                    predator_type: document.getElementById('predator_type').value,
-                    ambition: document.getElementById('ambition').value,
-                    desire: document.getElementById('desire').value,
-                    background: document.getElementById('background').value,
-                    traitValues: Object.assign({}, traitValues),
-                    disciplineValues: Object.assign({}, disciplineValues),
-                    advantageValues: JSON.parse(JSON.stringify(advantageValues)),
-                    flawValues: JSON.parse(JSON.stringify(flawValues)),
-                    attributePriorities: Object.assign({}, attributePriorities),
-                    skillPriorities: Object.assign({}, skillPriorities),
-                    savedAt: new Date().toISOString()
-                };
-                localStorage.setItem(getDraftKey(), JSON.stringify(draft));
-            } catch (e) {
-                console.warn('Draft save failed:', e);
-            }
-        }
+    // ============================================================
 
-        function loadDraft() {
-            try {
-                const saved = localStorage.getItem(getDraftKey());
-                if (!saved) return;
-                const draft = JSON.parse(saved);
-                const savedDate = new Date(draft.savedAt);
-                const ageMinutes = (Date.now() - savedDate.getTime()) / 60000;
-                // Don't offer drafts older than 7 days
-                if (ageMinutes > 10080) {
-                    localStorage.removeItem(getDraftKey());
-                    return;
-                }
-                if (confirm('Resume draft from ' + savedDate.toLocaleString() + '?')) {
-                    applyDraftToForm(draft);
-                } else {
-                    localStorage.removeItem(getDraftKey());
-                }
-            } catch (e) {
-                console.warn('Draft load failed:', e);
-            }
-        }
-
-        function applyDraftToForm(draft) {
-            // Restore simple form fields
-            if (draft.full_name) document.getElementById('full_name').value = draft.full_name;
-            if (draft.concept) document.getElementById('concept').value = draft.concept;
-            if (draft.sire) document.getElementById('sire').value = draft.sire;
-            if (draft.ambition) document.getElementById('ambition').value = draft.ambition;
-            if (draft.desire) document.getElementById('desire').value = draft.desire;
-            if (draft.background) document.getElementById('background').value = draft.background;
-
-            // Restore selects
-            if (draft.clan) {
-                document.getElementById('clan').value = draft.clan;
-                document.getElementById('clan').dispatchEvent(new Event('change'));
-            }
-            if (draft.generation) {
-                document.getElementById('generation').value = draft.generation;
-            }
-            if (draft.predator_type) {
-                document.getElementById('predator_type').value = draft.predator_type;
-            }
-
-            // Restore priorities
-            if (draft.attributePriorities) {
-                ['primary', 'secondary', 'tertiary'].forEach(function(level) {
-                    if (draft.attributePriorities[level]) {
-                        attributePriorities[level] = draft.attributePriorities[level];
-                        document.getElementById('attr-priority-' + level).value = draft.attributePriorities[level];
-                    }
-                });
-                validatePrioritySelections('attr');
-                updateAttributeMaxValues();
-            }
-            if (draft.skillPriorities) {
-                ['primary', 'secondary', 'tertiary'].forEach(function(level) {
-                    if (draft.skillPriorities[level]) {
-                        skillPriorities[level] = draft.skillPriorities[level];
-                        document.getElementById('skill-priority-' + level).value = draft.skillPriorities[level];
-                    }
-                });
-                validatePrioritySelections('skill');
-                updateSkillMaxValues();
-            }
-
-            // Restore trait values (attributes and skills)
-            if (draft.traitValues) {
-                for (const [trait, value] of Object.entries(draft.traitValues)) {
-                    traitValues[trait] = value;
-                    const dotsContainer = document.querySelector('.trait-dots[data-trait="' + trait + '"]');
-                    if (dotsContainer) {
-                        updateDots(dotsContainer, value);
-                    }
-                }
-            }
-
-            // Restore discipline values
-            if (draft.disciplineValues) {
-                for (const [disc, value] of Object.entries(draft.disciplineValues)) {
-                    disciplineValues[disc] = value;
-                }
-                // Update dots if already rendered
-                document.querySelectorAll('#disciplines-container .trait-dots').forEach(function(dotsContainer) {
-                    const trait = dotsContainer.dataset.trait;
-                    if (disciplineValues[trait]) {
-                        updateDots(dotsContainer, disciplineValues[trait]);
-                    }
-                });
-            }
-
-            // Restore advantage values
-            if (draft.advantageValues) {
-                for (const [adv, data] of Object.entries(draft.advantageValues)) {
-                    advantageValues[adv] = data;
-                }
-                document.querySelectorAll('#advantages-container .trait-dots').forEach(function(dotsContainer) {
-                    const trait = dotsContainer.dataset.trait;
-                    if (advantageValues[trait]) {
-                        updateDots(dotsContainer, advantageValues[trait].value);
-                    }
-                });
-            }
-
-            // Restore flaw values
-            if (draft.flawValues) {
-                for (const [flaw, data] of Object.entries(draft.flawValues)) {
-                    flawValues[flaw] = data;
-                }
-                document.querySelectorAll('#flaws-container .trait-dots').forEach(function(dotsContainer) {
-                    const trait = dotsContainer.dataset.trait;
-                    if (flawValues[trait]) {
-                        updateDots(dotsContainer, flawValues[trait].value);
-                    }
-                });
-            }
-
-            updatePointsDisplay();
-            validateForm();
-        }
-
-        function clearDraft() {
-            try {
-                localStorage.removeItem(getDraftKey());
-            } catch (e) {
-                console.warn('Draft clear failed:', e);
-            }
-        }
-
-        // ============================================================
-
-        function showToast(message, type = 'info') {
-            const toastHTML = `
-                <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    function showToast(message, type = 'info') {
+        const toastHTML = `
+            <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
                     </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
-            `;
+            </div>
+        `;
 
-            const container = document.getElementById('toast-container');
-            if (!container) {
-                console.error('Toast container not found');
-                return;
-            }
-
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = toastHTML.trim();
-            const toastEl = tempDiv.firstChild;
-            container.appendChild(toastEl);
-
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-
-            toastEl.addEventListener('hidden.bs.toast', function () {
-                this.remove();
-            });
+        const container = document.getElementById('toast-container');
+        if (!container) {
+            console.error('Toast container not found');
+            return;
         }
-    </script>
-</body>
-</html>
+
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = toastHTML.trim();
+        const toastEl = tempDiv.firstChild;
+        container.appendChild(toastEl);
+
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+
+        toastEl.addEventListener('hidden.bs.toast', function () {
+            this.remove();
+        });
+    }
+</script>
+{% endblock %}

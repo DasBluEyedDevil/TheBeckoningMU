@@ -587,9 +587,6 @@
             <button class="mode-btn" id="mode-exit" onclick="setMode('exit')">
                 <i class="bi bi-arrow-left-right"></i> Exit
             </button>
-            <button class="mode-btn" id="mode-compass" onclick="setMode('compass')">
-                <i class="bi bi-compass"></i> Compass
-            </button>
         </div>
 
         <!-- Exit Mode Hint -->
@@ -922,7 +919,7 @@
         document.getElementById(`mode-${mode}`).classList.add('active');
 
         // Update status
-        const modeNames = {select: 'Select', room: 'Add Room', exit: 'Add Exit', compass: 'Compass'};
+        const modeNames = {select: 'Select', room: 'Add Room', exit: 'Add Exit'};
         document.getElementById('current-mode').textContent = modeNames[mode];
 
         // Canvas click handler

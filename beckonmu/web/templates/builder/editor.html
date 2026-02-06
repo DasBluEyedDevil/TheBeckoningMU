@@ -527,6 +527,7 @@
     let projectId = {{ project_id|default:"null" }};
     let canEdit = {{ can_edit|yesno:"true,false" }};
     let mapData = {{ project_data|safe }};
+    let projectStatus = '{{ project_status|default:"new" }}';
 
     // Editor state
     let selectedRoomId = null;
@@ -1121,12 +1122,67 @@
         }
     }
 
-    function buildToSandbox() {
-        if (!canEdit || !projectId) {
+    async function buildToSandbox() {
+        if (!projectId) {
             alert('Please save the project first.');
             return;
         }
-        alert('Build to Sandbox coming in Phase 6');
+
+        if (projectStatus === 'new' || projectStatus === 'draft') {
+            alert('Project must be submitted and approved before building to sandbox.\n\nCurrent status: ' + projectStatus);
+            return;
+        }
+
+        if (projectStatus === 'submitted') {
+            alert('Project is awaiting staff review. Please wait for approval.');
+            return;
+        }
+
+        if (projectStatus === 'built') {
+            alert('Sandbox already exists. Use the dashboard to manage your sandbox.');
+            return;
+        }
+
+        if (projectStatus === 'live') {
+            alert('Project is already live.');
+            return;
+        }
+
+        if (projectStatus !== 'approved') {
+            alert('Unexpected project status: ' + projectStatus);
+            return;
+        }
+
+        if (!confirm('Build this project to a sandbox?\n\nThis will create real game rooms you can walk through and test.')) {
+            return;
+        }
+
+        document.getElementById('save-status').textContent = 'Building sandbox...';
+
+        try {
+            const response = await fetch(`/builder/api/build/${projectId}/build-sandbox/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                projectStatus = 'built';
+                if (typeof updateStatusBanner === 'function') updateStatusBanner();
+                document.getElementById('save-status').textContent = '';
+                alert(`Sandbox built successfully!\n\n${result.room_count} rooms and ${result.exit_count} exits created.\n\nUse @goto_sandbox in-game to walk through your build.`);
+            } else {
+                document.getElementById('save-status').textContent = 'Build failed';
+                alert('Build failed: ' + (result.error || 'Unknown error'));
+            }
+        } catch (err) {
+            document.getElementById('save-status').textContent = 'Build error';
+            alert('Error building sandbox: ' + err.message);
+        }
     }
 
     // Trigger management

@@ -7,6 +7,8 @@ from evennia.utils import search
 from evennia.utils.utils import run_in_main_thread
 import threading
 
+from .trigger_scripts import delete_timed_triggers_for_room
+
 
 def _do_cleanup_in_main_thread(project_id):
     """
@@ -51,6 +53,15 @@ def _do_cleanup_in_main_thread(project_id):
                 deleted_counts["objects"] += 1
             except Exception as e:
                 deleted_counts["errors"].append(f"Object {obj.id}: {e}")
+
+        # Delete trigger scripts attached to rooms first
+        for room in list(rooms):
+            try:
+                delete_timed_triggers_for_room(room)
+            except Exception as e:
+                deleted_counts["errors"].append(
+                    f"Trigger cleanup for room {room.id}: {e}"
+                )
 
         # Delete rooms last
         for room in list(rooms):

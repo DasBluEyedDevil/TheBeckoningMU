@@ -13,6 +13,7 @@ from evennia.utils.search import search_object
 
 from beckonmu.typeclasses.rooms import Room
 from beckonmu.typeclasses.exits import Exit
+from .trigger_scripts import create_timed_trigger, delete_timed_triggers_for_room
 
 logger = logging.getLogger(__name__)
 
@@ -107,6 +108,11 @@ def build_sandbox_area(project_id: int, map_data: Dict[str, Any]) -> Dict[str, A
             triggers = room_data.get("triggers", [])
             if triggers:
                 room.db.triggers = triggers
+
+                # Create timed trigger scripts for this room
+                for trigger in triggers:
+                    if trigger.get("type") == "timed" and trigger.get("enabled", True):
+                        create_timed_trigger(room, trigger)
 
             # Add tracking tags
             room.tags.add("web_builder")

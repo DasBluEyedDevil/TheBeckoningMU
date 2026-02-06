@@ -301,6 +301,9 @@
 
 {% block content %}
 <div class="builder-container">
+    <!-- Status Banner -->
+    <div id="status-banner" style="display: none; width: 100%; padding: 8px 16px; font-size: 13px; text-align: center; border-bottom: 1px solid #444; position: absolute; top: 0; left: 0; z-index: 50;"></div>
+
     <!-- Sidebar -->
     <div class="builder-sidebar">
         <div class="sidebar-header">
@@ -622,6 +625,7 @@
         initMap();
         updateStatusBar();
         loadTemplates();
+        updateStatusBanner();
 
         // Bind template dropdown
         document.getElementById('room-template').onchange = function(e) {
@@ -1119,6 +1123,96 @@
             }
         } catch (err) {
             document.getElementById('save-status').textContent = 'Error: ' + err.message;
+        }
+    }
+
+    function updateStatusBanner() {
+        const banner = document.getElementById('status-banner');
+        if (!banner) return;
+
+        const bannerConfigs = {
+            'new': { bg: '#333', text: 'New project — save to begin', show: false },
+            'draft': { bg: '#444', text: 'Draft — save and submit for review when ready', show: true },
+            'submitted': { bg: '#665500', text: 'Submitted — awaiting staff review', show: true },
+            'approved': { bg: '#1a4d1a', text: 'Approved — ready to build to sandbox!', show: true },
+            'built': { bg: '#003366', text: 'Built — use @goto_sandbox in-game to test', show: true },
+            'live': { bg: '#2d1a00', text: 'Live — this project is in the game world', show: true }
+        };
+
+        const config = bannerConfigs[projectStatus] || bannerConfigs['new'];
+        banner.style.display = config.show ? 'block' : 'none';
+        banner.style.backgroundColor = config.bg;
+        banner.textContent = config.text;
+
+        // Show rejection info
+        const rejectionCount = {{ rejection_count|default:0 }};
+        if (projectStatus === 'draft' && rejectionCount > 0) {
+            banner.textContent = 'Draft — rejected ' + rejectionCount + ' time(s). Check dashboard for feedback.';
+            banner.style.backgroundColor = '#553300';
+        }
+
+        updateSidebarButtons();
+    }
+
+    function updateSidebarButtons() {
+        const footer = document.querySelector('.sidebar-footer');
+        if (!footer || !canEdit) return;
+
+        let html = '';
+
+        if (projectStatus === 'new' || projectStatus === 'draft') {
+            html += '<button class="btn btn-danger w-100 mb-2" onclick="saveProject()">Save Project</button>';
+            if (projectId) {
+                html += '<button class="btn btn-outline-success w-100 mb-2" onclick="submitForReview()">Submit for Review</button>';
+            }
+            if (projectId) {
+                html += '<a href="/builder/export/' + projectId + '/" class="btn btn-outline-secondary w-100">Export .ev File</a>';
+            }
+        } else if (projectStatus === 'submitted') {
+            html += '<div class="alert alert-warning mb-0 py-2 text-center">Awaiting Review</div>';
+        } else if (projectStatus === 'approved') {
+            html += '<button class="btn btn-success w-100 mb-2" onclick="buildToSandbox()">Build to Sandbox</button>';
+            html += '<a href="/builder/export/' + projectId + '/" class="btn btn-outline-secondary w-100">Export .ev File</a>';
+        } else if (projectStatus === 'built') {
+            html += '<div class="alert alert-info mb-0 py-2 text-center">Built — test in sandbox</div>';
+        } else if (projectStatus === 'live') {
+            html += '<div class="alert alert-success mb-0 py-2 text-center">Live</div>';
+        }
+
+        footer.innerHTML = html;
+    }
+
+    async function submitForReview() {
+        if (!projectId) {
+            alert('Please save the project first.');
+            return;
+        }
+
+        const notes = prompt('Notes for staff reviewers (optional):');
+        if (notes === null) return;
+
+        try {
+            const response = await fetch(`/builder/api/project/${projectId}/submit/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ notes: notes || '' })
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                projectStatus = 'submitted';
+                canEdit = false;
+                updateStatusBanner();
+                alert('Project submitted for review! You cannot edit while under review.');
+            } else {
+                alert('Error: ' + (result.error || 'Failed to submit'));
+            }
+        } catch (err) {
+            alert('Error submitting: ' + err.message);
         }
     }
 

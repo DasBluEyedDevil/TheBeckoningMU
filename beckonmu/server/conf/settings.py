@@ -37,12 +37,12 @@ SERVERNAME = "Beckoning"
 
 # Add custom Django apps (BBS, Jobs, Status, Boons, Traits, Web Builder)
 INSTALLED_APPS += (
-    "beckonmu.bbs",
-    "beckonmu.jobs",
-    "beckonmu.status",
-    "beckonmu.boons",
-    "beckonmu.traits",
-    "beckonmu.web.builder.apps.BuilderConfig",
+    "bbs",
+    "jobs",
+    "status",
+    "boons",
+    "traits",
+    "web.builder.apps.BuilderConfig",
 )
 
 ######################################################################

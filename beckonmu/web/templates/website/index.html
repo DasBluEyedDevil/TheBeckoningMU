@@ -222,6 +222,17 @@
             justify-content: center;
             text-align: center;
             padding: 40px 24px;
+            background: url("{% static 'website/images/athens5.jpg' %}") center center / cover no-repeat;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at center, rgba(7, 7, 10, 0.55) 0%, rgba(7, 7, 10, 0.85) 70%, #07070a 100%),
+                linear-gradient(180deg, rgba(7, 7, 10, 0.3) 0%, transparent 30%, transparent 70%, #07070a 100%);
+            z-index: -1;
         }
 
         .hero-content {
@@ -273,6 +284,29 @@
             font-style: italic;
             color: var(--text-secondary);
             letter-spacing: 2px;
+        }
+
+        .hero-logo {
+            margin-top: 36px;
+            opacity: 0;
+            animation: logo-fade-in 2.5s ease-out 0.8s forwards;
+        }
+
+        .hero-logo img {
+            width: clamp(180px, 30vw, 320px);
+            height: auto;
+            filter: invert(1);
+            opacity: 0.35;
+            transition: opacity 0.4s ease;
+        }
+
+        .hero-logo img:hover {
+            opacity: 0.55;
+        }
+
+        @keyframes logo-fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
 
@@ -682,8 +716,7 @@
         @media (max-width: 768px) {
             body { font-size: 16px; }
 
-            .hero { min-height: 90vh; padding: 60px 20px; }
-            .hero-ankh { width: 70px; height: 70px; }
+            .hero { min-height: 90vh; padding: 60px 20px; background-position: center top; }
 
             .about, .features, .connect { padding: 60px 0; }
 
@@ -743,6 +776,9 @@
             <h1 class="hero-title">The Beckoning</h1>
             <div class="hero-subtitle">Athens By Night</div>
             <div class="hero-tagline">A Vampire: The Masquerade Chronicle</div>
+            <div class="hero-logo">
+                <img src="{% static 'website/images/VampireMasqueradeV5Logo.webp' %}" alt="Vampire: The Masquerade" loading="eager">
+            </div>
         </div>
 
         <div class="scroll-indicator" id="scrollIndicator">

@@ -4,8 +4,8 @@
 {% block title %}Character Creation{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'chargen/codex-base.css' %}">
-<link rel="stylesheet" href="{% static 'chargen/codex-chargen.css' %}">
+<link rel="stylesheet" href="{% static 'chargen/codex-base.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'chargen/codex-chargen.css' %}?v=2">
 {% endblock %}
 
 {% block content %}
@@ -564,5 +564,5 @@
     const CSRF_TOKEN = '{{ csrf_token }}';
     const editCharacterId = {{ edit_character_id|default:"null" }};
 </script>
-<script src="{% static 'chargen/codex-chargen.js' %}"></script>
+<script src="{% static 'chargen/codex-chargen.js' %}?v=2"></script>
 {% endblock %}

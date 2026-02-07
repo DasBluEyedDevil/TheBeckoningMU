@@ -4,7 +4,7 @@ Base Command class for The Beckoning MU
 Provides styled command output and error messages.
 """
 
-from evennia import Command as BaseCommand
+from evennia.commands.command import Command as BaseCommand
 
 
 class Command(BaseCommand):

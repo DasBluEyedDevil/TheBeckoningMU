@@ -15,7 +15,7 @@
     .project-card {
         background: var(--builder-card);
         border: 1px solid var(--builder-border);
-        border-radius: 10px;
+        border-radius: 2px;
         padding: 20px;
         transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
         cursor: pointer;
@@ -23,12 +23,12 @@
     }
     .project-card:hover {
         border-color: var(--builder-border-hover);
-        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        box-shadow: 0 0 20px var(--crimson-glow);
         transform: translateY(-1px);
     }
     .project-card.card-accent:hover {
-        border-color: var(--builder-accent);
-        box-shadow: 0 4px 24px var(--builder-accent-glow);
+        border-color: var(--codex-border-active);
+        box-shadow: 0 0 20px var(--crimson-glow);
     }
 
     .project-card-top {
@@ -39,17 +39,19 @@
     }
 
     .project-name {
+        font-family: 'Cinzel', serif;
         font-size: 15px;
         font-weight: 600;
         color: var(--builder-text);
         margin: 0;
         line-height: 1.3;
+        letter-spacing: 0.5px;
     }
     .project-name a {
         color: inherit;
         text-decoration: none;
     }
-    .project-name a:hover { color: var(--builder-accent-light); }
+    .project-name a:hover { color: var(--crimson-vivid); text-shadow: 0 0 8px var(--crimson-glow); }
 
     .project-meta {
         display: flex;
@@ -74,12 +76,13 @@
     }
 
     .rejection-note {
-        background: rgba(212,160,23,0.08);
-        border: 1px solid rgba(212,160,23,0.2);
-        border-radius: 6px;
+        background: var(--crimson-faint);
+        border: 1px solid rgba(139, 26, 26, 0.3);
+        border-left: 3px solid var(--crimson);
+        border-radius: 2px;
         padding: 8px 12px;
         font-size: 12px;
-        color: #d4a017;
+        color: var(--text-crimson);
         margin-bottom: 14px;
     }
     .rejection-note i { margin-right: 4px; }
@@ -94,20 +97,22 @@
     .stat-card {
         background: var(--builder-card);
         border: 1px solid var(--builder-border);
-        border-radius: 8px;
+        border-radius: 2px;
         padding: 16px;
         text-align: center;
     }
     .stat-value {
+        font-family: 'Cinzel', serif;
         font-size: 24px;
         font-weight: 700;
         line-height: 1;
         margin-bottom: 4px;
     }
     .stat-label {
+        font-family: 'Raleway', sans-serif;
         font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
         color: var(--builder-muted);
     }
 
@@ -119,28 +124,29 @@
         margin-bottom: 16px;
     }
     .section-title {
+        font-family: 'Cinzel', serif;
         font-size: 13px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1.5px;
         color: var(--builder-muted);
         display: flex;
         align-items: center;
         gap: 8px;
     }
     .section-count {
-        background: rgba(255,255,255,0.08);
+        background: var(--crimson-faint);
         padding: 1px 8px;
-        border-radius: 10px;
+        border-radius: 2px;
         font-size: 11px;
-        color: var(--builder-muted);
+        color: var(--text-secondary);
     }
 
     /* ── New Project Card ──────────────────────── */
     .new-project-card {
         background: transparent;
         border: 2px dashed var(--builder-border);
-        border-radius: 10px;
+        border-radius: 2px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -152,8 +158,8 @@
         min-height: 180px;
     }
     .new-project-card:hover {
-        border-color: var(--builder-accent);
-        background: rgba(139, 0, 0, 0.05);
+        border-color: var(--crimson);
+        background: var(--crimson-faint);
     }
     .new-project-card i {
         font-size: 28px;
@@ -161,7 +167,7 @@
         margin-bottom: 8px;
         transition: color 0.2s;
     }
-    .new-project-card:hover i { color: var(--builder-accent-light); }
+    .new-project-card:hover i { color: var(--crimson-bright); }
     .new-project-card span {
         font-size: 13px;
         font-weight: 500;
@@ -172,9 +178,10 @@
 
     /* ── Review Banner ──────────────────────────── */
     .review-banner {
-        background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(212,160,23,0.02));
-        border: 1px solid rgba(212,160,23,0.2);
-        border-radius: 10px;
+        background: linear-gradient(135deg, var(--gold-glow), rgba(154,125,58,0.02));
+        border: 1px solid rgba(154,125,58,0.2);
+        border-left: 3px solid var(--gold);
+        border-radius: 2px;
         padding: 16px 20px;
         display: flex;
         align-items: center;
@@ -186,7 +193,7 @@
         align-items: center;
         gap: 12px;
         font-size: 14px;
-        color: #d4a017;
+        color: var(--gold-bright);
     }
     .review-banner-text i { font-size: 20px; }
 
@@ -197,9 +204,10 @@
     }
     .pub-table th {
         padding: 10px 16px;
+        font-family: 'Cinzel', serif;
         font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
         color: var(--builder-muted);
         font-weight: 600;
         border-bottom: 1px solid var(--builder-border);
@@ -235,7 +243,7 @@
             <i class="bi bi-inbox"></i>
             <span><strong id="pending-count">0</strong> projects awaiting review</span>
         </div>
-        <a href="{% url 'builder:build_review' %}" class="btn-ghost" style="text-decoration:none; color: #d4a017; border-color: rgba(212,160,23,0.3);">
+        <a href="{% url 'builder:build_review' %}" class="btn-ghost" style="text-decoration:none; color: var(--gold-bright); border-color: rgba(154,125,58,0.3);">
             Review Submissions <i class="bi bi-arrow-right" style="font-size: 11px;"></i>
         </a>
     </div>
@@ -249,7 +257,7 @@
             <div class="stat-label">Total Projects</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value" style="color: #3fb950;">
+            <div class="stat-value" style="color: #5a9a6a;">
                 {% with live_count=0 %}
                 {% for p in my_projects %}{% if p.status == 'live' %}{{ forloop.counter }}{% endif %}{% endfor %}
                 {% endwith %}
@@ -259,7 +267,7 @@
             <div class="stat-label">Live</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value" style="color: #d4a017;">
+            <div class="stat-value" style="color: var(--gold-bright);">
                 {% for p in my_projects %}{% if p.status == 'submitted' %}{% with found=True %}{% endwith %}{% endif %}{% endfor %}
             </div>
             <div class="stat-label">In Review</div>
@@ -470,7 +478,7 @@
                     <div class="form-text">Players will use this direction to enter your build.</div>
                 </div>
 
-                <div style="background: rgba(212,160,23,0.08); border: 1px solid rgba(212,160,23,0.2); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #d4a017;">
+                <div style="background: var(--crimson-faint); border: 1px solid rgba(139,26,26,0.3); border-left: 3px solid var(--crimson); border-radius: 2px; padding: 12px 14px; font-size: 13px; color: var(--text-crimson);">
                     <i class="bi bi-exclamation-triangle"></i>
                     This action cannot be undone. Make sure you have tested thoroughly in the sandbox.
                 </div>

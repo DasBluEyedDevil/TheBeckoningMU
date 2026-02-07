@@ -14,7 +14,7 @@
     /* ── Sidebar ──────────────────────────────────────── */
     .builder-sidebar {
         width: 320px;
-        background: var(--builder-panel);
+        background: var(--codex-obsidian);
         border-right: 1px solid var(--builder-border);
         display: flex;
         flex-direction: column;
@@ -37,15 +37,15 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: var(--builder-warning);
+        background: var(--crimson-bright);
         display: none;
-        animation: pulse-gold 1.5s ease-in-out infinite;
+        animation: pulse-crimson 1.5s ease-in-out infinite;
     }
     .unsaved-indicator.visible { display: inline-block; }
 
-    @keyframes pulse-gold {
-        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(212, 160, 23, 0.4); }
-        50% { opacity: 0.7; box-shadow: 0 0 8px 2px rgba(212, 160, 23, 0.2); }
+    @keyframes pulse-crimson {
+        0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--crimson-glow); }
+        50% { opacity: 0.7; box-shadow: 0 0 8px 2px var(--crimson-glow); }
     }
 
     .sidebar-content {
@@ -64,8 +64,8 @@
         flex: 1;
         position: relative;
         overflow: hidden;
-        background-color: var(--builder-bg);
-        background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+        background-color: var(--codex-void);
+        background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
         background-size: 20px 20px;
     }
 
@@ -76,9 +76,9 @@
         display: flex;
         gap: 4px;
         z-index: 100;
-        background: var(--builder-panel);
+        background: var(--codex-obsidian);
         border: 1px solid var(--builder-border);
-        border-radius: 8px;
+        border-radius: 2px;
         padding: 4px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
@@ -87,9 +87,9 @@
         position: absolute;
         bottom: 10px;
         left: 10px;
-        background: var(--builder-panel);
+        background: var(--codex-obsidian);
         padding: 8px 12px;
-        border-radius: 4px;
+        border-radius: 2px;
         font-size: 12px;
         color: var(--builder-muted);
     }
@@ -99,14 +99,15 @@
         position: absolute;
         width: 80px;
         height: 60px;
-        background: var(--builder-card);
+        background: var(--codex-slate);
         border: 2px solid var(--builder-border);
-        border-radius: 6px;
+        border-radius: 2px;
         cursor: move;
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--builder-text);
+        font-family: 'Raleway', sans-serif;
         font-size: 11px;
         text-align: center;
         padding: 5px;
@@ -116,19 +117,19 @@
     }
 
     .room-node:hover {
-        border-color: var(--builder-accent-light);
+        border-color: var(--crimson-bright);
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .room-node.selected {
-        border-color: var(--builder-accent);
-        background: rgba(139, 0, 0, 0.15);
-        box-shadow: 0 0 16px var(--builder-accent-glow);
+        border-color: var(--crimson);
+        background: var(--crimson-faint);
+        box-shadow: 0 0 16px var(--crimson-glow);
     }
 
     .room-node.exit-source {
-        border-color: var(--builder-success);
-        box-shadow: 0 0 16px rgba(46, 160, 67, 0.4);
+        border-color: var(--gold);
+        box-shadow: 0 0 16px var(--gold-glow);
     }
 
     .exit-mode .room-node:not(.exit-source) {
@@ -137,7 +138,7 @@
 
     @keyframes pulse-target {
         0%, 100% { border-color: var(--builder-border); }
-        50% { border-color: var(--builder-info); box-shadow: 0 0 12px rgba(56, 139, 253, 0.3); }
+        50% { border-color: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
     }
 
     /* ── Exit Lines ───────────────────────────────────── */
@@ -164,11 +165,12 @@
         left: 50%;
         transform: translateX(-50%);
         z-index: 100;
-        background: rgba(56, 139, 253, 0.12);
-        border: 1px solid rgba(56, 139, 253, 0.3);
-        color: var(--builder-info);
+        background: var(--gold-glow);
+        border: 1px solid rgba(154,125,58,0.3);
+        color: var(--gold-bright);
         padding: 8px 16px;
-        border-radius: 8px;
+        border-radius: 2px;
+        font-family: 'Raleway', sans-serif;
         font-size: 12px;
         font-weight: 500;
         white-space: nowrap;
@@ -181,9 +183,9 @@
         position: absolute;
         top: 10px;
         right: 10px;
-        background: var(--builder-panel);
+        background: var(--codex-obsidian);
         border: 1px solid var(--builder-border);
-        border-radius: 8px;
+        border-radius: 2px;
         padding: 10px;
         z-index: 100;
         display: flex;
@@ -208,7 +210,7 @@
         color: var(--builder-text);
     }
 
-    .compass-n { top: 0; left: 50%; transform: translateX(-50%); color: var(--builder-accent-light); }
+    .compass-n { top: 0; left: 50%; transform: translateX(-50%); color: var(--crimson-bright); }
     .compass-s { bottom: 0; left: 50%; transform: translateX(-50%); }
     .compass-e { right: 0; top: 50%; transform: translateY(-50%); }
     .compass-w { left: 0; top: 50%; transform: translateY(-50%); }
@@ -233,10 +235,11 @@
         padding: 8px 0;
         border-bottom: 1px solid var(--builder-border);
         color: var(--builder-muted);
+        font-family: 'Cinzel', serif;
         font-size: 12px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1.5px;
     }
 
     .prop-section-header:hover {
@@ -262,8 +265,9 @@
         background: transparent;
         border: 1px solid transparent;
         color: var(--builder-muted);
-        border-radius: 6px;
+        border-radius: 2px;
         cursor: pointer;
+        font-family: 'Raleway', sans-serif;
         font-size: 12px;
         font-weight: 500;
         display: flex;
@@ -274,13 +278,13 @@
 
     .mode-btn:hover {
         color: var(--builder-text);
-        background: rgba(255,255,255,0.06);
+        background: var(--crimson-faint);
     }
 
     .mode-btn.active {
-        background: var(--builder-accent);
+        background: var(--crimson);
         color: #fff;
-        box-shadow: 0 0 12px var(--builder-accent-glow);
+        box-shadow: 0 0 12px var(--crimson-glow);
     }
 
     /* ── Status Bar (floating pill) ───────────────────── */
@@ -288,12 +292,13 @@
         position: absolute;
         bottom: 12px;
         left: 12px;
-        background: var(--builder-panel);
+        background: var(--codex-obsidian);
         border: 1px solid var(--builder-border);
-        border-radius: 8px;
+        border-radius: 2px;
         display: flex;
         align-items: center;
         padding: 6px 14px;
+        font-family: 'Raleway', sans-serif;
         font-size: 12px;
         color: var(--builder-muted);
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -320,12 +325,12 @@
         left: 0;
         z-index: 50;
     }
-    .status-banner.status-banner-draft     { display: block; background: rgba(120,120,138,0.15); color: #999; }
-    .status-banner.status-banner-rejected  { display: block; background: rgba(212,160,23,0.12); color: var(--builder-warning); }
-    .status-banner.status-banner-submitted { display: block; background: rgba(212,160,23,0.12); color: var(--builder-warning); }
-    .status-banner.status-banner-approved  { display: block; background: rgba(46,160,67,0.12); color: var(--builder-success); }
-    .status-banner.status-banner-built     { display: block; background: rgba(56,139,253,0.12); color: var(--builder-info); }
-    .status-banner.status-banner-live      { display: block; background: rgba(139,0,0,0.12); color: var(--builder-accent-light); }
+    .status-banner.status-banner-draft     { display: block; background: rgba(90,86,78,0.12); color: var(--text-secondary); }
+    .status-banner.status-banner-rejected  { display: block; background: var(--crimson-faint); color: var(--text-crimson); }
+    .status-banner.status-banner-submitted { display: block; background: var(--gold-glow); color: var(--gold-bright); }
+    .status-banner.status-banner-approved  { display: block; background: rgba(58,122,74,0.12); color: var(--builder-success); }
+    .status-banner.status-banner-built     { display: block; background: var(--gold-glow); color: var(--gold-bright); }
+    .status-banner.status-banner-live      { display: block; background: var(--crimson-faint); color: var(--crimson-bright); }
 
     /* ── No Selection ─────────────────────────────────── */
     .no-selection {

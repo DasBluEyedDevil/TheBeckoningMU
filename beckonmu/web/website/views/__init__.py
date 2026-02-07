@@ -8,6 +8,13 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 
+class HomepageView(TemplateView):
+    """
+    Public landing page for TheBeckoningMU.
+    """
+    template_name = 'website/index.html'
+
+
 @method_decorator(login_required, name='dispatch')
 @method_decorator(staff_member_required, name='dispatch')
 class CharacterApprovalView(TemplateView):

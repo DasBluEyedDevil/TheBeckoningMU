@@ -4,14 +4,15 @@ Base Command class for The Beckoning MU
 Provides styled command output and error messages.
 """
 
-from evennia.commands.command import Command as BaseCommand
+from evennia.commands.default.muxcommand import MuxCommand
 
 
-class Command(BaseCommand):
+class Command(MuxCommand):
     """
     Inherit from this base to get styled command messages throughout the game.
 
     This provides:
+    - MuxCommand parsing (switches, lhs/rhs, etc.)
     - Styled error messages (red)
     - Styled usage messages (yellow/white)
     - Consistent formatting across all commands

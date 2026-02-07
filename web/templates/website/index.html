@@ -273,46 +273,45 @@
             font-style: italic;
             color: var(--text-secondary);
             letter-spacing: 2px;
-            margin-bottom: 50px;
         }
 
-        /* Ankh SVG */
-        .hero-ankh {
-            width: 120px;
-            height: 160px;
-            cursor: pointer;
-            margin-bottom: 50px;
-            animation: ankh-rotate 20s linear infinite;
-            filter: drop-shadow(0 0 15px rgba(139, 26, 26, 0.5));
-            transition: filter 0.3s ease;
+        /* Blood Drips */
+        .blood-drips {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
         }
 
-        .hero-ankh:hover {
-            filter: drop-shadow(0 0 25px rgba(139, 26, 26, 0.8));
+        .blood-drop {
+            position: absolute;
+            top: -20px;
+            width: 2px;
+            border-radius: 0 0 2px 2px;
+            background: linear-gradient(180deg, transparent 0%, rgba(139, 26, 26, 0.6) 30%, rgba(107, 21, 21, 0.8) 100%);
+            animation: drip linear forwards;
+            opacity: 0;
         }
 
-        .hero-ankh svg {
-            width: 100%;
-            height: 100%;
+        .blood-drop::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(139, 26, 26, 0.7);
         }
 
-        @keyframes ankh-rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes ankh-pulse {
-            0%, 100% { filter: drop-shadow(0 0 10px rgba(139, 26, 26, 0.4)); }
-            50% { filter: drop-shadow(0 0 25px rgba(139, 26, 26, 0.8)); }
-        }
-
-        .hero-ankh.spin {
-            animation: ankh-spin 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        @keyframes ankh-spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(720deg); }
+        @keyframes drip {
+            0% { opacity: 0; top: -20px; }
+            5% { opacity: 1; }
+            90% { opacity: 0.6; }
+            100% { opacity: 0; top: 105vh; }
         }
 
         /* Scroll indicator */
@@ -751,22 +750,26 @@
     <div class="vignette"></div>
     <div class="sigil-layer sigil-layer-1"></div>
     <div class="sigil-layer sigil-layer-2"></div>
+    <div class="blood-drips" id="bloodDrips"></div>
 
     <!-- ═══════════════════════════════════════════════════
          NAVBAR
          ═══════════════════════════════════════════════════ -->
     <nav class="site-nav" id="siteNav">
         <div class="nav-links">
-            {% if user.is_authenticated %}
+            {% if account %}
                 <div class="nav-user">
-                    <span class="username">{{ user.username }}</span>
+                    <span class="username">{{ account.username }}</span>
                     <span class="nav-separator"></span>
                 </div>
-                <a href="/character-creation/" class="nav-link">Characters</a>
-                <a href="/auth/logout/" class="nav-link">Logout</a>
+                <a href="{% url 'character_creation' %}" class="nav-link">Characters</a>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link" style="background:none;border:none;cursor:pointer;">Logout</button>
+                </form>
             {% else %}
-                <a href="/auth/login/" class="nav-link">Log In</a>
-                <a href="/auth/register" class="nav-link accent">Register</a>
+                <a href="{% url 'login' %}" class="nav-link">Log In</a>
+                <a href="{% url 'register' %}" class="nav-link accent">Register</a>
             {% endif %}
         </div>
     </nav>
@@ -780,22 +783,6 @@
             <div class="hero-subtitle">Athens By Night</div>
             <div class="hero-tagline">A Vampire: The Masquerade Chronicle</div>
 
-            <div class="hero-ankh" id="heroAnkh" title="Click to spin">
-                <svg viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <filter id="ankhGlow">
-                            <feGaussianBlur stdDeviation="2.5" result="blur"/>
-                            <feMerge>
-                                <feMergeNode in="blur"/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                    </defs>
-                    <!-- Ankh: teardrop loop, vertical shaft, crossbar -->
-                    <path d="M50 8 C30 8 18 22 18 38 C18 54 32 62 44 62 L44 62 L44 68 L28 68 L28 76 L44 76 L44 148 L56 148 L56 76 L72 76 L72 68 L56 68 L56 62 C68 62 82 54 82 38 C82 22 70 8 50 8 Z M50 18 C64 18 72 27 72 38 C72 49 64 55 50 55 C36 55 28 49 28 38 C28 27 36 18 50 18 Z"
-                          fill="none" stroke="#8b1a1a" stroke-width="2.5" filter="url(#ankhGlow)"/>
-                </svg>
-            </div>
         </div>
 
         <div class="scroll-indicator" id="scrollIndicator">
@@ -973,22 +960,32 @@
         window.addEventListener('load', checkReveal);
         checkReveal();
 
-        /* ── Ankh Click Spin ── */
-        var ankh = document.getElementById('heroAnkh');
-        if (ankh) {
-            ankh.addEventListener('click', function() {
-                // Reset animation
-                ankh.style.animation = 'none';
-                ankh.offsetHeight; // trigger reflow
-                ankh.classList.add('spin');
-
-                ankh.addEventListener('animationend', function handler() {
-                    ankh.classList.remove('spin');
-                    ankh.style.animation = '';
-                    ankh.removeEventListener('animationend', handler);
-                });
-            });
+        /* ── Blood Drips ── */
+        var dripsContainer = document.getElementById('bloodDrips');
+        function spawnDrip() {
+            if (!dripsContainer) return;
+            var drop = document.createElement('div');
+            drop.className = 'blood-drop';
+            var x = Math.random() * 100;
+            var height = 15 + Math.random() * 35;
+            var duration = 4 + Math.random() * 6;
+            var delay = Math.random() * 0.5;
+            drop.style.left = x + '%';
+            drop.style.height = height + 'px';
+            drop.style.animationDuration = duration + 's';
+            drop.style.animationDelay = delay + 's';
+            dripsContainer.appendChild(drop);
+            setTimeout(function() {
+                if (drop.parentNode) drop.parentNode.removeChild(drop);
+            }, (duration + delay) * 1000 + 200);
         }
+        // Spawn drips at random intervals
+        function scheduleDrip() {
+            spawnDrip();
+            var next = 800 + Math.random() * 3000;
+            setTimeout(scheduleDrip, next);
+        }
+        scheduleDrip();
 
         /* ── Scroll Indicator ── */
         var scrollIndicator = document.getElementById('scrollIndicator');

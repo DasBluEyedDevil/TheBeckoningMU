@@ -275,67 +275,6 @@
             letter-spacing: 2px;
         }
 
-        /* Title Blood Drips */
-        .title-drip-zone {
-            position: relative;
-            width: 100%;
-            height: 80px;
-            pointer-events: none;
-            overflow: visible;
-            margin-bottom: 10px;
-        }
-
-        .title-drip {
-            position: absolute;
-            top: 0;
-            width: 2px;
-            border-radius: 0 0 2px 2px;
-            background: linear-gradient(180deg,
-                rgba(139, 26, 26, 0.8) 0%,
-                rgba(107, 21, 21, 0.6) 60%,
-                rgba(107, 21, 21, 0.3) 100%);
-            opacity: 0;
-            animation: title-drip ease-in infinite;
-        }
-
-        .title-drip::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: rgba(139, 26, 26, 0.6);
-        }
-
-        @keyframes title-drip {
-            0% { height: 0; opacity: 0; top: 0; }
-            8% { opacity: 0.7; }
-            40% { height: var(--drip-len); opacity: 0.6; top: 0; }
-            70% { height: var(--drip-len); opacity: 0.4; top: calc(80px - var(--drip-len)); }
-            85% { opacity: 0.15; }
-            100% { height: var(--drip-len); opacity: 0; top: calc(80px - var(--drip-len)); }
-        }
-
-        /* Blood pool under tagline */
-        .blood-pool {
-            width: 200px;
-            height: 3px;
-            margin: 0 auto;
-            border-radius: 50%;
-            background: radial-gradient(ellipse at center,
-                rgba(139, 26, 26, 0.35) 0%,
-                rgba(107, 21, 21, 0.15) 50%,
-                transparent 100%);
-            animation: pool-pulse 6s ease-in-out infinite;
-        }
-
-        @keyframes pool-pulse {
-            0%, 100% { width: 180px; opacity: 0.6; }
-            50% { width: 240px; opacity: 0.9; }
-        }
 
         /* Scroll indicator */
         .scroll-indicator {
@@ -802,10 +741,8 @@
     <section class="hero">
         <div class="hero-content">
             <h1 class="hero-title">The Beckoning</h1>
-            <div class="title-drip-zone" id="titleDripZone"></div>
             <div class="hero-subtitle">Athens By Night</div>
             <div class="hero-tagline">A Vampire: The Masquerade Chronicle</div>
-            <div class="blood-pool"></div>
         </div>
 
         <div class="scroll-indicator" id="scrollIndicator">
@@ -983,41 +920,6 @@
         window.addEventListener('load', checkReveal);
         checkReveal();
 
-        /* ── Title Blood Drips ── */
-        var dripZone = document.getElementById('titleDripZone');
-        var titleEl = document.querySelector('.hero-title');
-        function spawnTitleDrip() {
-            if (!dripZone || !titleEl) return;
-            var titleRect = titleEl.getBoundingClientRect();
-            var zoneRect = dripZone.getBoundingClientRect();
-            // Random position within the title width, centered in the zone
-            var titleLeft = titleRect.left - zoneRect.left;
-            var titleWidth = titleRect.width;
-            var x = titleLeft + (Math.random() * titleWidth);
-            var drop = document.createElement('div');
-            drop.className = 'title-drip';
-            var dripLen = 12 + Math.random() * 30;
-            var duration = 3 + Math.random() * 4;
-            var delay = Math.random() * 1;
-            drop.style.left = x + 'px';
-            drop.style.setProperty('--drip-len', dripLen + 'px');
-            drop.style.animationDuration = duration + 's';
-            drop.style.animationDelay = delay + 's';
-            dripZone.appendChild(drop);
-            setTimeout(function() {
-                if (drop.parentNode) drop.parentNode.removeChild(drop);
-            }, (duration + delay) * 1000 + 500);
-        }
-        function scheduleTitleDrip() {
-            spawnTitleDrip();
-            var next = 600 + Math.random() * 2500;
-            setTimeout(scheduleTitleDrip, next);
-        }
-        // Stagger initial drips
-        for (var d = 0; d < 3; d++) {
-            setTimeout(spawnTitleDrip, d * 400);
-        }
-        scheduleTitleDrip();
 
         /* ── Scroll Indicator ── */
         var scrollIndicator = document.getElementById('scrollIndicator');

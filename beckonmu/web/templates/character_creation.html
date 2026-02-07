@@ -89,12 +89,22 @@
                                 <option value="">Select predator type...</option>
                                 <option value="Alleycat">Alleycat</option>
                                 <option value="Bagger">Bagger</option>
+                                <option value="Blood Leech">Blood Leech</option>
+                                <option value="Cleaver">Cleaver</option>
+                                <option value="Consensualist">Consensualist</option>
                                 <option value="Farmer">Farmer</option>
                                 <option value="Osiris">Osiris</option>
                                 <option value="Sandman">Sandman</option>
+                                <option value="Scene Queen">Scene Queen</option>
                                 <option value="Siren">Siren</option>
                             </select>
                             <span class="codex-hint">How your character prefers to feed</span>
+                        </div>
+
+                        <div id="predator-discipline-choice" class="codex-field" style="display:none;">
+                            <label class="codex-label">Predator Discipline Bonus</label>
+                            <p class="codex-hint" style="margin-bottom:8px;">Your predator type grants +1 dot in one of these disciplines:</p>
+                            <div id="predator-discipline-options"></div>
                         </div>
 
                         <div class="codex-field">
@@ -400,7 +410,8 @@
                     <img src="{% static 'chargen/assets/divider.svg' %}" class="codex-divider" alt="">
                     <div class="codex-section-body">
                         <p style="color: var(--text-secondary); font-size: 14px; font-family: var(--font-ui); margin-bottom: 20px;">
-                            3 dots total. At least 2 must be in-clan. Max 3 per discipline.
+                            Allocate 3 dots among your in-clan disciplines: 2 dots in one, 1 dot in another.
+                            Your predator type may grant an additional bonus dot (selected in Identity tab).
                         </p>
                         <div id="disciplines-container">
                             <div class="codex-loading">
@@ -520,7 +531,7 @@
         </div>
         <div class="tracker-group">
             <div class="tracker-group-label">Disciplines</div>
-            <div class="tracker-line" id="tracker-disciplines"><span id="points-disciplines">0</span>/3 dots</div>
+            <div class="tracker-line" id="tracker-disciplines"><span id="points-disciplines">0</span>/3 in-clan <span id="predator-disc-indicator"></span></div>
         </div>
         <div class="tracker-group">
             <div class="tracker-group-label">Advantages</div>

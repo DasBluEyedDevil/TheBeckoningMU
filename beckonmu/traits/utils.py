@@ -14,6 +14,7 @@ try:
         SKILLS,
         CLANS as SPLATS,
         STATS,
+        PREDATOR_TYPES,
         get_trait_category as _get_trait_category_v5
     )
     
@@ -30,6 +31,7 @@ except ImportError:
     SKILLS = {}
     SPLATS = {}
     STATS = {}
+    PREDATOR_TYPES = {}
     
     def get_trait_list(category):
         return []
@@ -136,22 +138,66 @@ def validate_v5_chargen_pools(json_data, clan=None):
             if isinstance(rating, (int, float)):
                 discipline_total += int(rating)
 
-    if discipline_total != rules['discipline_total']:
+    # Account for predator discipline bonus (+1 dot)
+    has_predator_bonus = bool(json_data.get('predator_discipline', ''))
+    expected_total = rules['discipline_total'] + (1 if has_predator_bonus else 0)
+
+    if discipline_total != expected_total:
         errors.append(
-            f"Disciplines: Must spend exactly {rules['discipline_total']} dots "
-            f"(currently {discipline_total})"
+            f"Disciplines: Must spend exactly {rules['discipline_total']} in-clan dots "
+            f"(plus predator bonus if applicable). Currently {discipline_total} total"
         )
 
     # In-clan discipline check (skip for Caitiff and Thin-Blood)
-    if (discipline_total == rules['discipline_total'] and clan
+    if (discipline_total == expected_total and clan
             and clan not in ('Caitiff', 'Thin-Blood') and isinstance(disciplines, dict)):
-        # Try to determine in-clan disciplines from Trait model splat_restriction
-        # NOTE: The Trait model uses splat_restriction for vampire/ghoul/mortal, not
-        # per-clan restrictions. The clan-to-discipline mapping lives in the frontend
-        # CLANS object (character_creation.html). Until a ClanDiscipline model or
-        # similar mapping is added, this check cannot be performed server-side.
-        # Staff review catches invalid clan/discipline combinations.
-        pass
+        in_clan_discs = []
+        if clan in SPLATS and 'disciplines' in SPLATS[clan]:
+            in_clan_discs = SPLATS[clan]['disciplines']
+
+        # Get predator discipline (the one allowed out-of-clan exception)
+        predator_discipline = json_data.get('predator_discipline', '')
+        predator_type = json_data.get('predator_type', '')
+
+        # Validate predator discipline is valid for the predator type
+        if predator_discipline and predator_type:
+            valid_pred_discs = PREDATOR_TYPES.get(predator_type, {}).get('disciplines', [])
+            if predator_discipline not in valid_pred_discs:
+                errors.append(
+                    f"Disciplines: '{predator_discipline}' is not a valid discipline "
+                    f"for predator type '{predator_type}'"
+                )
+
+        if in_clan_discs:
+            for disc_name, rating in disciplines.items():
+                if not isinstance(rating, (int, float)) or int(rating) <= 0:
+                    continue
+                # Subtract predator bonus to isolate in-clan allocation
+                base_rating = int(rating)
+                if disc_name == predator_discipline:
+                    base_rating -= 1
+                if base_rating > 0 and disc_name not in in_clan_discs:
+                    errors.append(
+                        f"Disciplines: '{disc_name}' is not an in-clan discipline "
+                        f"for {clan}"
+                    )
+
+            # Validate 2+1 pattern for in-clan allocation (excluding predator bonus)
+            in_clan_ratings = []
+            for disc_name, rating in disciplines.items():
+                if not isinstance(rating, (int, float)) or int(rating) <= 0:
+                    continue
+                base_rating = int(rating)
+                if disc_name == predator_discipline:
+                    base_rating -= 1
+                if base_rating > 0:
+                    in_clan_ratings.append(base_rating)
+
+            if sorted(in_clan_ratings) != [1, 2]:
+                errors.append(
+                    "Disciplines: In-clan allocation must be 2 dots in one discipline "
+                    "and 1 dot in another"
+                )
 
     # --- Advantage pool validation ---
     advantages = json_data.get('advantages', {})

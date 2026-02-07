@@ -1224,75 +1224,74 @@ DISCIPLINES = {
 # PREDATOR TYPES
 # ============================================================================
 
-# SKELETON ONLY - Full predator mechanics defined in Phase 8
 PREDATOR_TYPES = {
     "Alleycat": {
         "description": "Hunt the homeless and forgotten",
         "specialty": "Intimidation or Streetwise",
-        "disciplines": [],  # Defined in Phase 8
+        "disciplines": ["Celerity", "Potence"],
         "merits": [],
         "flaws": []
     },
     "Bagger": {
         "description": "Feed from blood bags and hospitals",
         "specialty": "Medicine or Streetwise",
-        "disciplines": [],
+        "disciplines": ["Blood Sorcery", "Obfuscate"],
         "merits": [],
         "flaws": []
     },
     "Blood Leech": {
         "description": "Feed from other vampires",
         "specialty": "Brawl or Stealth",
-        "disciplines": [],
+        "disciplines": ["Celerity", "Protean"],
         "merits": [],
         "flaws": []
     },
     "Cleaver": {
         "description": "Feed from a mortal family or group",
         "specialty": "Persuasion or Subterfuge",
-        "disciplines": [],
+        "disciplines": ["Animalism", "Dominate"],
         "merits": [],
         "flaws": []
     },
     "Consensualist": {
         "description": "Feed with permission and consent",
         "specialty": "Medicine or Persuasion",
-        "disciplines": [],
+        "disciplines": ["Auspex", "Fortitude"],
         "merits": [],
         "flaws": []
     },
     "Farmer": {
         "description": "Feed from animals",
         "specialty": "Animal Ken or Survival",
-        "disciplines": [],
+        "disciplines": ["Animalism", "Protean"],
         "merits": [],
         "flaws": []
     },
     "Osiris": {
         "description": "Cult leader who feeds from worshippers",
         "specialty": "Occult or Performance",
-        "disciplines": [],
+        "disciplines": ["Blood Sorcery", "Presence"],
         "merits": [],
         "flaws": []
     },
     "Sandman": {
         "description": "Feed from sleeping victims",
         "specialty": "Medicine or Stealth",
-        "disciplines": [],
+        "disciplines": ["Auspex", "Obfuscate"],
         "merits": [],
         "flaws": []
     },
     "Scene Queen": {
         "description": "Feed from the party scene",
         "specialty": "Performance or Streetwise",
-        "disciplines": [],
+        "disciplines": ["Dominate", "Presence"],
         "merits": [],
         "flaws": []
     },
     "Siren": {
         "description": "Seduce and feed",
         "specialty": "Persuasion or Subterfuge",
-        "disciplines": [],
+        "disciplines": ["Fortitude", "Presence"],
         "merits": [],
         "flaws": []
     },

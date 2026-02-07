@@ -113,6 +113,20 @@ let advantagesData = [];
 let flawsData = [];
 
 let isEditMode = false;
+let predatorDisciplineChoice = null;
+
+const PREDATOR_TYPES = {
+    "Alleycat": ["Celerity", "Potence"],
+    "Bagger": ["Blood Sorcery", "Obfuscate"],
+    "Blood Leech": ["Celerity", "Protean"],
+    "Cleaver": ["Animalism", "Dominate"],
+    "Consensualist": ["Auspex", "Fortitude"],
+    "Farmer": ["Animalism", "Protean"],
+    "Osiris": ["Blood Sorcery", "Presence"],
+    "Sandman": ["Auspex", "Obfuscate"],
+    "Scene Queen": ["Dominate", "Presence"],
+    "Siren": ["Fortitude", "Presence"]
+};
 
 // ============================================================
 // DOT CLASS HELPERS
@@ -131,6 +145,7 @@ const DOT_SELECTOR = '.dot, .blood-pip';
 document.addEventListener('DOMContentLoaded', function () {
     initializeDots();
     setupClanSelector();
+    setupPredatorTypeSelector();
     setupFormSubmit();
     loadTraitData();
     setupPrioritySelectors();
@@ -275,12 +290,22 @@ function checkTabComplete(tabIndex) {
             if (discSpent !== 3) return false;
             const selectedClan = document.getElementById('clan').value;
             if (selectedClan && CLANS[selectedClan] && CLANS[selectedClan].disciplines.length > 0) {
+                // Non-Caitiff: enforce 2+1 pattern, all in-clan
+                const activeDiscs = Object.entries(disciplineValues).filter(function (e) { return e[1] > 0; });
+                if (activeDiscs.length !== 2) return false;
+                const values = activeDiscs.map(function (e) { return e[1]; }).sort();
+                if (values[0] !== 1 || values[1] !== 2) return false;
                 const inClanDiscs = CLANS[selectedClan].disciplines;
-                const inClanSpent = Object.entries(disciplineValues)
-                    .filter(function (e) { return inClanDiscs.includes(e[0]) && e[1] > 0; })
-                    .reduce(function (s, e) { return s + e[1]; }, 0);
-                return inClanSpent >= 2;
+                var allInClan = activeDiscs.every(function (e) { return inClanDiscs.includes(e[0]); });
+                if (!allInClan) return false;
+            } else if (selectedClan === 'Caitiff') {
+                // Caitiff: 3 total, at least 2 different disciplines
+                const caitiffActive = Object.entries(disciplineValues).filter(function (e) { return e[1] > 0; });
+                if (caitiffActive.length < 2) return false;
             }
+            // Predator discipline choice required if predator type is selected
+            var predType = document.getElementById('predator_type').value;
+            if (predType && PREDATOR_TYPES[predType] && !predatorDisciplineChoice) return false;
             return true;
         }
 
@@ -353,15 +378,26 @@ function renderChronicSummary() {
     html += renderSummaryTraits('Mental', MENTAL_SKILLS);
     html += '</div>';
 
-    // Disciplines
+    // Disciplines (combined in-clan + predator bonus)
     html += '<h4 class="chronicle-heading">IV. Disciplines</h4>';
     html += '<div class="chronicle-block">';
-    const activeDiscs = Object.entries(disciplineValues).filter(function (e) { return e[1] > 0; });
-    if (activeDiscs.length === 0) {
+    var combinedDiscs = {};
+    Object.entries(disciplineValues).forEach(function (e) {
+        if (e[1] > 0) combinedDiscs[e[0]] = e[1];
+    });
+    if (predatorDisciplineChoice) {
+        combinedDiscs[predatorDisciplineChoice] = (combinedDiscs[predatorDisciplineChoice] || 0) + 1;
+    }
+    var combinedEntries = Object.entries(combinedDiscs);
+    if (combinedEntries.length === 0) {
         html += '<p class="chronicle-empty">(none selected)</p>';
     } else {
-        activeDiscs.forEach(function (e) {
-            html += '<p>' + escapeHtml(e[0]) + ': ' + renderPipString(e[1], 3) + '</p>';
+        combinedEntries.forEach(function (e) {
+            var annotation = '';
+            if (predatorDisciplineChoice === e[0]) {
+                annotation = ' <span style="color:var(--blood-primary);font-size:12px;">(includes +1 Predator)</span>';
+            }
+            html += '<p>' + escapeHtml(e[0]) + ': ' + renderPipString(e[1], 5) + annotation + '</p>';
         });
     }
     html += '</div>';
@@ -683,6 +719,17 @@ function setupClanSelector() {
             clanInfo.innerHTML = html;
             clanInfo.style.display = 'block';
 
+            // Reset discipline allocations on clan change
+            const hasAllocatedDots = Object.values(disciplineValues).some(function (v) { return v > 0; });
+            if (hasAllocatedDots) {
+                if (confirm('Changing clans will reset your discipline allocations. Continue?')) {
+                    Object.keys(disciplineValues).forEach(function (k) { delete disciplineValues[k]; });
+                } else {
+                    // Revert clan selection — find previous clan from disciplineValues
+                    return;
+                }
+            }
+
             // Re-render disciplines if they're already loaded
             if (disciplinesData.length > 0) {
                 renderDisciplines();
@@ -690,6 +737,52 @@ function setupClanSelector() {
         } else {
             clanInfo.style.display = 'none';
         }
+    });
+}
+
+// ============================================================
+// PREDATOR TYPE SELECTOR
+// ============================================================
+
+function setupPredatorTypeSelector() {
+    var predatorSelect = document.getElementById('predator_type');
+    var choiceDiv = document.getElementById('predator-discipline-choice');
+    var optionsDiv = document.getElementById('predator-discipline-options');
+
+    predatorSelect.addEventListener('change', function () {
+        var predatorType = this.value;
+        if (!predatorType || !PREDATOR_TYPES[predatorType]) {
+            choiceDiv.style.display = 'none';
+            predatorDisciplineChoice = null;
+            optionsDiv.innerHTML = '';
+            renderDisciplines();
+            validateForm();
+            return;
+        }
+
+        var disciplines = PREDATOR_TYPES[predatorType];
+        predatorDisciplineChoice = null;
+        var html = '';
+        disciplines.forEach(function (disc) {
+            html += '<label style="display:inline-flex;align-items:center;gap:6px;margin-right:16px;cursor:pointer;' +
+                'font-family:var(--font-ui);font-size:14px;color:var(--text-primary);">' +
+                '<input type="radio" name="predator-disc" value="' + escapeHtml(disc) + '" ' +
+                'style="accent-color:var(--blood-primary);width:16px;height:16px;">' +
+                escapeHtml(disc) + '</label>';
+        });
+        optionsDiv.innerHTML = html;
+        choiceDiv.style.display = 'block';
+
+        optionsDiv.querySelectorAll('input[name="predator-disc"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                predatorDisciplineChoice = this.value;
+                renderDisciplines();
+                validateForm();
+            });
+        });
+
+        renderDisciplines();
+        validateForm();
     });
 }
 
@@ -729,33 +822,76 @@ async function loadTraitData() {
 
 // ============================================================
 // RENDER DISCIPLINES
-// Fixed Bug 1: dot toggle deselection for disciplines
+// V5 rules: in-clan only (2+1), predator bonus shown separately
 // ============================================================
 
 function renderDisciplines() {
     const container = document.getElementById('disciplines-container');
     const selectedClan = document.getElementById('clan').value;
     const inClanDisciplines = selectedClan && CLANS[selectedClan] ? CLANS[selectedClan].disciplines : [];
+    const isCaitiff = selectedClan === 'Caitiff';
+
+    // Clear discipline values for disciplines no longer in-clan (unless Caitiff)
+    if (!isCaitiff && inClanDisciplines.length > 0) {
+        Object.keys(disciplineValues).forEach(function (k) {
+            if (!inClanDisciplines.includes(k) && disciplineValues[k] > 0) {
+                disciplineValues[k] = 0;
+            }
+        });
+    }
+
+    // Determine which disciplines to show
+    var visibleDisciplines;
+    if (isCaitiff || !selectedClan || !CLANS[selectedClan]) {
+        // Caitiff or no clan: show all disciplines
+        visibleDisciplines = disciplinesData;
+    } else {
+        // Non-Caitiff: show only in-clan disciplines
+        visibleDisciplines = disciplinesData.filter(function (d) {
+            return inClanDisciplines.includes(d.name);
+        });
+    }
+
+    // Check if predator discipline is out-of-clan
+    var predatorIsOutOfClan = false;
+    if (predatorDisciplineChoice && !isCaitiff && inClanDisciplines.length > 0) {
+        predatorIsOutOfClan = !inClanDisciplines.includes(predatorDisciplineChoice);
+    }
 
     let html = '<div class="trait-group">';
 
-    disciplinesData.forEach(function (discipline) {
-        const isInClan = inClanDisciplines.includes(discipline.name);
-        const labelClass = isInClan ? 'trait-label in-clan' : 'trait-label';
+    visibleDisciplines.forEach(function (discipline) {
+        var isPredatorBonus = predatorDisciplineChoice === discipline.name;
+        var labelExtra = '';
+        if (isPredatorBonus && !predatorIsOutOfClan) {
+            labelExtra = ' <span style="color:var(--blood-primary);font-size:12px;">(+1 from Predator Type)</span>';
+        }
 
         html += '<div class="trait-row">' +
-            '<span class="' + labelClass + '">' + escapeHtml(discipline.name) + (isInClan ? ' \u2605' : '') + '</span>' +
+            '<span class="trait-label in-clan">' + escapeHtml(discipline.name) + ' \u2605' + labelExtra + '</span>' +
             '<div class="pip-row trait-dots" data-trait="' + escapeHtml(discipline.name) + '" data-category="disciplines"></div>' +
             '</div>';
     });
 
+    // Out-of-clan predator discipline: read-only row
+    if (predatorIsOutOfClan && predatorDisciplineChoice) {
+        html += '<div class="trait-row" style="opacity:0.8;">' +
+            '<span class="trait-label" style="color:var(--blood-primary);">' +
+            escapeHtml(predatorDisciplineChoice) + ' <span style="font-size:12px;">(Predator Type)</span></span>' +
+            '<div class="pip-row" data-category="predator-readonly">';
+        // 1 filled dot + 2 empty dots (read-only)
+        for (var p = 1; p <= 3; p++) {
+            html += '<div class="' + DOT_CLASS + ' dot' + (p <= 1 ? ' filled' : '') + '" style="pointer-events:none;"></div>';
+        }
+        html += '</div></div>';
+    }
+
     html += '</div>';
     container.innerHTML = html;
 
-    // Initialize discipline dots
-    container.querySelectorAll('.pip-row, .trait-dots').forEach(function (dotsContainer) {
+    // Initialize interactive discipline dots
+    container.querySelectorAll('.pip-row[data-category="disciplines"]').forEach(function (dotsContainer) {
         const trait = dotsContainer.dataset.trait;
-        if (dotsContainer.dataset.category !== 'disciplines') return;
         disciplineValues[trait] = disciplineValues[trait] || 0;
 
         for (let i = 1; i <= 3; i++) {
@@ -1000,13 +1136,33 @@ function validateForm() {
     } else if (selectedClan && CLANS[selectedClan]) {
         const inClanDisciplines = CLANS[selectedClan].disciplines;
         if (inClanDisciplines.length > 0) {
-            const inClanSpent = Object.entries(disciplineValues)
-                .filter(function (e) { return inClanDisciplines.includes(e[0]) && e[1] > 0; })
-                .reduce(function (sum, e) { return sum + e[1]; }, 0);
-            if (inClanSpent < 2) {
-                errors.push('Disciplines: Must spend at least 2 dots in in-clan disciplines (currently ' + inClanSpent + ')');
+            // Non-Caitiff: enforce 2+1 pattern, all in-clan
+            const activeDiscs = Object.entries(disciplineValues).filter(function (e) { return e[1] > 0; });
+            if (activeDiscs.length !== 2) {
+                errors.push('Disciplines: Must allocate dots in exactly 2 in-clan disciplines (2 dots in one, 1 in another)');
+            } else {
+                const values = activeDiscs.map(function (e) { return e[1]; }).sort();
+                if (values[0] !== 1 || values[1] !== 2) {
+                    errors.push('Disciplines: Must allocate 2 dots in one discipline and 1 dot in another');
+                }
+                var allInClan = activeDiscs.every(function (e) { return inClanDisciplines.includes(e[0]); });
+                if (!allInClan) {
+                    errors.push('Disciplines: All allocated dots must be in in-clan disciplines');
+                }
+            }
+        } else if (selectedClan === 'Caitiff') {
+            // Caitiff: 3 total, at least 2 different disciplines
+            const caitiffActive = Object.entries(disciplineValues).filter(function (e) { return e[1] > 0; });
+            if (caitiffActive.length < 2) {
+                errors.push('Disciplines: Must allocate dots across at least 2 different disciplines');
             }
         }
+    }
+
+    // Validate predator discipline choice
+    var predType = document.getElementById('predator_type').value;
+    if (predType && PREDATOR_TYPES[predType] && !predatorDisciplineChoice) {
+        errors.push('Disciplines: Must choose a predator discipline bonus (in the Identity tab)');
     }
 
     // Validate advantages
@@ -1027,8 +1183,13 @@ function validateForm() {
     const trackerDisc = document.getElementById('tracker-disciplines');
     if (trackerDisc) {
         const discValid = disciplinesSpent === 3;
+        var predIndicator = '';
+        if (predatorDisciplineChoice) {
+            predIndicator = ' + 1 ' + escapeHtml(predatorDisciplineChoice);
+        }
         trackerDisc.className = discValid ? 'validation-success' : 'validation-error';
-        trackerDisc.innerHTML = '<span id="points-disciplines">' + disciplinesSpent + '</span>/3 dots ' + (discValid ? '\u2713' : '\u2717');
+        trackerDisc.innerHTML = '<span id="points-disciplines">' + disciplinesSpent + '</span>/3 in-clan' +
+            ' <span id="predator-disc-indicator">' + predIndicator + '</span> ' + (discValid ? '\u2713' : '\u2717');
     }
 
     // Advantages tracker
@@ -1099,12 +1260,17 @@ function setupFormSubmit() {
             character_data[trait] = value;
         }
 
-        // Add disciplines
+        // Add disciplines (merge in-clan allocations + predator bonus)
         const disciplines = {};
         for (const [discipline, value] of Object.entries(disciplineValues)) {
             if (value > 0) {
                 disciplines[discipline] = value;
             }
+        }
+        // Merge predator discipline bonus
+        if (predatorDisciplineChoice) {
+            disciplines[predatorDisciplineChoice] = (disciplines[predatorDisciplineChoice] || 0) + 1;
+            character_data.predator_discipline = predatorDisciplineChoice;
         }
         character_data.disciplines = disciplines;
 
@@ -1373,6 +1539,7 @@ function saveDraft() {
             flawValues: JSON.parse(JSON.stringify(flawValues)),
             attributePriorities: Object.assign({}, attributePriorities),
             skillPriorities: Object.assign({}, skillPriorities),
+            predatorDisciplineChoice: predatorDisciplineChoice,
             savedAt: new Date().toISOString()
         };
         localStorage.setItem(getDraftKey(), JSON.stringify(draft));
@@ -1422,6 +1589,13 @@ function applyDraftToForm(draft) {
     }
     if (draft.predator_type) {
         document.getElementById('predator_type').value = draft.predator_type;
+        document.getElementById('predator_type').dispatchEvent(new Event('change'));
+    }
+    // Restore predator discipline choice after predator type change event fires
+    if (draft.predatorDisciplineChoice) {
+        predatorDisciplineChoice = draft.predatorDisciplineChoice;
+        var predRadio = document.querySelector('input[name="predator-disc"][value="' + draft.predatorDisciplineChoice + '"]');
+        if (predRadio) predRadio.checked = true;
     }
 
     // Restore priorities
